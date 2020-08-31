@@ -14,11 +14,11 @@ resX, resY = 1920, 1080
 
 
 
-confirmes, dates = fillData('csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv')
+confirmes, dates = fillData('dataWorld/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv')
 
-deaths, dates = fillData('csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv')
+deaths, dates = fillData('dataWorld/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv')
 
-recoveres, dates = fillData('csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv')
+recoveres, dates = fillData('dataWorld/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv')
 
 lastDateData = len(dates)-1
 #lastDateData = len(dates)-1-30

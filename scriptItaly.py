@@ -18,11 +18,11 @@ resX, resY = 1920, 1080
 
 if useDatiISTAT: 
 #    dataISTAT, datesISTAT = fillDataISTATpickle('DatiISTAT/dati-giornalieri-comune/comune_giorno.csv',               zerosuppression=100, pickleFileName = "temp_italia.pkl", writePickle = False)
-    dataISTAT, datesISTAT = fillDataISTATpickle('DatiISTAT2/Dataset-decessi-comunali-giornalieri-e-tracciato-record-2/dati-mortalità-comuni_giornalieri-al_31maggio.csv',                                                                                      zerosuppression=100, pickleFileName = "temp_italia_31maggio.pkl", writePickle = False)
+    dataISTAT, datesISTAT = fillDataISTATpickle('dataISTAT/comuni_giornaliero_30giugno.csv',                                                                                      zerosuppression=100, pickleFileName = "temp_italia_31maggio.pkl", writePickle = False)
     dataISTAT = makeCompatible(dataISTAT, firstDateDay=23, firstDateMonth=2)
 
-dataRegioni, dates = fillDataRegioni('dati-regioni/dpc-covid19-ita-regioni.csv')
-if (doProvince): dataProvince, dates = fillDataRegioni('dati-province/dpc-covid19-ita-province.csv', "denominazione_provincia")
+dataRegioni, dates = fillDataRegioni('dataItaly/dati-regioni/dpc-covid19-ita-regioni.csv')
+if (doProvince): dataProvince, dates = fillDataRegioni('dataItaly/dati-province/dpc-covid19-ita-province.csv', "denominazione_provincia")
 
 #data,stato,codice_regione,denominazione_regione,lat,long,ricoverati_con_sintomi,terapia_intensiva,totale_ospedalizzati,isolamento_domiciliare,totale_attualmente_positivi,nuovi_attualmente_positivi,dimessi_guariti,deceduti,totale_casi,tamponi
 

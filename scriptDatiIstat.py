@@ -13,13 +13,13 @@ ROOT.gROOT.SetBatch(1)
 resX, resY = 1920, 1080
 
 #dataISTAT, dates = fillDataISTATpickle('DatiISTAT/dati-giornalieri-comune/comune_giorno.csv', zerosuppression=100, pickleFileName = "temp_italia.pkl", writePickle = True)
-dataISTAT, dates = fillDataISTATpickle('DatiISTAT2/Dataset-decessi-comunali-giornalieri-e-tracciato-record-2/dati-mortalità-comuni_giornalieri-al_31maggio.csv', zerosuppression=100, pickleFileName = "temp_italia_31maggio.pkl", writePickle = True)
+dataISTAT, dates = fillDataISTATpickle('dataISTAT/comuni_giornaliero_30giugno.csv', zerosuppression=100, pickleFileName = "temp_italia_31maggio.pkl", writePickle = True)
 dataISTAT = makeCompatible(dataISTAT, firstDateDay=1, firstDateMonth=1)
 for i in range(len(dates)):
     dates[i] = dates[i].replace("/0","/")
     if dates[i][0]=="0": dates[i]=dates[i][1:]
 
-dates = extendDates(dates, 140)
+dates = extendDates(dates, 200)
 
 decessi     = selectComuniDatesAgeGender(dataISTAT, dates[:], places=None, ages=range(0,30), genders=[0,1])
 decessi_old = selectComuniDatesAgeGender(dataISTAT, dates[:], places=None, ages=range(0,30), genders=[2,3])
@@ -33,7 +33,7 @@ firstDate = 0
 #lastDate = len(dates)-1
 lastDate = dates.index("5/1/20")
 #lastDate = dates.index("3/11/20")
-predictionsDate = dates.index("5/30/20")
+predictionsDate = dates.index("6/30/20")
 #predictionsDate = dates.index("3/8/20")
 startDate = lastDate
 #lastDate2015 = dates.index("4/30/20")
