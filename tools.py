@@ -697,12 +697,18 @@ def extendDates(dates, nextend):
             newDate = "5/%d/20"%(i-61)
         elif i>92 and i<=122:
             newDate = "6/%d/20"%(i-92)
-        elif i>122 and i<=152:
+        elif i>122 and i<=153:
             newDate = "7/%d/20"%(i-122)
-        elif i>152 and i<=182:
-            newDate = "8/%d/20"%(i-152)
-        elif i>182 and i<=213:
-            newDate = "9/%d/20"%(i-182)
+        elif i>153 and i<=184:
+            newDate = "8/%d/20"%(i-153)
+        elif i>184 and i<=214:
+            newDate = "9/%d/20"%(i-184)
+        elif i>214 and i<=245:
+            newDate = "10/%d/20"%(i-214)
+        elif i>245 and i<=275:
+            newDate = "11/%d/20"%(i-245)
+        elif i>275 and i<=306:
+            newDate = "12/%d/20"%(i-275)
         if not newDate in dates: dates.append(newDate)
     return dates
 

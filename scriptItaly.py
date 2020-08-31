@@ -5,8 +5,8 @@ from tools import colors, fillDataRegioni, fillDataISTATpickle, newCases, getRat
 
 doProvince = False
 useLog = True
-#useDatiISTAT = False
-useDatiISTAT = True
+useDatiISTAT = False
+#useDatiISTAT = True
 
 import ROOT
 ROOT.gStyle.SetOptStat(0)
@@ -41,17 +41,17 @@ if useDatiISTAT:
     newDeathIstats_old = selectComuniDatesAgeGender(dataISTAT, dates, places=None, ages=range(0,30), genders=[2,3])
 
 lastDateData = len(dates)-1
-dates = extendDates(dates, 200)
+dates = extendDates(dates, 310)
 ################
 
 firstDate = 0
-#firstDate = dates.index("2/18/20")
+firstDate = dates.index("6/1/20")
 #firstDate = 16
 lastDate = lastDateData - 1
 #lastDate = dates.index("2/29/20")
 #lastDate = dates.index("3/1/20")
 #lastDate = 30
-predictionsDate = dates.index("8/30/20")
+predictionsDate = dates.index("11/1/20")
 #predictionsDate = 95
 
 
@@ -76,6 +76,7 @@ newRecoveres = newCases(recoveres, dates)
 newTests = newCases(tests, dates)
 newIntensivas = newCases(intensivas, dates)
 newRicoveratis = newCases(ricoveratis, dates)
+newPositives = newCases(positives, dates)
 
 if (doProvince): newConfirmesProv = newCases(confirmesProv, dates)
 
@@ -133,7 +134,7 @@ newDeaths_h     = makeHistos("histo_newDeaths", newDeaths,    dates, places, fir
 newTests_h     = makeHistos("histo_newTests", newTests,    dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2, daysSmearing=7)
 newRicoveratis_h = makeHistos("histo_newRicoveratis", newRicoveratis,    dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2, daysSmearing=7)
 newIntensivas_h     = makeHistos("histo_newIntensivas", newIntensivas,    dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2, daysSmearing=7)
-#newPositives_h  = makeHistos("histo_newpositives", newPositives, dates, places, firstDate, lastDate, predictionsDate)
+newPositives_h  = makeHistos("histo_newpositives", newPositives, dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2, daysSmearing=7)
 
 fits, fits_res, fits_error              = fitErf(confirmes_h,      places, firstDate, lastDate, predictionsDate)
 fitdiffs, fitdiffs_res, fitdiffs_error  = fitGaussAsymmetric(newConfirmes_h, places, firstDate, lastDate, predictionsDate)
@@ -404,8 +405,8 @@ for place in places:
             fitLinears[place].error = fitLinears_error[place]
             fitLinears[place].res = fitLinears_res[place]
     if not place in newDeathIstatExcess_h: newDeathIstatExcess_h[place] = None
-    savePlotNew([confirmes_h[place], recoveres_h[place], deaths_h[place], predictions_h[place], predictionDeaths_h[place], predictionRecoveres_h[place], intensivas_h[place], ricoveratis_h[place], tests_h[place]], [fitexptotals[place]], "plotsRegioni/%s.png"%place, startDate, d3)
-    savePlotNew([newConfirmes_h[place], newRecoveres_h[place], newDeaths_h[place], newDeathIstatExcess_h[place], newIntensivas_h[place], newRicoveratis_h[place], newTests_h[place]], [fitdiffs[place], fitdiffRecoveres[place], fitdiffDeaths[place], fitexps[place]], "plotsRegioni/%s_newCases.png"%place, startDate, d3)
+    savePlotNew([confirmes_h[place], recoveres_h[place], deaths_h[place], predictions_h[place], predictionDeaths_h[place], predictionRecoveres_h[place], intensivas_h[place], ricoveratis_h[place], tests_h[place], positives_h[place]], [fitexptotals[place]], "plotsRegioni/%s.png"%place, startDate, d3)
+    savePlotNew([newConfirmes_h[place], newRecoveres_h[place], newDeaths_h[place], newDeathIstatExcess_h[place], newIntensivas_h[place], newRicoveratis_h[place], newTests_h[place], newPositives_h[place]], [fitdiffs[place], fitdiffRecoveres[place], fitdiffDeaths[place], fitexps[place]], "plotsRegioni/%s_newCases.png"%place, startDate, d3)
 #    savePlotNew([newDeathIstats_old_h[place]], [fitLinears[place]], "plotsRegioni/%s_newCases.png"%place, startDate, d3)
 
 if (doProvince): 
