@@ -29,8 +29,8 @@ Run scripts
 
 ```
 python script.py
-python scriptItaly.py
 python scriptDatiIstat.py
+python scriptItaly.py
 ```
 
 Check the results
