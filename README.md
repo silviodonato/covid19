@@ -1,7 +1,7 @@
 Get repository
 
-`git clone git@github.com:silviodonato/covid19.git
-cd covid19`
+```git clone git@github.com:silviodonato/covid19.git
+cd covid19```
 
 Get dataWorld
 
