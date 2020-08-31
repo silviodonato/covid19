@@ -372,7 +372,28 @@ def getRatio(numerators, denominators):
     return ratios
 
 
-def makeHistos(prefix, data, dates, places, firstDate, lastDate, predictionDate, threshold=-1, cutTails=False, errorType=None, lineWidth=3):
+def smearData(dataUnsmeared, dates, daysSmearing):
+    if daysSmearing>2:
+        data = {}
+        for place in dataUnsmeared:
+            data[place] = {}
+            for date in dates:
+                if date in dataUnsmeared[place]:
+                    data[place][date] = 0
+                    count = 0
+                    for j in range(daysSmearing):
+                        idx = dates.index(date) - j
+                        if idx>0:
+                            data[place][date] += dataUnsmeared[place][dates[idx]]
+                            count += 1
+                    if count>0:
+                        data[place][date] = data[place][date] / count
+    else:
+        data = copy.copy(dataUnsmeared)
+    return data
+
+def makeHistos(prefix, dataUnsmeared, dates, places, firstDate, lastDate, predictionDate, threshold=-1, cutTails=False, errorType=None, lineWidth=3, daysSmearing=1):
+    data = smearData(dataUnsmeared, dates, daysSmearing)
     histos = {}
     for place in places:
         if not place in data: continue
@@ -462,7 +483,7 @@ def fitErf(h, places, firstDate, lastDate, predictionDate, fitOption="0SEQ"):
         functs_err[place].SetFillColor(color)
         name = h[place].GetName().replace("histo_","functionErf_")
         functs[place].SetName(name+"_centralValue") 
-        functs_res[place].SetName(name+"_fitResult")
+        if functs_res[place].Get(): functs_res[place].SetName(name+"_fitResult")
         functs_err[place].SetName(name+"_errorBand")
     return functs, functs_res, functs_err
 
@@ -497,7 +518,7 @@ def fitGauss(h, places, firstDate, lastDate, predictionDate, fitOption="0SEQ", m
         functs_err[place].SetFillColor(color)
         name = h[place].GetName().replace("histo_","functionGaus_")
         functs[place].SetName(name+"_centralValue") 
-        functs_res[place].SetName(name+"_fitResult")
+        if functs_res[place].Get(): functs_res[place].SetName(name+"_fitResult")
         functs_err[place].SetName(name+"_errorBand")
     return functs, functs_res, functs_err
 
@@ -536,7 +557,7 @@ def fitGaussAsymmetric(h, places, firstDate, lastDate, predictionDate, fitOption
         functs_err[place].SetFillColor(color)
         name = h[place].GetName().replace("histo_","functionGaus_")
         functs[place].SetName(name+"_centralValue") 
-        functs_res[place].SetName(name+"_fitResult")
+        if functs_res[place].Get(): functs_res[place].SetName(name+"_fitResult")
         functs_err[place].SetName(name+"_errorBand")
     return functs, functs_res, functs_err
 
@@ -822,7 +843,10 @@ def savePlotNew(histos, functions, fName, xpred, canvas, ISTAT=False):
         function.SetFillColor(function.GetLineColor())
         if not ISTAT:
             if "Gaus" in function.GetName():
-                leg.AddEntry(function, "#splitline{Gaussian fit}{#splitline{#mu=%.1f #pm %.1f}{ #sigma=%.1f #pm %.1f}} "%(function.fitResult.GetParams()[1],function.fitResult.GetErrors()[1],function.fitResult.GetParams()[2],function.fitResult.GetErrors()[2]), "lep")
+                if function.fitResult.Get(): 
+                    leg.AddEntry(function, "#splitline{Gaussian fit}{#splitline{#mu=%.1f #pm %.1f}{ #sigma=%.1f #pm %.1f}} "%(function.fitResult.GetParams()[1],function.fitResult.GetErrors()[1],function.fitResult.GetParams()[2],function.fitResult.GetErrors()[2]), "lep")
+                else:
+                    leg.AddEntry(function, "Gaussian fit", "lep")
             if "Exp" in function.GetName():
                 leg.AddEntry(function, "#splitline{Exponential fit}{#tau_{2} = %.1f days}"%(function.GetParameter(0)*ROOT.TMath.Log(2)), "lep")
         else:

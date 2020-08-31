@@ -5,6 +5,7 @@ from tools import colors, fillDataRegioni, fillDataISTATpickle, newCases, getRat
 
 doProvince = False
 useLog = True
+#useDatiISTAT = False
 useDatiISTAT = True
 
 import ROOT
@@ -100,7 +101,7 @@ if (doProvince): province = [p[1] for p in sorted([(confirmesProv[p][dates[lastD
 places.remove("Trento")
 places.remove("Basilicata")
 
-#places = ["Italia"]
+#places = ["Italia","Lombardia"]
 #places = ["Nord", "Lombardia", "Piemonte"]
 #province = ["La Spezia", "Pisa", "Genova", "Milano", "Brescia", "Bergamo"]
 #province = ["Pisa"]
@@ -117,21 +118,21 @@ fitdiffs   = {}
 d1 = ROOT.TCanvas("d1","",resX,resY)
 
 
-positives_h = makeHistos("histo_positives", positives,        dates, places, firstDate, lastDate, predictionsDate, 0, cutTails=False, errorType='cumulative', lineWidth=2)
-confirmes_h = makeHistos("histo_confirmes", confirmes,        dates, places, firstDate, lastDate, predictionsDate, 0, cutTails=False, errorType='cumulative', lineWidth=2)
-recoveres_h = makeHistos("histo_recoveres", recoveres,        dates, places, firstDate, lastDate, predictionsDate, 0, cutTails=False, errorType='cumulative', lineWidth=2)
-deaths_h    = makeHistos("histo_deaths", deaths,           dates, places, firstDate, lastDate, predictionsDate, 0, cutTails=False, errorType='cumulative', lineWidth=2)
-tests_h    = makeHistos("histo_tests", tests,           dates, places, firstDate, lastDate, predictionsDate, 0, cutTails=False, errorType='cumulative', lineWidth=2)
-ricoveratis_h    = makeHistos("histo_ricoveratis", ricoveratis,           dates, places, firstDate, lastDate, predictionsDate, 0, cutTails=False, errorType='cumulative', lineWidth=2)
-intensivas_h    = makeHistos("histo_intensivas", intensivas,           dates, places, firstDate, lastDate, predictionsDate, 0, cutTails=False, errorType='cumulative', lineWidth=2)
+positives_h = makeHistos("histo_positives", positives,        dates, places, firstDate, lastDate, predictionsDate, 0, cutTails=False, errorType='cumulative', lineWidth=2, daysSmearing=1)
+confirmes_h = makeHistos("histo_confirmes", confirmes,        dates, places, firstDate, lastDate, predictionsDate, 0, cutTails=False, errorType='cumulative', lineWidth=2, daysSmearing=1)
+recoveres_h = makeHistos("histo_recoveres", recoveres,        dates, places, firstDate, lastDate, predictionsDate, 0, cutTails=False, errorType='cumulative', lineWidth=2, daysSmearing=1)
+deaths_h    = makeHistos("histo_deaths", deaths,           dates, places, firstDate, lastDate, predictionsDate, 0, cutTails=False, errorType='cumulative', lineWidth=2, daysSmearing=1)
+tests_h    = makeHistos("histo_tests", tests,           dates, places, firstDate, lastDate, predictionsDate, 0, cutTails=False, errorType='cumulative', lineWidth=2, daysSmearing=1)
+ricoveratis_h    = makeHistos("histo_ricoveratis", ricoveratis,           dates, places, firstDate, lastDate, predictionsDate, 0, cutTails=False, errorType='cumulative', lineWidth=2, daysSmearing=1)
+intensivas_h    = makeHistos("histo_intensivas", intensivas,           dates, places, firstDate, lastDate, predictionsDate, 0, cutTails=False, errorType='cumulative', lineWidth=2, daysSmearing=1)
 
 #histos = makeHistos(confirmes, places, firstDate, lastDate, predictionsDate, cumulativeError=True)
-newConfirmes_h  = makeHistos("histo_newConfirmes", newConfirmes, dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=True, lineWidth=2)
-newRecoveres_h  = makeHistos("histo_newRecoveres", newRecoveres, dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2)
-newDeaths_h     = makeHistos("histo_newDeaths", newDeaths,    dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2)
-newTests_h     = makeHistos("histo_newTests", newTests,    dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2)
-newRicoveratis_h = makeHistos("histo_newRicoveratis", newRicoveratis,    dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2)
-newIntensivas_h     = makeHistos("histo_newIntensivas", newIntensivas,    dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2)
+newConfirmes_h  = makeHistos("histo_newConfirmes", newConfirmes, dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=True, lineWidth=2, daysSmearing=7)
+newRecoveres_h  = makeHistos("histo_newRecoveres", newRecoveres, dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2, daysSmearing=7)
+newDeaths_h     = makeHistos("histo_newDeaths", newDeaths,    dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2, daysSmearing=7)
+newTests_h     = makeHistos("histo_newTests", newTests,    dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2, daysSmearing=7)
+newRicoveratis_h = makeHistos("histo_newRicoveratis", newRicoveratis,    dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2, daysSmearing=7)
+newIntensivas_h     = makeHistos("histo_newIntensivas", newIntensivas,    dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2, daysSmearing=7)
 #newPositives_h  = makeHistos("histo_newpositives", newPositives, dates, places, firstDate, lastDate, predictionsDate)
 
 fits, fits_res, fits_error              = fitErf(confirmes_h,      places, firstDate, lastDate, predictionsDate)
@@ -142,10 +143,10 @@ fitexptotals, fitexptotals_res, fitexptotals_error = fitExp(confirmes_h,      pl
 fitdiffDeaths, fitdiffDeaths_res, fitdiffDeaths_error = fitGaussAsymmetric(newDeaths_h, places, firstDate, lastDate, predictionsDate)
 fitdiffRecoveres, fitdiffRecoveres_res, fitdiffRecoveres_error = fitGaussAsymmetric(newRecoveres_h, places, firstDate, lastDate, predictionsDate)
 
+newDeathIstatExcess_h = {}
 if useDatiISTAT: 
     newDeathIstats_h        = makeHistos("histo_ISTAT",     newDeathIstats,        dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2, errorType='sqrtN')
     newDeathIstats_old_h    = makeHistos("histo_ISTAT_old", newDeathIstats_old,    dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2, errorType='sqrtN')
-    newDeathIstatExcess_h = {}
     for place in newDeathIstats_old_h:
         if newDeathIstats_old_h[place].Integral(0, dates.index("2/28/20"))>0: newDeathIstats_old_h[place].Scale(newDeathIstats_h[place].Integral(0, dates.index("2/28/20"))/newDeathIstats_old_h[place].Integral(0, dates.index("2/28/20")))
         feb29_bin = dates.index("3/1/20")
@@ -159,8 +160,8 @@ if useDatiISTAT:
 #1/0
 
 if (doProvince): 
-    confirmesProv_h = makeHistos("histo_confirmes", confirmesProv,        dates, province, firstDate, lastDate, predictionsDate, 0, cutTails=False, errorType='cumulative', lineWidth=2)
-    newConfirmesProv_h  = makeHistos("histo_newConfirmes", newConfirmesProv, dates, province, firstDate, lastDate, predictionsDate, 1, cutTails=True, lineWidth=2)
+    confirmesProv_h = makeHistos("histo_confirmes", confirmesProv,        dates, province, firstDate, lastDate, predictionsDate, 0, cutTails=False, errorType='cumulative', lineWidth=2, daysSmearing=1)
+    newConfirmesProv_h  = makeHistos("histo_newConfirmes", newConfirmesProv, dates, province, firstDate, lastDate, predictionsDate, 1, cutTails=True, lineWidth=2, daysSmearing=7)
 
 
 #for place in places:
@@ -397,10 +398,11 @@ for place in places:
     fitdiffRecoveres[place].fitResult = fitdiffRecoveres_res[place]
     fitexps[place].error = None
     fitexps[place].fitResult = None
-    if not place in fitLinears: fitLinears[place] = None
-    else:
-        fitLinears[place].error = fitLinears_error[place]
-        fitLinears[place].res = fitLinears_res[place]
+    if useDatiISTAT: 
+        if not place in fitLinears: fitLinears[place] = None
+        else:
+            fitLinears[place].error = fitLinears_error[place]
+            fitLinears[place].res = fitLinears_res[place]
     if not place in newDeathIstatExcess_h: newDeathIstatExcess_h[place] = None
     savePlotNew([confirmes_h[place], recoveres_h[place], deaths_h[place], predictions_h[place], predictionDeaths_h[place], predictionRecoveres_h[place], intensivas_h[place], ricoveratis_h[place], tests_h[place]], [fitexptotals[place]], "plotsRegioni/%s.png"%place, startDate, d3)
     savePlotNew([newConfirmes_h[place], newRecoveres_h[place], newDeaths_h[place], newDeathIstatExcess_h[place], newIntensivas_h[place], newRicoveratis_h[place], newTests_h[place]], [fitdiffs[place], fitdiffRecoveres[place], fitdiffDeaths[place], fitexps[place]], "plotsRegioni/%s_newCases.png"%place, startDate, d3)

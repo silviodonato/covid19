@@ -87,14 +87,14 @@ fitdiffs   = {}
 c1 = ROOT.TCanvas("c1","",resX,resY)
 
 
-positives_h     = makeHistos("histo_positives", positives,    dates, places, firstDate, lastDate, predictionsDate, 0, cutTails=False, errorType='cumulative', lineWidth=2)
-confirmes_h     = makeHistos("histo_confirmes", confirmes,    dates, places, firstDate, lastDate, predictionsDate, 0, cutTails=False, errorType='cumulative', lineWidth=2)
-recoveres_h     = makeHistos("histo_recoveres", recoveres,    dates, places, firstDate, lastDate, predictionsDate, 0, cutTails=False, errorType='cumulative', lineWidth=2)
-deaths_h        = makeHistos("histo_deaths",    deaths,       dates, places, firstDate, lastDate, predictionsDate, 0, cutTails=False, errorType='cumulative', lineWidth=2)
+positives_h     = makeHistos("histo_positives", positives,    dates, places, firstDate, lastDate, predictionsDate, 0, cutTails=False, errorType='cumulative', lineWidth=2, daysSmearing=1)
+confirmes_h     = makeHistos("histo_confirmes", confirmes,    dates, places, firstDate, lastDate, predictionsDate, 0, cutTails=False, errorType='cumulative', lineWidth=2, daysSmearing=1)
+recoveres_h     = makeHistos("histo_recoveres", recoveres,    dates, places, firstDate, lastDate, predictionsDate, 0, cutTails=False, errorType='cumulative', lineWidth=2, daysSmearing=1)
+deaths_h        = makeHistos("histo_deaths",    deaths,       dates, places, firstDate, lastDate, predictionsDate, 0, cutTails=False, errorType='cumulative', lineWidth=2, daysSmearing=1)
 #histos          = makeHistos(confirmes, places, firstDate, lastDate, predictionsDate, cumulativeError=True)
-newConfirmes_h  = makeHistos("histo_newConfirmes", newConfirmes, dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False,  lineWidth=2)
-newRecoveres_h  = makeHistos("histo_newRecoveres", newRecoveres, dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2)
-newDeaths_h     = makeHistos("histo_newDeaths",    newDeaths,    dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2)
+newConfirmes_h  = makeHistos("histo_newConfirmes", newConfirmes, dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False,  lineWidth=2, daysSmearing=7)
+newRecoveres_h  = makeHistos("histo_newRecoveres", newRecoveres, dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2, daysSmearing=7)
+newDeaths_h     = makeHistos("histo_newDeaths",    newDeaths,    dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2, daysSmearing=7)
 #newPositives_h  = makeHistos(newPositives, dates, places, firstDate, lastDate, predictionsDate)
 
 fits, fits_res, fits_error                         = fitErf(confirmes_h,      places, firstDate, lastDate, predictionsDate)

@@ -41,8 +41,8 @@ startDate = lastDate
 #lastDate2015 = dates.index("3/1/20")
 #lastDate2015 = dates.index("4/29/20")
 
-decessi_h = makeHistos("histo_decessi", decessi,        dates[:], places, firstDate, lastDate, predictionsDate, 0, cutTails=False, errorType='sqrtN', lineWidth=2)
-decessi_old_h = makeHistos("histo_storico", decessi_old,dates[:], places, firstDate, lastDate, predictionsDate, 0, cutTails=False, errorType='sqrtN', lineWidth=2)
+decessi_h = makeHistos("histo_decessi", decessi,        dates[:], places, firstDate, lastDate, predictionsDate, 0, cutTails=False, errorType='sqrtN', lineWidth=2, daysSmearing=7)
+decessi_old_h = makeHistos("histo_storico", decessi_old,dates[:], places, firstDate, lastDate, predictionsDate, 0, cutTails=False, errorType='sqrtN', lineWidth=2, daysSmearing=7)
 
 decessi_excess_only_h = {}
 for place in places:
