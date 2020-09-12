@@ -68,6 +68,8 @@ colorMap = {
     "newDeaths":      ROOT.kBlack,
     "prediction":      ROOT.kMagenta+2,
     "functionExp":      ROOT.kMagenta,
+    "functionExp_newConfirmes":      ROOT.kMagenta,
+    "functionExp_confirmes":      ROOT.kMagenta,
     "intensiva":      ROOT.kGreen+2,
     "ricoverati":      ROOT.kOrange+1,
     "test":      ROOT.kGray+2,
@@ -78,20 +80,26 @@ colorMap = {
     "decessi":      ROOT.kBlack,
     "ISTAT":        ROOT.kMagenta+1,
     "storico":      ROOT.kBlack,
+    "predictionConfirmes":   ROOT.kBlue,
+    "predictionRecoveres":   ROOT.kRed,
+    "predictionDeaths":      ROOT.kBlack,
+    "predictionIntensiva":      ROOT.kGreen+2,
+    "predictionRicoverati":      ROOT.kOrange+1,
+    "predictionTest":      ROOT.kGray+2,
 }
 
 labelMap = {
-    "positives":  "positives",
-    "confirmes":  "confirmed",
-    "recoveres":  "recovered",
-    "deaths":     "deaths",
-    "newConfirmes":   "new confirmed",
-    "newRecoveres":   "new recovered",
-    "newDeaths":      "new deaths",
-    "prediction":      "prediction",
+    "positives":  "Positivi",
+    "confirmes":  "Casi totali",
+    "recoveres":  "Guariti",
+    "deaths":     "Decessi",
+    "prediction":      "Prediction",
     "intensiva":      "Terapia Intensiva",
     "ricoverati":      "Ricoverati",
     "test":      "Tamponi",
+    "newConfirmes":   "Casi totali",
+    "newRecoveres":   "Guariti",
+    "newDeaths":      "Decessi",
     "newIntensiva":      "Terapia Intensiva",
     "newRicoverati":      "Ricoverati",
     "newTest":      "Tamponi",
@@ -99,6 +107,12 @@ labelMap = {
     "decessi":      "Decessi",
     "ISTAT":        "#splitline{Decessi totali}{(eccesso ISTAT)}",
     "storico":      "#splitline{Media 2015-19}{(riscalata)}",
+    "predictionConfirmes":   "Casi totali (prev.)",
+    "predictionRecoveres":   "Guariti (prev.)",
+    "predictionDeaths":      "Decessi (prev.)",
+    "predictionIntensiva":      "Terapia Intensiva (prev.)",
+    "predictionRicoverati":      "Ricoverati (prev.)",
+    "predictionTest":      "Tamponi (prev.)",
 }
 
 def makeCompatible(dataISTAT, firstDateDay=24, firstDateMonth=2):
@@ -129,7 +143,7 @@ def makeCompatible(dataISTAT, firstDateDay=24, firstDateMonth=2):
     return dataISTAT
 
 def getGeneric(name, dictionary):
-    for k in dictionary:
+    for k in sorted(dictionary.keys(), key=len, reverse=True):
         if k in name:
             return dictionary[k]
     import pprint
@@ -141,6 +155,7 @@ def getGeneric(name, dictionary):
 def getColor(name):
     out = getGeneric (name, colorMap)
     assert(type(out)==type(ROOT.kBlue))
+#    print("getColor(%s) = %s"%(name, out))
     return out
 
 def getLabel(name):
@@ -294,6 +309,7 @@ def fillDataRegioni(fileName, column_regione = "denominazione_regione"):
                 date = row[labels.index("data")].split(" ")[0].split("T")[0].replace("2020-0","").replace("-","/").replace("/0","/")+"/20"
                 if not date in dates: dates.append(date)
                 regione = row[labels.index(column_regione)]
+                if regione == "Fuori Regione / Provincia Autonoma": continue
                 if regione == "In fase di definizione/aggiornamento": continue
                 if regione == "Friuli V. G. ": regione = "Friuli Venezia Giulia"
                 regione = regione.replace(" ","")
@@ -351,6 +367,7 @@ def newCases(cases, dates):
         newCases[place] = {}
         newCases[place][dates[0]] = 0
         for i in range(1, len(cases[place])):
+            print place, i, dates[i]
             newCases[place][dates[i]] = cases[place][dates[i]] - cases[place][dates[i-1]]
     return newCases
 
@@ -487,6 +504,48 @@ def fitErf(h, places, firstDate, lastDate, predictionDate, fitOption="0SEQ"):
         functs_err[place].SetName(name+"_errorBand")
     return functs, functs_res, functs_err
 
+from math import log
+
+def fitExpGauss(h, places, firstDate, lastDate, predictionDate, fitOption="0SEQ", maxPar3=maxPar3):
+    functs = {}
+    functs_res = {}
+    functs_err = {}
+    for place in places:
+        print "### Fit %s ###"%place
+        functs[place] = copy.copy(ROOT.TF1("function"+place,"gaus + exp(-(x-[3])/[4])",firstDate,predictionDate))
+        functs[place].SetParameters(h[place].GetMaximum(), h[place].GetXaxis().GetXmax(), fixSigma, h[place].GetXaxis().GetXmax(), h[place].GetXaxis().GetXmax()/log(h[place].GetMaximum()))
+        
+#        functs[place].FixParameter(0, 0)
+#        functs[place].SetParameter(3, h[place].GetXaxis().GetXmin())
+#        functs[place].SetParameter(4, h[place].GetMaximum())
+#        print h[place]
+#        print functs[place]
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
+#        functs[place].ReleaseParameter(3)
+        functs[place].ReleaseParameter(0)
+        functs[place].SetParameter(0, h[place].GetMaximum())
+#        functs[place].SetParLimits(3,0,maxPar3)
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
+        if minPar2 != maxPar2:
+            functs[place].ReleaseParameter(2)
+            functs[place].SetParLimits(2,minPar2,maxPar2)
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
+        color = colors[places.index(place)]
+        functs[place].SetLineColor(color)
+        functs_err[place] = copy.copy(h[place].Clone(("err"+h[place].GetName())))
+        functs_err[place].Reset()
+        ROOT.TVirtualFitter.GetFitter().GetConfidenceIntervals(functs_err[place], 0.68)
+        functs_err[place].SetStats(ROOT.kFALSE)
+        functs_err[place].SetLineColor(color)
+        functs_err[place].SetFillColor(color)
+        name = h[place].GetName().replace("histo_","functionGaus_")
+        functs[place].SetName(name+"_centralValue") 
+        if functs_res[place].Get(): functs_res[place].SetName(name+"_fitResult")
+        functs_err[place].SetName(name+"_errorBand")
+    return functs, functs_res, functs_err
+
+
 def fitGauss(h, places, firstDate, lastDate, predictionDate, fitOption="0SEQ", maxPar3=maxPar3):
     functs = {}
     functs_res = {}
@@ -545,6 +604,43 @@ def fitGaussAsymmetric(h, places, firstDate, lastDate, predictionDate, fitOption
             functs[place].SetParLimits(2,minPar2,maxPar2)
             functs[place].ReleaseParameter(4)
             functs[place].SetParLimits(4,minPar2,maxPar2)
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
+        color = colors[places.index(place)]
+        functs[place].SetLineColor(color)
+        functs_err[place] = copy.copy(h[place].Clone(("err"+h[place].GetName())))
+        functs_err[place].Reset()
+        ROOT.TVirtualFitter.GetFitter().GetConfidenceIntervals(functs_err[place], 0.68)
+        functs_err[place].SetStats(ROOT.kFALSE)
+        functs_err[place].SetLineColor(color)
+        functs_err[place].SetFillColor(color)
+        name = h[place].GetName().replace("histo_","functionGaus_")
+        functs[place].SetName(name+"_centralValue") 
+        if functs_res[place].Get(): functs_res[place].SetName(name+"_fitResult")
+        functs_err[place].SetName(name+"_errorBand")
+    return functs, functs_res, functs_err
+
+def fitTwoExp(h, places, firstDate, lastDate, predictionDate, fitOption="0SEQ", maxPar3=maxPar3):
+    functs = {}
+    functs_res = {}
+    functs_err = {}
+    for place in places:
+        print "### Fit %s ###"%place
+        functs[place] = copy.copy(ROOT.TF1("function"+place,"exp((x-[0])/[1]) + exp(-(x-[2])/[3])",firstDate,predictionDate))
+        functs[place].SetParameters(h[place].GetMean(), h[place].GetMean(), h[place].GetMean(), h[place].GetMean())
+#        functs[place].FixParameter(2, 10000)
+ #       functs[place].FixParameter(3, 1)
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
+  #      functs[place].FixParameter(2, functs[place].GetParameter(0))
+   #     functs[place].FixParameter(3, functs[place].GetParameter(1))
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
+    #    functs[place].ReleaseParameter(2)
+     #   functs[place].ReleaseParameter(3)
+#        if minPar2 != maxPar2:
+#            functs[place].ReleaseParameter(2)
+#            functs[place].SetParLimits(2,minPar2,maxPar2)
+#            functs[place].ReleaseParameter(4)
+#            functs[place].SetParLimits(4,minPar2,maxPar2)
         functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
         functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
         color = colors[places.index(place)]
@@ -837,46 +933,50 @@ def savePlotNew(histos, functions, fName, xpred, canvas, ISTAT=False):
     maxim = 0
     for histo in histos:
         maxim = max(maxim, histo.GetMaximum())
-        leg.AddEntry(histo, getLabel(histo.GetName()), "lep")
-        if not ISTAT: histo.SetLineColor(getColor(histo.GetName()))
+        if not "prediction" in histo.GetName():
+            leg.AddEntry(histo, getLabel(histo.GetName()), "lep")
+        if not "ISTAT" in histo.GetName(): histo.SetLineColor(getColor(histo.GetName()))
 #        histo.SetFillColor(getColor(histo.GetName()))
         histo.SetLineStyle(1)
     
     for function in functions:
         function.SetMinimum(1)
-        if not ISTAT: function.SetLineColor(getColor(function.GetName()))
+        if not "ISTAT" in histo.GetName(): function.SetLineColor(getColor(function.GetName()))
 #        function.SetFillStyle(0)
         function.SetFillColor(function.GetLineColor())
-        if not ISTAT:
+        if not "ISTAT" in histo.GetName():
             if "Gaus" in function.GetName():
                 if function.fitResult.Get(): 
-                    leg.AddEntry(function, "#splitline{Gaussian fit}{#splitline{#mu=%.1f #pm %.1f}{ #sigma=%.1f #pm %.1f}} "%(function.fitResult.GetParams()[1],function.fitResult.GetErrors()[1],function.fitResult.GetParams()[2],function.fitResult.GetErrors()[2]), "lep")
+                    leg.AddEntry(function, "Exp + Gauss fit", "lp")
+#                    leg.AddEntry(function, "#splitline{Gaussian fit}{#splitline{#mu=%.1f #pm %.1f}{ #sigma=%.1f #pm %.1f}} "%(function.fitResult.GetParams()[1],function.fitResult.GetErrors()[1],function.fitResult.GetParams()[2],function.fitResult.GetErrors()[2]), "lep")
                 else:
-                    leg.AddEntry(function, "Gaussian fit", "lep")
+                    leg.AddEntry(function, "Gaussian fit", "lp")
             if "Exp" in function.GetName():
                 leg.AddEntry(function, "#splitline{Exponential fit}{#tau_{2} = %.1f days}"%(function.GetParameter(0)*ROOT.TMath.Log(2)), "lep")
         else:
-            leg.AddEntry(function, function.label, "lep")
+            leg.AddEntry(function, function.label, "lp")
             
     if maxim>0 and useLog: maxim = 10**int(ROOT.TMath.Log10(maxim)+1)
     
     line = ROOT.TLine(xpred+0.5,0,xpred+0.5,maxim)
     line.SetLineStyle(2)
     line.SetLineWidth(3)
-    
+    histo
     histos[0].SetMaximum(maxim)
     histos[0].Draw("")
     for i, histo in enumerate(reversed(histos+[histos[0]])):
         if i == 0: same = ""
         else: same = "same"
-        if "predictions" in histo.GetName(): 
+        if "prediction" in histo.GetName(): 
             histoErr = histo.Clone(histo.GetName()+"err")
             histoErr.SetFillColor(histo.GetLineColor())
             histoErr.SetFillStyle(3144)
             histoErr.Draw("e3"+same)
-        histo.SetMarkerStyle(20)
+            histo.SetMarkerStyle(0)
+        else:
+            histo.SetMarkerStyle(20)
         histo.SetMarkerColor(histo.GetLineColor())
-        if not ISTAT:
+        if not "ISTAT" in histo.GetName():
             histo.Draw("HIST,PL,"+same)
         else:
             histo.Draw("ERR,"+same)
@@ -945,3 +1045,4 @@ def getPredictionErf(places, dates, firstDate, finalDate, histo, functErfs, func
             except:
                 pass
     return predictions
+
