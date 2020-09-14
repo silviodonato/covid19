@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 #import csv
 #import copy
-from tools import colors, fillDataRegioni, fillDataISTATpickle, newCases, getRatio, makeHistos, fitErf, fitGauss, fitGaussAsymmetric, fitExp, extendDates, saveCSV, savePlotNew, getPrediction, getPredictionErf, getColumn, selectComuniDatesAgeGender, makeCompatible, fitLinear, fitTwoExp, fitExpGauss, applyScaleFactors
+from tools import colors, fillDataRegioni, fillDataISTATpickle, newCases, getRatio, makeHistos, fitErf, fitGauss, fitGaussAsymmetric, fitExp, extendDates, saveCSV, savePlotNew, getPrediction, getPredictionErf, getColumn, selectComuniDatesAgeGender, makeCompatible, fitLinear, fitTwoExp, fitExpGauss, applyScaleFactors, useLog, positiveHisto
 
-startFromZero = True
+startFromZero = False
 daysSmearing = 1
 doProvince = False
+#doProvince = True
 useScaleFactor = True
-useLog = True
+#useScaleFactor = False
+
 useDatiISTAT = False
 #useDatiISTAT = True
 
@@ -115,7 +117,7 @@ places.remove("Basilicata")
 #province = ["La Spezia", "Pisa", "Genova", "Milano", "Brescia", "Bergamo"]
 #province = ["Pisa"]
 #places = ["Lombardia"]
-places = ["Italia"]
+#places = ["Italia"]
 
 print "places:",places
 
@@ -139,6 +141,12 @@ intensivas_h    = makeHistos("histo_intensivas", intensivas,           dates, pl
 if startFromZero:
     for place in places:
         for histo in [positives_h,confirmes_h,recoveres_h,deaths_h,tests_h,ricoveratis_h,intensivas_h]:
+            minVal_ = histo[place].GetBinContent(1)
+            for ibin in range(1,lastDate-firstDate):
+                val = histo[place].GetBinContent(ibin)
+                if val < minVal_:
+                    minVal_ = val
+#            val = float(minVal_-1)
             val = histo[place].GetBinContent(1)
             for i in range(histo[place].GetNbinsX()+2):
                 histo[place].SetBinContent(i, histo[place].GetBinContent(i) - val)
@@ -155,10 +163,13 @@ newRicoveratis_h = makeHistos("histo_newRicoveratis", newRicoveratis,    dates, 
 newIntensivas_h     = makeHistos("histo_newIntensivas", newIntensivas,    dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2, daysSmearing=daysSmearing)
 newPositives_h  = makeHistos("histo_newpositives", newPositives, dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2, daysSmearing=daysSmearing)
 
-if useScaleFactor:
-    for place in places:
+for place in places:
+    if useScaleFactor:
         for histo in [newPositives_h,newConfirmes_h,newRecoveres_h,newDeaths_h,newTests_h,newRicoveratis_h,newIntensivas_h]:
             applyScaleFactors(histo[place])
+    if useLog:
+        for histo in [newPositives_h,newConfirmes_h,newRecoveres_h,newDeaths_h,newTests_h,newRicoveratis_h,newIntensivas_h,positives_h,confirmes_h,recoveres_h,deaths_h,tests_h,ricoveratis_h,intensivas_h]:
+            positiveHisto(histo[place])
 
 fits, fits_res, fits_error              = fitErf(confirmes_h,      places, firstDate, lastDate, predictionsDate)
 fitdiffs, fitdiffs_res, fitdiffs_error  = fitExpGauss(newConfirmes_h, places, firstDate, lastDate, predictionsDate)
@@ -443,8 +454,8 @@ for place in places:
             fitLinears[place].error = fitLinears_error[place]
             fitLinears[place].res = fitLinears_res[place]
     if not place in newDeathIstatExcess_h: newDeathIstatExcess_h[place] = None
-    savePlotNew([confirmes_h[place], recoveres_h[place], deaths_h[place], predictionConfirmes_h[place], predictionDeaths_h[place], predictionRecoveres_h[place], predictionIntensivas_h[place], predictionRicoveratis_h[place], intensivas_h[place], ricoveratis_h[place], tests_h[place], positives_h[place]], [fitexptotals[place]], "plotsRegioni/%s.png"%place, startDate, d3)
-    savePlotNew([newConfirmes_h[place], newRecoveres_h[place], newDeaths_h[place], newDeathIstatExcess_h[place], newIntensivas_h[place], newRicoveratis_h[place], newTests_h[place], newPositives_h[place]], [fitexps[place], fitdiffs[place], fitdiffRecoveres[place], fitdiffDeaths[place], fitdiffIntensivas[place], fitdiffRicoveratis[place]], "plotsRegioni/%s_newCases.png"%place, startDate, d3)
+    savePlotNew([confirmes_h[place], recoveres_h[place], deaths_h[place], predictionConfirmes_h[place], predictionDeaths_h[place], predictionRecoveres_h[place], predictionIntensivas_h[place], predictionRicoveratis_h[place], intensivas_h[place], ricoveratis_h[place], tests_h[place] if useLog else 0, positives_h[place]], [fitexptotals[place]], "plotsRegioni/%s.png"%place, startDate, d3)
+    savePlotNew([newConfirmes_h[place], newRecoveres_h[place], newDeaths_h[place], newDeathIstatExcess_h[place], newIntensivas_h[place], newRicoveratis_h[place], newTests_h[place] if useLog else 0, newPositives_h[place]], [fitexps[place], fitdiffs[place], fitdiffRecoveres[place], fitdiffDeaths[place], fitdiffIntensivas[place], fitdiffRicoveratis[place]], "plotsRegioni/%s_newCases.png"%place, startDate, d3)
 #    savePlotNew([newDeathIstats_old_h[place]], [fitLinears[place]], "plotsRegioni/%s_newCases.png"%place, startDate, d3)
 
 if (doProvince): 

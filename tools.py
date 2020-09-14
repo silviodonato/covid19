@@ -513,7 +513,7 @@ def fitExpGauss(h, places, firstDate, lastDate, predictionDate, fitOption="0SEQ"
     for place in places:
         print "### Fit %s ###"%place
         functs[place] = copy.copy(ROOT.TF1("function"+place,"gaus + exp(-(x-[3])/[4])",firstDate,predictionDate))
-        functs[place].SetParameters(h[place].GetMaximum(), h[place].GetXaxis().GetXmax(), fixSigma, h[place].GetXaxis().GetXmax(), h[place].GetXaxis().GetXmax()/log(h[place].GetMaximum()))
+        functs[place].SetParameters(h[place].GetMaximum(), h[place].GetXaxis().GetXmax(), fixSigma, h[place].GetXaxis().GetXmax(), h[place].GetXaxis().GetXmax()/log(max(1E-3,h[place].GetMaximum())))
         
 #        functs[place].FixParameter(0, 0)
 #        functs[place].SetParameter(3, h[place].GetXaxis().GetXmin())
@@ -1010,13 +1010,16 @@ def getPrediction(places, dates, firstDate, finalDate, histo, functNewCases, fun
             val = histo[place].GetBinContent(histo[place].FindBin(firstDate))
             integr = functNewCases[place].Integral(firstDate + 0.5, predictionDate + 0.5)
             interr = functNewCases[place].IntegralError(firstDate + 0.5, predictionDate + 0.5, functNewCases_res[place].GetParams(), functNewCases_res[place].GetCovarianceMatrix().GetMatrixArray()) if functNewCases_res[place].Get() else 1E9
-            if interr>1: 
-                interr = (interr**2 + integr)**0.5 # Err = (Syst^2 + Stat(ie sqrtN)^2)^0.5
+            if integr>0:
+                if interr>1: 
+                    interr = (interr**2 + integr)**0.5 # Err = (Syst^2 + Stat(ie sqrtN)^2)^0.5
+                else:
+                    interr = (interr**2 + integr)**0.5 # Err = (Syst^2 + Stat(ie sqrtN)^2)^0.5
+                    print "WARNING interr=%f"%interr
             else:
-                interr = (interr**2 + integr)**0.5 # Err = (Syst^2 + Stat(ie sqrtN)^2)^0.5
-                print "WARNING interr=%f"%interr
+                interr=1
             print "Expected fit new cases (%s): %.1f +/- %.1f"%(dates[predictionDate],  val + integr, interr)
-            predictions[place][dates[predictionDate]] = (val + integr, interr) if float(interr)/(1.+val+integr)<0.5 else (0,0)
+            predictions[place][dates[predictionDate]] = (val + integr, interr) if float(interr)/(1.001+val+integr)<0.5 else (0,0)
 #            predictions[place][dates[predictionDate]] = (val + integr, interr)
             try:
                 print "Real Confirmed (%s): %d"%(dates[predictionDate], realData[place][dates[predictionDate]])
@@ -1068,15 +1071,23 @@ def getPredictionErf(places, dates, firstDate, finalDate, histo, functErfs, func
     return predictions
 
 def applyScaleFactors(histo):
-    sfs = [0]*7
-    tot = 0
+    sfs = [1.]*7
+    tot = 7.
     for i in range(1,len(histo)+1):
         val = histo.GetBinContent(i)
         sfs[i%7] += val
         tot += val
     
     for i in range(7):
-        sfs[i] = tot/sfs[i]
+        sfs[i] = tot/sfs[i]/7.
     
     for i in range(1,len(histo)+1):
         histo.SetBinContent(i, histo.GetBinContent(i)*sfs[i%7])
+
+def positiveHisto(histo):
+    for i in range(0,len(histo)+2):
+#        histo.SetBinContent(i, max(0.1, histo.GetBinContent(i)))
+        histo.SetBinContent(i, max(0.1, histo.GetBinContent(i)))
+
+
+
