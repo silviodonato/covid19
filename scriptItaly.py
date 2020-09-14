@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 #import csv
 #import copy
-from tools import colors, fillDataRegioni, fillDataISTATpickle, newCases, getRatio, makeHistos, fitErf, fitGauss, fitGaussAsymmetric, fitExp, extendDates, saveCSV, savePlotNew, getPrediction, getPredictionErf, getColumn, selectComuniDatesAgeGender, makeCompatible, fitLinear, fitTwoExp, fitExpGauss
+from tools import colors, fillDataRegioni, fillDataISTATpickle, newCases, getRatio, makeHistos, fitErf, fitGauss, fitGaussAsymmetric, fitExp, extendDates, saveCSV, savePlotNew, getPrediction, getPredictionErf, getColumn, selectComuniDatesAgeGender, makeCompatible, fitLinear, fitTwoExp, fitExpGauss, applyScaleFactors
 
 startFromZero = True
 daysSmearing = 1
 doProvince = False
+useScaleFactor = True
 useLog = True
 useDatiISTAT = False
 #useDatiISTAT = True
@@ -135,12 +136,13 @@ tests_h    = makeHistos("histo_tests", tests,           dates, places, firstDate
 ricoveratis_h    = makeHistos("histo_ricoveratis", ricoveratis,           dates, places, firstDate, lastDate, predictionsDate, 0, cutTails=False, errorType='cumulative', lineWidth=2, daysSmearing=1)
 intensivas_h    = makeHistos("histo_intensivas", intensivas,           dates, places, firstDate, lastDate, predictionsDate, 0, cutTails=False, errorType='cumulative', lineWidth=2, daysSmearing=1)
 
-#if startFromZero:
-#    for place in places:
-#        for histo in [positives_h,confirmes_h,recoveres_h,deaths_h,tests_h,ricoveratis_h,intensivas_h]:
-#            for i in range(histo[place].GetNbinsX()+2):
-#                histo[place].SetBinContent(i, histo[place].GetBinContent(i) - histo[place].GetBinContent(firstDate))
-##            removeOffset(histo[place], firstDate)
+if startFromZero:
+    for place in places:
+        for histo in [positives_h,confirmes_h,recoveres_h,deaths_h,tests_h,ricoveratis_h,intensivas_h]:
+            val = histo[place].GetBinContent(1)
+            for i in range(histo[place].GetNbinsX()+2):
+                histo[place].SetBinContent(i, histo[place].GetBinContent(i) - val)
+#            removeOffset(histo[place], firstDate)
 
 #print("CHECK",positives_h[place].GetBinContent(1))
 
@@ -153,10 +155,15 @@ newRicoveratis_h = makeHistos("histo_newRicoveratis", newRicoveratis,    dates, 
 newIntensivas_h     = makeHistos("histo_newIntensivas", newIntensivas,    dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2, daysSmearing=daysSmearing)
 newPositives_h  = makeHistos("histo_newpositives", newPositives, dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2, daysSmearing=daysSmearing)
 
+if useScaleFactor:
+    for place in places:
+        for histo in [newPositives_h,newConfirmes_h,newRecoveres_h,newDeaths_h,newTests_h,newRicoveratis_h,newIntensivas_h]:
+            applyScaleFactors(histo[place])
+
 fits, fits_res, fits_error              = fitErf(confirmes_h,      places, firstDate, lastDate, predictionsDate)
 fitdiffs, fitdiffs_res, fitdiffs_error  = fitExpGauss(newConfirmes_h, places, firstDate, lastDate, predictionsDate)
 fitexps, fitexps_res, fitexps_error                = fitExp(newConfirmes_h, places, lastDate-14, lastDate, predictionsDate)
-fitexptotals, fitexptotals_res, fitexptotals_error = fitExp(confirmes_h,    places, lastDate-14, lastDate, predictionsDate)
+fitexptotals, fitexptotals_res, fitexptotals_error = fitExp(confirmes_h,    places, lastDate-14-1, lastDate-1, predictionsDate)
 #fitexptotals, fitexptotals_res, fitexptotals_error = fitExp(confirmes_h,    places, lastDate-8, lastDate, predictionsDate)
 fitdiffIntensivas, fitdiffIntensivas_res, fitdiffIntensivas_error = fitExpGauss(newIntensivas_h, places, firstDate, lastDate, predictionsDate)
 fitdiffRicoveratis, fitdiffRicoveratis_res, fitdiffRicoveratis_error = fitExpGauss(newRicoveratis_h, places, firstDate, lastDate, predictionsDate)

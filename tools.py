@@ -1046,3 +1046,37 @@ def getPredictionErf(places, dates, firstDate, finalDate, histo, functErfs, func
                 pass
     return predictions
 
+def getPredictionErf(places, dates, firstDate, finalDate, histo, functErfs, functErfs_res, realData=None):
+    predictions = {}
+    for place in places:
+        print "### Prediction (from Erf)%s ###"%(place)
+        predictions[place] = {}
+        valErf0 = functErfs[place].Eval( firstDate  )
+        for predictionDate in range(firstDate, finalDate):
+            valErf = functErfs[place].Eval( predictionDate  )
+            err = array.array('d',[0])
+            x   = array.array('d',[predictionDate ])
+            functErfs_res[place].GetConfidenceIntervals(2, 1, 1, x, err, 0.683)
+            err = (err[0]**2 + abs(valErf-valErf0))**0.5 ## add statistical error
+            print "Expected fit erf (%s): %.1f +/- %.1f"%(dates[predictionDate], valErf, err)
+            predictions[place][dates[predictionDate]] = (valErf, err)
+            try:
+                print "Real Confirmed (%s): %d"%(dates[predictionDate], realData[place][dates[predictionDate]])
+                print "Error (sigma) : %.1f"%( (realData[place][dates[predictionDate]] - (val + integr)) / interr)
+            except:
+                pass
+    return predictions
+
+def applyScaleFactors(histo):
+    sfs = [0]*7
+    tot = 0
+    for i in range(1,len(histo)+1):
+        val = histo.GetBinContent(i)
+        sfs[i%7] += val
+        tot += val
+    
+    for i in range(7):
+        sfs[i] = tot/sfs[i]
+    
+    for i in range(1,len(histo)+1):
+        histo.SetBinContent(i, histo.GetBinContent(i)*sfs[i%7])
