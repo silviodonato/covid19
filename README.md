@@ -41,3 +41,18 @@ ls plotsItalia
 ls *csv
 ```
 
+#############################################
+
+Update data
+
+```
+cd dataItaly
+git pull origin master
+cd .. 
+```
+
+```
+cd dataWorld
+git pull origin master
+cd ..                           
+```

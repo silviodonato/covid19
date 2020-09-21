@@ -22,7 +22,7 @@ recoveres, dates = fillData('dataWorld/csse_covid_19_data/csse_covid_19_time_ser
 
 lastDateData = len(dates)-1
 #lastDateData = len(dates)-1-30
-dates = extendDates(dates, 200)
+dates = extendDates(dates, 310)
 ################
 
 firstDate = 0
@@ -32,7 +32,7 @@ lastDate = lastDateData -1
 #lastDate = dates.index("2/29/20")
 #lastDate = dates.index("3/1/20")
 #lastDate = 30
-predictionsDate = dates.index("8/30/20")
+predictionsDate = dates.index("11/1/20")
 #predictionsDate = 95
 
 
@@ -62,7 +62,7 @@ for place in confirmes.keys():
     if confirmes[place][dates[lastDate]]>100000:
         places.append(place)
 
-#places = ["Italy","South Korea","Japan","Iran","Hubei"]
+#places = ["Italy"]
 #places = ["Italy"]
 #places = ["United Kingdom"]
 #places = ["Rest of Europe"]

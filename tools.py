@@ -513,22 +513,30 @@ def fitExpGauss(h, places, firstDate, lastDate, predictionDate, fitOption="0SEQ"
     for place in places:
         print "### Fit %s ###"%place
         functs[place] = copy.copy(ROOT.TF1("function"+place,"gaus + exp(-(x-[3])/[4])",firstDate,predictionDate))
-        functs[place].SetParameters(h[place].GetMaximum(), h[place].GetXaxis().GetXmax(), fixSigma, h[place].GetXaxis().GetXmax(), h[place].GetXaxis().GetXmax()/log(max(1E-3,h[place].GetMaximum())))
+        functs[place].SetParameters(h[place].GetMaximum(), h[place].GetXaxis().GetXmax(), fixSigma*10, h[place].GetXaxis().GetXmax(), h[place].GetXaxis().GetXmax()/log(max(1E-3,h[place].GetMaximum())))
         
-#        functs[place].FixParameter(0, 0)
+        functs[place].FixParameter(0, 0)
+        functs[place].FixParameter(1, 1)
+        functs[place].FixParameter(2, 1)
 #        functs[place].SetParameter(3, h[place].GetXaxis().GetXmin())
 #        functs[place].SetParameter(4, h[place].GetMaximum())
 #        print h[place]
 #        print functs[place]
-        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,firstDate + (lastDate - firstDate)/2 )
 #        functs[place].ReleaseParameter(3)
         functs[place].ReleaseParameter(0)
-        functs[place].SetParameter(0, h[place].GetMaximum())
+        functs[place].ReleaseParameter(1)
+        functs[place].ReleaseParameter(2)
+        
+        functs[place].SetParameter(0, 0.01*h[place].GetMaximum())
+        functs[place].SetParameter(1, h[place].GetXaxis().GetXmax())
+        functs[place].SetParameter(2, fixSigma*10)
+
 #        functs[place].SetParLimits(3,0,maxPar3)
         functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
         if minPar2 != maxPar2:
             functs[place].ReleaseParameter(2)
-            functs[place].SetParLimits(2,minPar2,maxPar2)
+#            functs[place].SetParLimits(2,minPar2,maxPar2)
         functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
         functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
         color = colors[places.index(place)]

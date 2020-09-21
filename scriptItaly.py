@@ -51,6 +51,7 @@ dates = extendDates(dates, 310)
 
 firstDate = 0
 #firstDate = dates.index("6/1/20")
+#firstDate = dates.index("5/15/20")
 firstDate = dates.index("5/15/20")
 #firstDate = dates.index("4/1/20")
 #firstDate = 16
@@ -479,14 +480,24 @@ canv=ROOT.TCanvas("canv")
 #newConfirmes_h['Italia'].Draw()
 #fitdiffs['Italia'].Draw("same")
 #print(fitdiffs['Italia'])
+
 #fitdiffs['Italia'].Print()
 #newConfirmes_h['Italia'].Fit(fitdiffs['Italia'])
 
 #newIntensivas_h['Italia'].Draw()
 #fitdiffIntensivas['Italia'].Draw("same")
 
-intensivas_h['Italia'].Draw()
-predictionIntensivas_h['Italia'].Draw("same")
+#newRecoveres_h['Italia'].Draw()
+#fitdiffRecoveres['Italia'].Draw("same")
+
+#newDeaths_h['Italia'].Draw()
+#fitdiffDeaths['Italia'].Draw("same")
+
+#intensivas_h['Italia'].Draw()
+#predictionIntensivas_h['Italia'].Draw("same")
+
+newConfirmes_h['Italia'].Draw()
+fitdiffs['Italia'].Draw("same")
 
 
 #hist = newConfirmes_h['Italia']
