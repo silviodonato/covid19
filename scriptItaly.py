@@ -5,8 +5,8 @@ from tools import colors, fillDataRegioni, fillDataISTATpickle, newCases, getRat
 
 startFromZero = False
 daysSmearing = 1
-doProvince = False
-#doProvince = True
+#doProvince = False
+doProvince = True
 useScaleFactor = True
 #useScaleFactor = False
 
