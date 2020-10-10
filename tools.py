@@ -7,6 +7,33 @@ import pickle
 
 rnd = ROOT.TRandom3()
 
+scuola7=[
+"Bolzano",
+]
+
+scuola14=[
+"EmiliaRomagna",
+"Lazio",
+"Liguria",
+"Lombardia",
+"Marche",
+"Piemonte",
+"Toscana",
+"Umbria",
+"Valled'Aosta",
+"Veneto",
+"Sicilia",
+"Molise",
+]
+
+scuola24=[
+"Abruzzo",
+"Calabria",
+"Campania",
+"Puglia",
+"Sardegna",
+]
+
 useLog = True
 fixSigma = 8
 #maxPar3 = 1E4
@@ -195,6 +222,9 @@ def regions(state, country, default = ["World"]):
     if country=="Mainland China" and state!="Hubei": regions.add("Rest of China")
     if country!="Mainland China" and default[0]=="World": regions.add("Rest of World")
     if country!="Lombardia" and default[0]=="Italia": regions.add("FuoriLombardia")
+    if country in scuola7:  regions.add("scuola7")
+    if country in scuola14: regions.add("scuola14")
+    if country in scuola24: regions.add("scuola24")
     if country!="Lombardia" and country!="Emilia Romagna" and country!="Veneto" and default[0]=="Italia": regions.add("FuoriLombardiaEmiliaVeneto")
 #    print (state, country, regions)
     return regions
@@ -306,7 +336,7 @@ def fillDataRegioni(fileName, column_regione = "denominazione_regione"):
             if line_count ==0:
                 labels = row[:]
             else:
-                date = row[labels.index("data")].split(" ")[0].split("T")[0].replace("2020-0","").replace("-","/").replace("/0","/")+"/20"
+                date = row[labels.index("data")].split(" ")[0].split("T")[0].replace("-0","-").replace("2020-","").replace("-","/").replace("/0","/")+"/20"
                 if not date in dates: dates.append(date)
                 regione = row[labels.index(column_regione)]
                 if regione == "Fuori Regione / Provincia Autonoma": continue
