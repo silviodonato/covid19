@@ -1110,14 +1110,18 @@ def getPredictionErf(places, dates, firstDate, finalDate, histo, functErfs, func
 
 def applyScaleFactors(histo):
     sfs = [1.]*7
-    tot = 7.
+    count = [0]*7
+    tot = 0.001
+    countTot = 0.001
     for i in range(1,len(histo)+1):
         val = histo.GetBinContent(i)
         sfs[i%7] += val
         tot += val
+        if val!=0: count[i%7] += 1
+        if val!=0: countTot += 1
     
     for i in range(7):
-        sfs[i] = tot/sfs[i]/7.
+        sfs[i] = count[i]/sfs[i] * tot/countTot
     
     for i in range(1,len(histo)+1):
         histo.SetBinContent(i, histo.GetBinContent(i)*sfs[i%7])

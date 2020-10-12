@@ -3,7 +3,7 @@
 #import copy
 from tools import colors, fillDataRegioni, fillDataISTATpickle, newCases, getRatio, makeHistos, fitErf, fitGauss, fitGaussAsymmetric, fitExp, extendDates, saveCSV, savePlotNew, getPrediction, getPredictionErf, getColumn, selectComuniDatesAgeGender, makeCompatible, fitLinear, fitTwoExp, fitExpGauss, applyScaleFactors, useLog, positiveHisto
 
-startFromZero = False
+startFromZero = True
 daysSmearing = 1
 #doProvince = False
 doProvince = True
@@ -52,14 +52,15 @@ dates = extendDates(dates, 310)
 firstDate = 0
 #firstDate = dates.index("6/1/20")
 #firstDate = dates.index("5/15/20")
-firstDate = dates.index("5/15/20")
+#firstDate = dates.index("5/15/20")
+firstDate = dates.index("8/1/20")
 #firstDate = dates.index("4/1/20")
 #firstDate = 16
 lastDate = lastDateData - 1
 #lastDate = dates.index("2/29/20")
 #lastDate = dates.index("3/1/20")
 #lastDate = 30
-predictionsDate = dates.index("11/1/20")
+predictionsDate = dates.index("12/31/20")
 #predictionsDate = 95
 
 
