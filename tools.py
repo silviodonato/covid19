@@ -472,8 +472,10 @@ def makeHistos(prefix, dataUnsmeared, dates, places, firstDate, lastDate, predic
                     value = data[place][date]
                     if errorType=='cumulative':
                         error = 1.+(data[place][dates[lastDate]] - data[place][date])**0.5    if (data[place][dates[lastDate]] - data[place][date]) >=0 else 0
+                    elif errorType=='3sqrtN':
+                        error = 3*(data[place][date])**0.5 if data[place][date]>=0 else abs(data[place][date])*2
                     elif errorType=='sqrtN':
-                        error = (data[place][date])**0.5
+                        error = (data[place][date])**0.5 if data[place][date]>=0 else abs(data[place][date])*2
                     else:
                         error = 10.+(data[place][date])**0.5+0*0.25*(data[place][date]) if data[place][date]>=0 else abs(data[place][date])*2                    ## error 10 + sqrt(N) + 0*25% N
                         if i>=1: error = max(error, abs(data[place][date]-data[place][dates[i-1]]))
@@ -542,9 +544,10 @@ def fitExpGauss(h, places, firstDate, lastDate, predictionDate, fitOption="0SEQ"
     functs_err = {}
     for place in places:
         print "### Fit %s ###"%place
-        functs[place] = copy.copy(ROOT.TF1("function"+place,"gaus + exp(-(x-[3])/[4])",firstDate,predictionDate))
+        functs[place] = copy.copy(ROOT.TF1("function"+place,"gaus + exp(+(x-[3])/[4])",firstDate,predictionDate))
         functs[place].SetParameters(h[place].GetMaximum(), h[place].GetXaxis().GetXmax(), fixSigma*10, h[place].GetXaxis().GetXmax(), h[place].GetXaxis().GetXmax()/log(max(1E-3,h[place].GetMaximum())))
-        
+
+##### Fit Exp then Gaus
         functs[place].FixParameter(0, 0)
         functs[place].FixParameter(1, 1)
         functs[place].FixParameter(2, 1)
@@ -561,6 +564,7 @@ def fitExpGauss(h, places, firstDate, lastDate, predictionDate, fitOption="0SEQ"
         functs[place].SetParameter(0, 0.01*h[place].GetMaximum())
         functs[place].SetParameter(1, h[place].GetXaxis().GetXmax())
         functs[place].SetParameter(2, fixSigma*10)
+        functs[place].SetParameter(4, functs[place].GetParameter(4)*10)
 
 #        functs[place].SetParLimits(3,0,maxPar3)
         functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
@@ -1113,15 +1117,18 @@ def applyScaleFactors(histo):
     count = [0]*7
     tot = 0.001
     countTot = 0.001
-    for i in range(1,len(histo)+1):
-        val = histo.GetBinContent(i)
+    for i in range(7,len(histo)+1):
+        val = histo.GetBinContent(i)/(0.001+sum(histo.GetBinContent(i-j) for j in range(0,7)))
         sfs[i%7] += val
         tot += val
         if val!=0: count[i%7] += 1
         if val!=0: countTot += 1
     
+    print ("Getting scale factors: ")
     for i in range(7):
         sfs[i] = count[i]/sfs[i] * tot/countTot
+        print ("sfs[%d] = %f"%(i,sfs[i]))
+    print ("Applying scale factors: ")
     
     for i in range(1,len(histo)+1):
         histo.SetBinContent(i, histo.GetBinContent(i)*sfs[i%7])

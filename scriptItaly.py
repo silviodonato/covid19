@@ -53,10 +53,10 @@ firstDate = 0
 #firstDate = dates.index("6/1/20")
 #firstDate = dates.index("5/15/20")
 #firstDate = dates.index("5/15/20")
-firstDate = dates.index("8/1/20")
+firstDate = dates.index("9/1/20")
 #firstDate = dates.index("4/1/20")
 #firstDate = 16
-lastDate = lastDateData - 1
+lastDate = lastDateData - 2
 #lastDate = dates.index("2/29/20")
 #lastDate = dates.index("3/1/20")
 #lastDate = 30
@@ -119,7 +119,8 @@ places.remove("Basilicata")
 #province = ["La Spezia", "Pisa", "Genova", "Milano", "Brescia", "Bergamo"]
 #province = ["Pisa"]
 #places = ["Lombardia"]
-#places = ["Italia"]
+places = ["Italia"]
+places = ["Lazio"]
 
 print "places:",places
 
@@ -157,13 +158,15 @@ if startFromZero:
 #print("CHECK",positives_h[place].GetBinContent(1))
 
 #histos = makeHistos(confirmes, places, firstDate, lastDate, predictionsDate, cumulativeError=True)
-newConfirmes_h  = makeHistos("histo_newConfirmes", newConfirmes, dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=True, lineWidth=2, daysSmearing=daysSmearing)
-newRecoveres_h  = makeHistos("histo_newRecoveres", newRecoveres, dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2, daysSmearing=daysSmearing)
-newDeaths_h     = makeHistos("histo_newDeaths", newDeaths,    dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2, daysSmearing=daysSmearing)
-newTests_h     = makeHistos("histo_newTests", newTests,    dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2, daysSmearing=daysSmearing)
-newRicoveratis_h = makeHistos("histo_newRicoveratis", newRicoveratis,    dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2, daysSmearing=daysSmearing)
-newIntensivas_h     = makeHistos("histo_newIntensivas", newIntensivas,    dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2, daysSmearing=daysSmearing)
-newPositives_h  = makeHistos("histo_newpositives", newPositives, dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2, daysSmearing=daysSmearing)
+#eType = "default"
+eType = "3sqrtN"
+newConfirmes_h  = makeHistos("histo_newConfirmes", newConfirmes, dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=True, lineWidth=2, daysSmearing=daysSmearing, errorType=eType)
+newRecoveres_h  = makeHistos("histo_newRecoveres", newRecoveres, dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2, daysSmearing=daysSmearing, errorType=eType)
+newDeaths_h     = makeHistos("histo_newDeaths", newDeaths,    dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2, daysSmearing=daysSmearing, errorType=eType)
+newTests_h     = makeHistos("histo_newTests", newTests,    dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2, daysSmearing=daysSmearing, errorType=eType)
+newRicoveratis_h = makeHistos("histo_newRicoveratis", newRicoveratis,    dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2, daysSmearing=daysSmearing, errorType=eType)
+newIntensivas_h     = makeHistos("histo_newIntensivas", newIntensivas,    dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2, daysSmearing=daysSmearing, errorType=eType)
+newPositives_h  = makeHistos("histo_newpositives", newPositives, dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2, daysSmearing=daysSmearing, errorType=eType)
 
 for place in places:
     if useScaleFactor:
@@ -497,8 +500,9 @@ canv=ROOT.TCanvas("canv")
 #intensivas_h['Italia'].Draw()
 #predictionIntensivas_h['Italia'].Draw("same")
 
-newConfirmes_h['Italia'].Draw()
-fitdiffs['Italia'].Draw("same")
+newConfirmes_h['Lazio'].Draw()
+fitdiffs['Lazio'].Draw("same")
+fitdiffs['Lazio'].error.Draw("same")
 
 
 #hist = newConfirmes_h['Italia']
