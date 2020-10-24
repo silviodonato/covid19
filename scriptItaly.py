@@ -56,7 +56,7 @@ firstDate = 0
 firstDate = dates.index("9/1/20")
 #firstDate = dates.index("4/1/20")
 #firstDate = 16
-lastDate = lastDateData - 2
+lastDate = lastDateData - 1
 #lastDate = dates.index("2/29/20")
 #lastDate = dates.index("3/1/20")
 #lastDate = 30
@@ -119,8 +119,8 @@ places.remove("Basilicata")
 #province = ["La Spezia", "Pisa", "Genova", "Milano", "Brescia", "Bergamo"]
 #province = ["Pisa"]
 #places = ["Lombardia"]
-places = ["Italia"]
-places = ["Lazio"]
+#places = ["Italia"]
+#places = ["Lazio"]
 
 print "places:",places
 

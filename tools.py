@@ -1125,8 +1125,13 @@ def applyScaleFactors(histo):
         if val!=0: countTot += 1
     
     print ("Getting scale factors: ")
+    sfAverage = 0
     for i in range(7):
         sfs[i] = count[i]/sfs[i] * tot/countTot
+        sfAverage += sfs[i]
+    sfAverage = sfAverage/7
+    for i in range(7):
+        sfs[i] = sfs[i] / sfAverage if sfAverage>0 else sfs[i]
         print ("sfs[%d] = %f"%(i,sfs[i]))
     print ("Applying scale factors: ")
     
