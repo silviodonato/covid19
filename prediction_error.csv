@@ -1,57 +1,58 @@
-place,10/31/20
-World,1.0
-Rest of World,1.0
-America,1.0
-US,1.0
-FarEast,1.0
-India,1.0
-Europe,1.0
-Brazil,1.0
-Rest of Europe,1.0
-MiddleEast,1.0
-Russia,1.0
-France,1.0
-Spain,1.0
-Argentina,1.0
-Colombia,1.0
-United Kingdom,1.0
-Mexico,1.0
-Peru,1.0
-South Africa,1.0
-Italy,1.0
-Iran,1.0
-Germany,1.0
-Chile,1.0
-Iraq,1.0
-Belgium,1.0
-Indonesia,1.0
-Bangladesh,1.0
-Ukraine,1.0
-Philippines,1.0
-Turkey,1.0
-Netherlands,1.0
-Saudi Arabia,1.0
-Poland,1.0
-Pakistan,1.0
-Czechia,1.0
-Israel,1.0
-Romania,1.0
-Canada,1.0
-Morocco,1.0
-Nepal,1.0
-Ecuador,1.0
-Switzerland,1.0
-Bolivia,1.0
-Portugal,1.0
-Panama,1.0
-Qatar,1.0
-United Arab Emirates,1.0
-Dominican Republic,1.0
-Kuwait,1.0
-Sweden,1.0
-Oman,1.0
-Kazakhstan,1.0
-Costa Rica,1.0
-Egypt,1.0
-Guatemala,1.0
-Japan,1.0
+place
+World
+Rest of World
+America
+US
+FarEast
+India
+Europe
+Brazil
+Rest of Europe
+MiddleEast
+Russia
+France
+Spain
+Argentina
+Colombia
+United Kingdom
+Mexico
+Peru
+South Africa
+Italy
+Iran
+Germany
+Chile
+Iraq
+Belgium
+Indonesia
+Bangladesh
+Ukraine
+Philippines
+Turkey
+Poland
+Netherlands
+Saudi Arabia
+Czechia
+Pakistan
+Israel
+Romania
+Canada
+Morocco
+Nepal
+Ecuador
+Switzerland
+Bolivia
+Portugal
+Panama
+United Arab Emirates
+Qatar
+Dominican Republic
+Kuwait
+Sweden
+Oman
+Kazakhstan
+Costa Rica
+Guatemala
+Egypt
+Austria
+Japan

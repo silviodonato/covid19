@@ -1,57 +1,58 @@
-place,10/31/20
-World,1195376.0 +/- 1.0
-Rest of World,1195376.0 +/- 1.0
-America,253405.0 +/- 1.0
-US,230548.0 +/- 1.0
-FarEast,124251.0 +/- 1.0
-India,122111.0 +/- 1.0
-Europe,165188.0 +/- 1.0
-Brazil,159884.0 +/- 1.0
-Rest of Europe,126570.0 +/- 1.0
-MiddleEast,52715.0 +/- 1.0
-Russia,27787.0 +/- 1.0
-France,36826.0 +/- 1.0
-Spain,35878.0 +/- 1.0
-Argentina,31002.0 +/- 1.0
-Colombia,31598.0 +/- 1.0
-United Kingdom,46645.0 +/- 1.0
-Mexico,91753.0 +/- 1.0
-Peru,34411.0 +/- 1.0
-South Africa,19276.0 +/- 1.0
-Italy,38618.0 +/- 1.0
-Iran,34864.0 +/- 1.0
-Germany,10483.0 +/- 1.0
-Chile,14207.0 +/- 1.0
-Iraq,10910.0 +/- 1.0
-Belgium,11625.0 +/- 1.0
-Indonesia,13869.0 +/- 1.0
-Bangladesh,5923.0 +/- 1.0
-Ukraine,7399.0 +/- 1.0
-Philippines,7221.0 +/- 1.0
-Turkey,10252.0 +/- 1.0
-Netherlands,7459.0 +/- 1.0
-Saudi Arabia,5402.0 +/- 1.0
-Poland,5631.0 +/- 1.0
-Pakistan,6823.0 +/- 1.0
-Czechia,3251.0 +/- 1.0
-Israel,2539.0 +/- 1.0
-Romania,6968.0 +/- 1.0
-Canada,10187.0 +/- 1.0
-Morocco,3695.0 +/- 1.0
-Nepal,937.0 +/- 1.0
-Ecuador,12670.0 +/- 1.0
-Switzerland,2297.0 +/- 1.0
-Bolivia,8725.0 +/- 1.0
-Portugal,2507.0 +/- 1.0
-Panama,2700.0 +/- 1.0
-Qatar,232.0 +/- 1.0
-United Arab Emirates,495.0 +/- 1.0
-Dominican Republic,2245.0 +/- 1.0
-Kuwait,779.0 +/- 1.0
-Sweden,5938.0 +/- 1.0
-Oman,1208.0 +/- 1.0
-Kazakhstan,1825.0 +/- 1.0
-Costa Rica,1385.0 +/- 1.0
-Egypt,6266.0 +/- 1.0
-Guatemala,3729.0 +/- 1.0
-Japan,1769.0 +/- 1.0
+place
+World
+Rest of World
+America
+US
+FarEast
+India
+Europe
+Brazil
+Rest of Europe
+MiddleEast
+Russia
+France
+Spain
+Argentina
+Colombia
+United Kingdom
+Mexico
+Peru
+South Africa
+Italy
+Iran
+Germany
+Chile
+Iraq
+Belgium
+Indonesia
+Bangladesh
+Ukraine
+Philippines
+Turkey
+Poland
+Netherlands
+Saudi Arabia
+Czechia
+Pakistan
+Israel
+Romania
+Canada
+Morocco
+Nepal
+Ecuador
+Switzerland
+Bolivia
+Portugal
+Panama
+United Arab Emirates
+Qatar
+Dominican Republic
+Kuwait
+Sweden
+Oman
+Kazakhstan
+Costa Rica
+Guatemala
+Egypt
+Austria
+Japan

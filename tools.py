@@ -439,7 +439,7 @@ def smearData(dataUnsmeared, dates, daysSmearing):
         data = copy.copy(dataUnsmeared)
     return data
 
-def makeHistos(prefix, dataUnsmeared, dates, places, firstDate, lastDate, predictionDate, threshold=-1, cutTails=False, errorType=None, lineWidth=3, daysSmearing=1):
+def makeHistos(prefix, dataUnsmeared, dates, places, firstDate, lastDate, predictionDate, threshold=-1E30, cutTails=False, errorType=None, lineWidth=3, daysSmearing=1):
     data = smearData(dataUnsmeared, dates, daysSmearing)
     histos = {}
     for place in places:
@@ -470,18 +470,23 @@ def makeHistos(prefix, dataUnsmeared, dates, places, firstDate, lastDate, predic
                 else:
 #                    print place, date
                     value = data[place][date]
+                    valueM1 = data[place][dates[i-1]] if i>=1 else value
+                    valueP1 = data[place][dates[i+1]] if i<=lastDate else value
+                    valueM1 = max(valueM1,0)
+                    valueP1 = max(valueP1,0)
+                    average = ((valueM1+valueP1)/2)
                     if errorType=='cumulative':
-                        error = 1.+(data[place][dates[lastDate]] - data[place][date])**0.5    if (data[place][dates[lastDate]] - data[place][date]) >=0 else 0
+                        error = 1.+(data[place][dates[lastDate]] - value)**0.5    if (data[place][dates[lastDate]] - value) >=0 else 0
                     elif errorType=='3sqrtN':
-                        error = 3*(data[place][date])**0.5 if data[place][date]>=0 else abs(data[place][date])*2
+                        error = 3*(value)**0.5 if (value>=9 and (value-average)<=0.5*average) else abs(value-average)*2
                     elif errorType=='sqrtN':
-                        error = (data[place][date])**0.5 if data[place][date]>=0 else abs(data[place][date])*2
+                        error = (value)**0.5 if (value>=9 and (value-average)<=0.5*average) else abs(value-average)*2
                     else:
-                        error = 10.+(data[place][date])**0.5+0*0.25*(data[place][date]) if data[place][date]>=0 else abs(data[place][date])*2                    ## error 10 + sqrt(N) + 0*25% N
-                        if i>=1: error = max(error, abs(data[place][date]-data[place][dates[i-1]]))
-                        if i<=lastDate: error = max(error, abs(data[place][date]-data[place][dates[i+1]]))
-                if value>threshold:
-                    if not stop:
+                        error = 9.+(value)**0.5+0*0.25*(value) if value>=9 else 12.+abs(value-9.)                    ## error 10 + sqrt(N) + 0*25% N
+                        if i>=1: error = max(error, abs(value-valueM1))
+                        if i<=lastDate: error = max(error, abs(value-valueP1))
+                if True or value>threshold:
+                    if True or not stop:
                             histos[place].SetBinContent(binx, value)
                             histos[place].SetBinError(binx, error)
                             start = True
@@ -544,32 +549,41 @@ def fitExpGauss(h, places, firstDate, lastDate, predictionDate, fitOption="0SEQ"
     functs_err = {}
     for place in places:
         print "### Fit %s ###"%place
-        functs[place] = copy.copy(ROOT.TF1("function"+place,"gaus + exp(+(x-[3])/[4])",firstDate,predictionDate))
-        functs[place].SetParameters(h[place].GetMaximum(), h[place].GetXaxis().GetXmax(), fixSigma*10, h[place].GetXaxis().GetXmax(), h[place].GetXaxis().GetXmax()/log(max(1E-3,h[place].GetMaximum())))
+        functs[place] = copy.copy(ROOT.TF1("function"+place,"gaus + exp(+x/[4]-[3])",firstDate,predictionDate))
+        functs[place].SetParameters(h[place].GetMaximum(), lastDate, fixSigma*10, 10, 1000)
 
 ##### Fit Exp then Gaus
-        functs[place].FixParameter(0, 0)
-        functs[place].FixParameter(1, 1)
-        functs[place].FixParameter(2, 1)
+        functs[place].FixParameter(3, functs[place].GetParameter(3))
+        functs[place].FixParameter(4, functs[place].GetParameter(4))
 #        functs[place].SetParameter(3, h[place].GetXaxis().GetXmin())
 #        functs[place].SetParameter(4, h[place].GetMaximum())
 #        print h[place]
 #        print functs[place]
-        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,firstDate + (lastDate - firstDate)/2 )
-#        functs[place].ReleaseParameter(3)
-        functs[place].ReleaseParameter(0)
-        functs[place].ReleaseParameter(1)
-        functs[place].ReleaseParameter(2)
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate + (lastDate - firstDate)/2, lastDate )
+
+#        functs[place].FixParameter(0, functs[place].GetParameter(0))
+#        functs[place].FixParameter(1, functs[place].GetParameter(1))
+#        functs[place].FixParameter(2, functs[place].GetParameter(2))
+
+        functs[place].ReleaseParameter(3)
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
+        functs[place].ReleaseParameter(4)
+ #       functs[place].ReleaseParameter(0)
+ #       functs[place].ReleaseParameter(1)
+  #      functs[place].ReleaseParameter(2)
         
-        functs[place].SetParameter(0, 0.01*h[place].GetMaximum())
-        functs[place].SetParameter(1, h[place].GetXaxis().GetXmax())
-        functs[place].SetParameter(2, fixSigma*10)
-        functs[place].SetParameter(4, functs[place].GetParameter(4)*10)
+#        functs[place].SetParameter(0, 0.01*h[place].GetMaximum())
+#        functs[place].SetParameter(1, h[place].GetXaxis().GetXmax())
+#        functs[place].SetParameter(2, fixSigma*10)
+#        functs[place].SetParameter(4, functs[place].GetParameter(4)*10)
 
 #        functs[place].SetParLimits(3,0,maxPar3)
         functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
-        if minPar2 != maxPar2:
-            functs[place].ReleaseParameter(2)
+#        functs[place].ReleaseParameter(4)
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
+
+#        if minPar2 != maxPar2:
+#            functs[place].ReleaseParameter(2)
 #            functs[place].SetParLimits(2,minPar2,maxPar2)
         functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
         functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
@@ -1140,8 +1154,11 @@ def applyScaleFactors(histo):
 
 def positiveHisto(histo):
     for i in range(0,len(histo)+2):
-#        histo.SetBinContent(i, max(0.1, histo.GetBinContent(i)))
-        histo.SetBinContent(i, max(0.1, histo.GetBinContent(i)))
+        val = histo.GetBinContent(i)
+        if val<0.1 and val!=0:
+#            err = histo.GetBinContent(i)
+            histo.SetBinContent(i, 0.1)
+#            histo.SetBinError(i, max(err,1))
 
 
 

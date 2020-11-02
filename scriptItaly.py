@@ -3,7 +3,7 @@
 #import copy
 from tools import colors, fillDataRegioni, fillDataISTATpickle, newCases, getRatio, makeHistos, fitErf, fitGauss, fitGaussAsymmetric, fitExp, extendDates, saveCSV, savePlotNew, getPrediction, getPredictionErf, getColumn, selectComuniDatesAgeGender, makeCompatible, fitLinear, fitTwoExp, fitExpGauss, applyScaleFactors, useLog, positiveHisto
 
-startFromZero = True
+startFromZero = False
 daysSmearing = 1
 #doProvince = False
 doProvince = True
@@ -488,8 +488,8 @@ canv=ROOT.TCanvas("canv")
 #fitdiffs['Italia'].Print()
 #newConfirmes_h['Italia'].Fit(fitdiffs['Italia'])
 
-#newIntensivas_h['Italia'].Draw()
-#fitdiffIntensivas['Italia'].Draw("same")
+newIntensivas_h['Italia'].Draw()
+fitdiffIntensivas['Italia'].Draw("same")
 
 #newRecoveres_h['Italia'].Draw()
 #fitdiffRecoveres['Italia'].Draw("same")
@@ -500,10 +500,12 @@ canv=ROOT.TCanvas("canv")
 #intensivas_h['Italia'].Draw()
 #predictionIntensivas_h['Italia'].Draw("same")
 
-newConfirmes_h['Lazio'].Draw()
-fitdiffs['Lazio'].Draw("same")
-fitdiffs['Lazio'].error.Draw("same")
+#newConfirmes_h['Italia'].Draw()
+#fitdiffs['Italia'].Draw("same")
+#fitdiffs['Italia'].error.Draw("same")
 
+#newRicoveratis_h['Italia'].Draw()
+#fitdiffRicoveratis['Italia'].Draw("same")
 
 #hist = newConfirmes_h['Italia']
 
