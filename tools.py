@@ -332,7 +332,7 @@ def fillDataRegioni(fileName, column_regione = "denominazione_regione"):
         csv_reader = csv.reader(csv_file, delimiter=',')
         line_count = 0
         for row in csv_reader:
-            print "XXX",row
+#            print "XXX",row
             if line_count ==0:
                 labels = row[:]
             else:
@@ -346,11 +346,11 @@ def fillDataRegioni(fileName, column_regione = "denominazione_regione"):
                 regione = regione.replace("-","")
                 regione = regione.replace("P.A.","")
                 if not regione in data: data[regione] = {}
-                if date in data[regione]: print "WARNING: OVERWRITING DATA: %s %s"%(regione, date)
+  #              if date in data[regione]: print "WARNING: OVERWRITING DATA: %s %s"%(regione, date)
                 data[regione][date] = {}
                 for i,label in enumerate(labels):
                     data[regione][date][label] = row[i]
-                    print regione, date, label, row[i]
+ #                   print regione, date, label, row[i]
             line_count+=1
     return data, dates
 
@@ -397,7 +397,7 @@ def newCases(cases, dates):
         newCases[place] = {}
         newCases[place][dates[0]] = 0
         for i in range(1, len(cases[place])):
-            print place, i, dates[i]
+#            print place, i, dates[i]
             newCases[place][dates[i]] = cases[place][dates[i]] - cases[place][dates[i-1]]
     return newCases
 
@@ -975,7 +975,8 @@ def saveCSV(predictions, places, dates, fn_predictions, fn_predictions_error):
 #    print fName
 
 
-def savePlotNew(histos, functions, fName, xpred, canvas, ISTAT=False):
+def savePlotNew(histos, functions, fName, xpred, dates, canvas, ISTAT=False):
+    Nov1 = dates.index("11/1/20")
     histos = [h for h in histos if h]
     functions = [f for f in functions if f]
 #    histoConfirmed, histoRecovered, histoDeaths, histoPrediction, histoTerapiaIntensiva, histoRicoverati, histoTamponi
@@ -1003,8 +1004,9 @@ def savePlotNew(histos, functions, fName, xpred, canvas, ISTAT=False):
         if not "ISTAT" in histo.GetName():
             if "Gaus" in function.GetName():
                 if function.fitResult.Get(): 
-                    leg.AddEntry(function, "Exp + Gauss fit", "lp")
-#                    leg.AddEntry(function, "#splitline{Gaussian fit}{#splitline{#mu=%.1f #pm %.1f}{ #sigma=%.1f #pm %.1f}} "%(function.fitResult.GetParams()[1],function.fitResult.GetErrors()[1],function.fitResult.GetParams()[2],function.fitResult.GetErrors()[2]), "lep")
+#                    leg.AddEntry(function, "Exp + Gauss fit", "lp")
+#                    leg.AddEntry(function, "#splitline{Gaussian fit}{#splitline{#mu=%.1f #pm %.1f Nov}{ #sigma=%.1f #pm %.1f}} "%(function.fitResult.GetParams()[1]-Nov1,function.fitResult.GetErrors()[1],function.fitResult.GetParams()[2],function.fitResult.GetErrors()[2]), "lep")
+                    leg.AddEntry(function, "#splitline{Gaussian fit}{#splitline{max %d}{ %.1f Nov}} "%( function.GetMaximum(), function.GetMaximumX() - Nov1), "lep")
                 else:
                     leg.AddEntry(function, "Gaussian fit", "lp")
             if "Exp" in function.GetName():
@@ -1138,7 +1140,7 @@ def applyScaleFactors(histo):
         if val!=0: count[i%7] += 1
         if val!=0: countTot += 1
     
-    print ("Getting scale factors: ")
+#    print ("Getting scale factors: ")
     sfAverage = 0
     for i in range(7):
         sfs[i] = count[i]/sfs[i] * tot/countTot
@@ -1146,8 +1148,8 @@ def applyScaleFactors(histo):
     sfAverage = sfAverage/7
     for i in range(7):
         sfs[i] = sfs[i] / sfAverage if sfAverage>0 else sfs[i]
-        print ("sfs[%d] = %f"%(i,sfs[i]))
-    print ("Applying scale factors: ")
+#        print ("sfs[%d] = %f"%(i,sfs[i]))
+#    print ("Applying scale factors: ")
     
     for i in range(1,len(histo)+1):
         histo.SetBinContent(i, histo.GetBinContent(i)*sfs[i%7])

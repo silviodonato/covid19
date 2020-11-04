@@ -459,16 +459,16 @@ for place in places:
             fitLinears[place].error = fitLinears_error[place]
             fitLinears[place].res = fitLinears_res[place]
     if not place in newDeathIstatExcess_h: newDeathIstatExcess_h[place] = None
-    savePlotNew([confirmes_h[place], recoveres_h[place], deaths_h[place], predictionConfirmes_h[place], predictionDeaths_h[place], predictionRecoveres_h[place], predictionIntensivas_h[place], predictionRicoveratis_h[place], intensivas_h[place], ricoveratis_h[place], tests_h[place] if useLog else 0, positives_h[place]], [fitexptotals[place]], "plotsRegioni/%s.png"%place, startDate, d3)
-    savePlotNew([newConfirmes_h[place], newRecoveres_h[place], newDeaths_h[place], newDeathIstatExcess_h[place], newIntensivas_h[place], newRicoveratis_h[place], newTests_h[place] if useLog else 0, newPositives_h[place]], [fitexps[place], fitdiffs[place], fitdiffRecoveres[place], fitdiffDeaths[place], fitdiffIntensivas[place], fitdiffRicoveratis[place]], "plotsRegioni/%s_newCases.png"%place, startDate, d3)
+    savePlotNew([confirmes_h[place], recoveres_h[place], deaths_h[place], predictionConfirmes_h[place], predictionDeaths_h[place], predictionRecoveres_h[place], predictionIntensivas_h[place], predictionRicoveratis_h[place], intensivas_h[place], ricoveratis_h[place], tests_h[place] if useLog else 0, positives_h[place]], [fitexptotals[place]], "plotsRegioni/%s.png"%place, startDate, dates, d3)
+    savePlotNew([newConfirmes_h[place], newRecoveres_h[place], newDeaths_h[place], newDeathIstatExcess_h[place], newIntensivas_h[place], newRicoveratis_h[place], newTests_h[place] if useLog else 0, newPositives_h[place]], [fitexps[place], fitdiffs[place], fitdiffRecoveres[place], fitdiffDeaths[place], fitdiffIntensivas[place], fitdiffRicoveratis[place]], "plotsRegioni/%s_newCases.png"%place, startDate, dates, d3)
 #    savePlotNew([newDeathIstats_old_h[place]], [fitLinears[place]], "plotsRegioni/%s_newCases.png"%place, startDate, d3)
 
 if (doProvince): 
     for place in province:
     #    savePlot(confirmesProv_h[place], confirmesProv_h[place], confirmesProv_h[place], None, None, None, None, None, None, None, None, "plotsProvince/%s.png"%place, lastDate, d3)
     #    savePlot(newConfirmesProv_h[place], newConfirmesProv_h[place], newConfirmesProv_h[place], None, None, None, None, None, None, None, None, "plotsProvince/%s_newCases.png"%place, lastDate, d3)
-        savePlotNew([confirmesProv_h[place]], [], "plotsProvince/%s.png"%place, startDate, d3)
-        savePlotNew([newConfirmesProv_h[place]], [], "plotsProvince/%s_newCases.png"%place, startDate, d3)
+        savePlotNew([confirmesProv_h[place]], [], "plotsProvince/%s.png"%place, startDate, dates, d3)
+        savePlotNew([newConfirmesProv_h[place]], [], "plotsProvince/%s_newCases.png"%place, startDate, dates, d3)
 
 
 ROOT.gROOT.SetBatch(0)
