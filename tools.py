@@ -195,7 +195,7 @@ def getData(row, i):
     try:
         value = int(row[i+4])
     except:
-        print "WARNING: problems with '%s' '%s' at %i. The numeber is '%s'. I wil use 0."%(row[0],row[1],i+4,row[i+4])
+        print("WARNING: problems with '%s' '%s' at %i. The numeber is '%s'. I wil use 0."%(row[0],row[1],i+4,row[i+4]))
         value = 0
     state = row[0]
     country = row[1]
@@ -1128,19 +1128,20 @@ def getPredictionErf(places, dates, firstDate, finalDate, histo, functErfs, func
                 pass
     return predictions
 
-def applyScaleFactors(histo):
+def applyScaleFactors(histo, errorType='3sqrtN'):
     sfs = [1.]*7
     count = [0]*7
     tot = 0.001
     countTot = 0.001
     for i in range(7,len(histo)+1):
         val = histo.GetBinContent(i)/(0.001+sum(histo.GetBinContent(i-j) for j in range(0,7)))
+        val = max(val, 0.)
         sfs[i%7] += val
         tot += val
         if val!=0: count[i%7] += 1
         if val!=0: countTot += 1
     
-#    print ("Getting scale factors: ")
+    print ("Getting scale factors: "+histo.GetName())
     sfAverage = 0
     for i in range(7):
         sfs[i] = count[i]/sfs[i] * tot/countTot
@@ -1148,11 +1149,32 @@ def applyScaleFactors(histo):
     sfAverage = sfAverage/7
     for i in range(7):
         sfs[i] = sfs[i] / sfAverage if sfAverage>0 else sfs[i]
-#        print ("sfs[%d] = %f"%(i,sfs[i]))
-#    print ("Applying scale factors: ")
+        print ("sfs[%d] = %f"%(i,sfs[i]))
+    print ("Applying scale factors: ")
     
     for i in range(1,len(histo)+1):
         histo.SetBinContent(i, histo.GetBinContent(i)*sfs[i%7])
+
+    ## Update Error
+    for i in range(1,len(histo)):
+        value = histo.GetBinContent(i)
+        error = histo.GetBinError(i)
+        valueM1 = histo.GetBinContent(i-1) if i>=1 else value
+        valueP1 = histo.GetBinContent(i+1) if i<=len(histo)-1 else value
+        valueM1 = max(valueM1,0)
+        valueP1 = max(valueP1,0)
+        average = ((valueM1+valueP1)/2)
+        if errorType=='3sqrtN':
+            error = 5*(value)**0.5 if (value>=9 and value>=0.5*average) else abs(value-average)*2
+        elif errorType=='sqrtN':
+            error = (value)**0.5   if (value>=9 and value>=0.5*average) else abs(value-average)*2
+        elif errorType=='default':
+            error = 9.+(value)**0.5+0*0.25*(value) if value>=9 else 12.+abs(value-9.)                    ## error 10 + sqrt(N) + 0*25% N
+            if i>=1: error = max(error, abs(value-valueM1))
+            if i<=lastDate: error = max(error, abs(value-valueP1))
+        histo.SetBinContent(i, value)
+        histo.SetBinError(i, error)
+
 
 def positiveHisto(histo):
     for i in range(0,len(histo)+2):

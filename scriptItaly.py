@@ -120,9 +120,9 @@ places.remove("Basilicata")
 #province = ["Pisa"]
 #places = ["Lombardia"]
 #places = ["Italia"]
-#places = ["Lazio"]
+#places = ["Liguria"]
 
-print "places:",places
+#print "places:",places
 
 ################
 
@@ -171,7 +171,7 @@ newPositives_h  = makeHistos("histo_newpositives", newPositives, dates, places, 
 for place in places:
     if useScaleFactor:
         for histo in [newPositives_h,newConfirmes_h,newRecoveres_h,newDeaths_h,newTests_h,newRicoveratis_h,newIntensivas_h]:
-            applyScaleFactors(histo[place])
+            applyScaleFactors(histo[place], errorType=eType)
     if useLog:
         for histo in [newPositives_h,newConfirmes_h,newRecoveres_h,newDeaths_h,newTests_h,newRicoveratis_h,newIntensivas_h,positives_h,confirmes_h,recoveres_h,deaths_h,tests_h,ricoveratis_h,intensivas_h]:
             positiveHisto(histo[place])
@@ -324,8 +324,8 @@ for place in places:
 histo_sigma1.Draw()
 histo_sigma2.Draw("same")
 histo_sigma1.Fit("gaus")
-print "Mean=",histo_sigma1.GetMean()
-print "RMS=",histo_sigma1.GetRMS()
+print("Mean=",histo_sigma1.GetMean())
+print("RMS=",histo_sigma1.GetRMS())
 
 leg.Draw()
 d3.SetGridx()
@@ -488,8 +488,11 @@ canv=ROOT.TCanvas("canv")
 #fitdiffs['Italia'].Print()
 #newConfirmes_h['Italia'].Fit(fitdiffs['Italia'])
 
-newIntensivas_h['Italia'].Draw()
-fitdiffIntensivas['Italia'].Draw("same")
+#newIntensivas_h['Liguria'].Draw()
+#fitdiffIntensivas['Liguria'].Draw("same")
+
+#newConfirmes_h['Liguria'].Draw()
+#fitdiffs['Liguria'].Draw("same")
 
 #newRecoveres_h['Italia'].Draw()
 #fitdiffRecoveres['Italia'].Draw("same")
