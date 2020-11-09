@@ -491,6 +491,9 @@ canv=ROOT.TCanvas("canv")
 #newIntensivas_h['Liguria'].Draw()
 #fitdiffIntensivas['Liguria'].Draw("same")
 
+newConfirmes_h['Italia'].Draw()
+fitdiffs['Italia'].Draw("same")
+
 #newConfirmes_h['Liguria'].Draw()
 #fitdiffs['Liguria'].Draw("same")
 

@@ -1134,12 +1134,13 @@ def applyScaleFactors(histo, errorType='3sqrtN'):
     tot = 0.001
     countTot = 0.001
     for i in range(7,len(histo)+1):
-        val = histo.GetBinContent(i)/(0.001+sum(histo.GetBinContent(i-j) for j in range(0,7)))
-        val = max(val, 0.)
-        sfs[i%7] += val
-        tot += val
-        if val!=0: count[i%7] += 1
-        if val!=0: countTot += 1
+        if histo.GetBinContent(i)>0:
+            val = histo.GetBinContent(i)/(0.001+sum(histo.GetBinContent(i-j) for j in range(0,7)))
+            val = max(val, 0.)
+            sfs[i%7] += val
+            tot += val
+            if val!=0: count[i%7] += 1
+            if val!=0: countTot += 1
     
     print ("Getting scale factors: "+histo.GetName())
     sfAverage = 0
@@ -1153,7 +1154,8 @@ def applyScaleFactors(histo, errorType='3sqrtN'):
     print ("Applying scale factors: ")
     
     for i in range(1,len(histo)+1):
-        histo.SetBinContent(i, histo.GetBinContent(i)*sfs[i%7])
+        if histo.GetBinContent(i)>0:
+            histo.SetBinContent(i, histo.GetBinContent(i)*sfs[i%7])
 
     ## Update Error
     for i in range(1,len(histo)):
@@ -1172,8 +1174,9 @@ def applyScaleFactors(histo, errorType='3sqrtN'):
             error = 9.+(value)**0.5+0*0.25*(value) if value>=9 else 12.+abs(value-9.)                    ## error 10 + sqrt(N) + 0*25% N
             if i>=1: error = max(error, abs(value-valueM1))
             if i<=lastDate: error = max(error, abs(value-valueP1))
-        histo.SetBinContent(i, value)
-        histo.SetBinError(i, error)
+#        histo.SetBinContent(i, value)
+        if histo.GetBinContent(i)>0:
+            histo.SetBinError(i, error)
 
 
 def positiveHisto(histo):
