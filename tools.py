@@ -519,14 +519,14 @@ def fitErf(h, places, firstDate, lastDate, predictionDate, fitOption="0SEQ"):
         functs[place].FixParameter(2, fixSigma)
         functs[place].FixParameter(3, 0)
 #        h[place].Fit(functs[place],"0W","",0,lastDate)
-        functs_res[place] = h[place].Fit(functs[place],"0S","",0,lastDate+0.5)
+        functs_res[place] = h[place].Fit(functs[place],"0S","",0,lastDate+1.5)
         functs[place].ReleaseParameter(3)
         functs[place].SetParLimits(3,0,maxPar3)
-        functs_res[place] = h[place].Fit(functs[place],"0S","",0,lastDate+0.5)
+        functs_res[place] = h[place].Fit(functs[place],"0S","",0,lastDate+1.5)
         if minPar2 != maxPar2:
             functs[place].ReleaseParameter(2)
             functs[place].SetParLimits(2,minPar2,maxPar2)
-        functs_res[place] = h[place].Fit(functs[place],"0S","",0,lastDate+0.5)
+        functs_res[place] = h[place].Fit(functs[place],"0S","",0,lastDate+1.5)
         color = colors[places.index(place)]
         functs[place].SetLineColor(color)
         functs_err[place] = copy.copy(h[place].Clone(("errErf"+h[place].GetName())))
@@ -559,14 +559,14 @@ def fitExpGauss(h, places, firstDate, lastDate, predictionDate, fitOption="0SEQ"
 #        functs[place].SetParameter(4, h[place].GetMaximum())
 #        print h[place]
 #        print functs[place]
-        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate + (lastDate - firstDate)/2, lastDate )
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5 + (lastDate - firstDate)/2, lastDate+1.5 )
 
 #        functs[place].FixParameter(0, functs[place].GetParameter(0))
 #        functs[place].FixParameter(1, functs[place].GetParameter(1))
 #        functs[place].FixParameter(2, functs[place].GetParameter(2))
 
         functs[place].ReleaseParameter(3)
-        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
         functs[place].ReleaseParameter(4)
  #       functs[place].ReleaseParameter(0)
  #       functs[place].ReleaseParameter(1)
@@ -578,15 +578,15 @@ def fitExpGauss(h, places, firstDate, lastDate, predictionDate, fitOption="0SEQ"
 #        functs[place].SetParameter(4, functs[place].GetParameter(4)*10)
 
 #        functs[place].SetParLimits(3,0,maxPar3)
-        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
 #        functs[place].ReleaseParameter(4)
-        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
 
 #        if minPar2 != maxPar2:
 #            functs[place].ReleaseParameter(2)
 #            functs[place].SetParLimits(2,minPar2,maxPar2)
-        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
-        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
         color = colors[places.index(place)]
         functs[place].SetLineColor(color)
         functs_err[place] = copy.copy(h[place].Clone(("err"+h[place].GetName())))
@@ -614,15 +614,15 @@ def fitGauss(h, places, firstDate, lastDate, predictionDate, fitOption="0SEQ", m
         functs[place].FixParameter(3, 1)
 #        print h[place]
 #        print functs[place]
-        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
         functs[place].ReleaseParameter(3)
         functs[place].SetParLimits(3,0,maxPar3)
-        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
         if minPar2 != maxPar2:
             functs[place].ReleaseParameter(2)
             functs[place].SetParLimits(2,minPar2,maxPar2)
-        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
-        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
         color = colors[places.index(place)]
         functs[place].SetLineColor(color)
         functs_err[place] = copy.copy(h[place].Clone(("err"+h[place].GetName())))
@@ -651,17 +651,17 @@ def fitGaussAsymmetric(h, places, firstDate, lastDate, predictionDate, fitOption
         functs[place].FixParameter(3, 1)
 #        print h[place]
 #        print functs[place]
-        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
         functs[place].ReleaseParameter(3)
         functs[place].SetParLimits(3,0,maxPar3)
-        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
         if minPar2 != maxPar2:
             functs[place].ReleaseParameter(2)
             functs[place].SetParLimits(2,minPar2,maxPar2)
             functs[place].ReleaseParameter(4)
             functs[place].SetParLimits(4,minPar2,maxPar2)
-        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
-        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
         color = colors[places.index(place)]
         functs[place].SetLineColor(color)
         functs_err[place] = copy.copy(h[place].Clone(("err"+h[place].GetName())))
@@ -686,10 +686,10 @@ def fitTwoExp(h, places, firstDate, lastDate, predictionDate, fitOption="0SEQ", 
         functs[place].SetParameters(h[place].GetMean(), h[place].GetMean(), h[place].GetMean(), h[place].GetMean())
 #        functs[place].FixParameter(2, 10000)
  #       functs[place].FixParameter(3, 1)
-        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
   #      functs[place].FixParameter(2, functs[place].GetParameter(0))
    #     functs[place].FixParameter(3, functs[place].GetParameter(1))
-        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
     #    functs[place].ReleaseParameter(2)
      #   functs[place].ReleaseParameter(3)
 #        if minPar2 != maxPar2:
@@ -697,8 +697,8 @@ def fitTwoExp(h, places, firstDate, lastDate, predictionDate, fitOption="0SEQ", 
 #            functs[place].SetParLimits(2,minPar2,maxPar2)
 #            functs[place].ReleaseParameter(4)
 #            functs[place].SetParLimits(4,minPar2,maxPar2)
-        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
-        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
         color = colors[places.index(place)]
         functs[place].SetLineColor(color)
         functs_err[place] = copy.copy(h[place].Clone(("err"+h[place].GetName())))
@@ -724,11 +724,11 @@ def fitDecessi(h, places, firstDate, lastDate, predictionDate, fitOption="0SEQ")
         functs[place].FixParameter(2, 0)
 #        print h[place]
 #        print functs[place]
-        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
         functs[place].ReleaseParameter(2)
         functs[place].SetParLimits(2,0,maxConstExp)
-        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
-        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
         color = colors[places.index(place)]
         functs[place].SetLineColor(color)
         functs_err[place] = copy.copy(h[place].Clone(("err"+h[place].GetName())))
@@ -754,12 +754,12 @@ def fitMultiExp(h, places, firstDate, lastDate, predictionDate, fitOption="0SEQ"
 #        functs[place].FixParameter(2, 0)
 #        print h[place]
 #        print functs[place]
-        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
         functs[place].ReleaseParameter(2)
         functs[place].SetParLimits(2,0,maxConstExp)
         functs[place].SetParLimits(0,0,100)
-        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
-        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
         color = colors[places.index(place)]
         functs[place].SetLineColor(color)
         functs_err[place] = copy.copy(h[place].Clone(("err"+h[place].GetName())))
@@ -784,11 +784,11 @@ def fitLinear(h, places, firstDate, lastDate, predictionDate, fitOption="0SEQ", 
         functs[place].SetParameters(h[place].GetBinContent(2), 0, 0)
         functs[place].FixParameter(1, 0)
         functs[place].FixParameter(2, 0)
-        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
         functs[place].ReleaseParameter(1)
-        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
         functs[place].ReleaseParameter(2)
-        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
         color = colors[places.index(place)]
         functs[place].SetLineColor(color)
         functs_err[place] = copy.copy(h[place].Clone(("err"+h[place].GetName())))
@@ -815,13 +815,13 @@ def fitExp(h, places, firstDate, lastDate, predictionDate, fitOption="0SEQ", max
 #        functs[place].FixParameter(2, 0)
 #        print h[place]
 #        print functs[place]
-        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
         functs[place].ReleaseParameter(2)
         functs[place].SetParLimits(2,0,maxConstExp)
         functs[place].SetParLimits(0,0,100)
         if tail: functs[place].SetParLimits(0,-100,0)
-        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
-        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate,lastDate)
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
         color = colors[places.index(place)]
         functs[place].SetLineColor(color)
         functs_err[place] = copy.copy(h[place].Clone(("err"+h[place].GetName())))
