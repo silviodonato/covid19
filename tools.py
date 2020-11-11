@@ -1167,15 +1167,15 @@ def applyScaleFactors(histo, errorType='3sqrtN'):
         valueP1 = max(valueP1,0)
         average = ((valueM1+valueP1)/2)
         if errorType=='3sqrtN':
-            error = 5*(value)**0.5 if (value>=9 and value>=0.5*average) else abs(value-average)*2
+            error = 5*(value)**0.5 if (value>=9 and value>=0.25*average) else max(5*3,abs(value-average)*2)
         elif errorType=='sqrtN':
-            error = (value)**0.5   if (value>=9 and value>=0.5*average) else abs(value-average)*2
+            error = (value)**0.5   if (value>=9 and value>=0.25*average) else max(3,abs(value-average)*2)
         elif errorType=='default':
             error = 9.+(value)**0.5+0*0.25*(value) if value>=9 else 12.+abs(value-9.)                    ## error 10 + sqrt(N) + 0*25% N
             if i>=1: error = max(error, abs(value-valueM1))
             if i<=lastDate: error = max(error, abs(value-valueP1))
 #        histo.SetBinContent(i, value)
-        if histo.GetBinContent(i)>0:
+        if histo.GetBinContent(i)!=0:
             histo.SetBinError(i, error)
 
 

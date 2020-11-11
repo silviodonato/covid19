@@ -3,6 +3,8 @@
 #import copy
 from tools import colors, fillDataRegioni, fillDataISTATpickle, newCases, getRatio, makeHistos, fitErf, fitGauss, fitGaussAsymmetric, fitExp, extendDates, saveCSV, savePlotNew, getPrediction, getPredictionErf, getColumn, selectComuniDatesAgeGender, makeCompatible, fitLinear, fitTwoExp, fitExpGauss, applyScaleFactors, useLog, positiveHisto
 
+placesTest = []
+#placesTest = ["Italia"]
 startFromZero = False
 daysSmearing = 1
 #doProvince = False
@@ -12,6 +14,9 @@ useScaleFactor = True
 
 useDatiISTAT = False
 #useDatiISTAT = True
+
+if len(placesTest)>0:
+    doProvince = False
 
 import ROOT
 ROOT.gStyle.SetOptStat(0)
@@ -121,6 +126,8 @@ places.remove("Basilicata")
 #places = ["Lombardia"]
 #places = ["Italia"]
 #places = ["Liguria"]
+
+if len(placesTest)>0: places = placesTest
 
 #print "places:",places
 
@@ -488,8 +495,8 @@ canv=ROOT.TCanvas("canv")
 #fitdiffs['Italia'].Print()
 #newConfirmes_h['Italia'].Fit(fitdiffs['Italia'])
 
-#newIntensivas_h['Liguria'].Draw()
-#fitdiffIntensivas['Liguria'].Draw("same")
+#newIntensivas_h['Italia'].Draw()
+#fitdiffIntensivas['Italia'].Draw("same")
 
 newConfirmes_h['Italia'].Draw()
 fitdiffs['Italia'].Draw("same")
