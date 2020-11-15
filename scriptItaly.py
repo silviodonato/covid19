@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #import csv
 #import copy
-from tools import colors, fillDataRegioni, fillDataISTATpickle, newCases, getRatio, makeHistos, fitErf, fitGauss, fitGaussAsymmetric, fitExp, extendDates, saveCSV, savePlotNew, getPrediction, getPredictionErf, getColumn, selectComuniDatesAgeGender, makeCompatible, fitLinear, fitTwoExp, fitExpGauss, applyScaleFactors, useLog, positiveHisto
+from tools import colors, fillDataRegioni, fillDataISTATpickle, newCases, getRatio, makeHistos, fitErf, fitGauss, fitGaussAsymmetric, fitExp, extendDates, saveCSV, savePlotNew, getPrediction, getPredictionErf, getColumn, selectComuniDatesAgeGender, makeCompatible, fitLinear, fitTwoExp, fitExpGauss, applyScaleFactors, useLog, positiveHisto, fitTwoGaussDiff
 
 placesTest = []
 #placesTest = ["Italia"]
@@ -68,6 +68,9 @@ lastDate = lastDateData - 1
 predictionsDate = dates.index("12/31/20")
 #predictionsDate = 95
 
+#firstDate = dates.index("3/1/20")
+#lastDate  = dates.index("5/1/20")
+#predictionsDate = dates.index("6/30/20")
 
 #firstDate = 10
 #lastDate = 35
@@ -188,8 +191,8 @@ fitdiffs, fitdiffs_res, fitdiffs_error  = fitExpGauss(newConfirmes_h, places, fi
 fitexps, fitexps_res, fitexps_error                = fitExp(newConfirmes_h, places, lastDate-14, lastDate, predictionsDate)
 fitexptotals, fitexptotals_res, fitexptotals_error = fitExp(confirmes_h,    places, lastDate-14-1, lastDate-1, predictionsDate)
 #fitexptotals, fitexptotals_res, fitexptotals_error = fitExp(confirmes_h,    places, lastDate-8, lastDate, predictionsDate)
-fitdiffIntensivas, fitdiffIntensivas_res, fitdiffIntensivas_error = fitExpGauss(newIntensivas_h, places, firstDate, lastDate, predictionsDate)
-fitdiffRicoveratis, fitdiffRicoveratis_res, fitdiffRicoveratis_error = fitExpGauss(newRicoveratis_h, places, firstDate, lastDate, predictionsDate)
+fitdiffIntensivas, fitdiffIntensivas_res, fitdiffIntensivas_error = fitTwoGaussDiff(newIntensivas_h, places, firstDate, lastDate, predictionsDate)
+fitdiffRicoveratis, fitdiffRicoveratis_res, fitdiffRicoveratis_error = fitTwoGaussDiff(newRicoveratis_h, places, firstDate, lastDate, predictionsDate)
 fitdiffDeaths, fitdiffDeaths_res, fitdiffDeaths_error = fitExpGauss(newDeaths_h, places, firstDate, lastDate, predictionsDate)
 fitdiffRecoveres, fitdiffRecoveres_res, fitdiffRecoveres_error = fitExpGauss(newRecoveres_h, places, firstDate, lastDate, predictionsDate)
 
@@ -495,17 +498,15 @@ canv=ROOT.TCanvas("canv")
 #fitdiffs['Italia'].Print()
 #newConfirmes_h['Italia'].Fit(fitdiffs['Italia'])
 
-#newIntensivas_h['Italia'].Draw()
-#fitdiffIntensivas['Italia'].Draw("same")
+newIntensivas_h['Italia'].Draw()
+fitdiffIntensivas['Italia'].Draw("same")
 
-newConfirmes_h['Italia'].Draw()
-fitdiffs['Italia'].Draw("same")
+#newConfirmes_h['Italia'].Draw()
+#fitdiffs['Italia'].Draw("same")
 
 #newConfirmes_h['Liguria'].Draw()
 #fitdiffs['Liguria'].Draw("same")
 
-#newRecoveres_h['Italia'].Draw()
-#fitdiffRecoveres['Italia'].Draw("same")
 
 #newDeaths_h['Italia'].Draw()
 #fitdiffDeaths['Italia'].Draw("same")
@@ -517,8 +518,11 @@ fitdiffs['Italia'].Draw("same")
 #fitdiffs['Italia'].Draw("same")
 #fitdiffs['Italia'].error.Draw("same")
 
-#newRicoveratis_h['Italia'].Draw()
-#fitdiffRicoveratis['Italia'].Draw("same")
+newRicoveratis_h['Italia'].Draw()
+fitdiffRicoveratis['Italia'].Draw("same")
+
+newRecoveres_h['Italia'].Draw()
+fitdiffRecoveres['Italia'].Draw("same")
 
 #hist = newConfirmes_h['Italia']
 
