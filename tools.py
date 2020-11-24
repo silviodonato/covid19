@@ -713,13 +713,13 @@ def fitGauss(h, places, firstDate, lastDate, predictionDate, fitOption="0SEQ", m
     return functs, functs_res, functs_err
 
 
-def fitGaussAsymmetric(h, places, firstDate, lastDate, predictionDate, fitOption="0SEQ", maxPar3=maxPar3):
+def fitGaussAsymmetric(h, places, firstDate, lastDate, predictionDate, fitOption="0SE", maxPar3=maxPar3):
     functs = {}
     functs_res = {}
     functs_err = {}
     for place in places:
-        print "### Fit %s ###"%place
-#        functs[place] = copy.copy(ROOT.TF1("function"+place,"[0]*exp(-0.5*( (x<=[5])*(x-[1])/[2] + (x>[5])*(x-[1])/[4] )**2) + [3]",firstDate,predictionDate))
+        print "### Fit fitGaussAsymmetric %s ###"%place
+#        functs[place] = copy.copy(ROOT.TF1("function"+place,"[0]*exp(-0.5*( (x<=[5])*(x-[1])/[2] + [4]/[2]*(x>[5])*(x-[1])/[4] )**2) + [3]",firstDate,predictionDate))
         functs[place] = copy.copy(ROOT.TF1("function"+place,"[0]*exp(-0.5*( (x<=[1])*(x-[1])/[2] + (x>[1])*(x-[1])/[4] )**2) + [3]",firstDate,predictionDate))
         fixSigma = 30
         functs[place].SetParameters(h[place].Integral(), h[place].GetMean(), fixSigma, 0, fixSigma)
@@ -727,15 +727,23 @@ def fitGaussAsymmetric(h, places, firstDate, lastDate, predictionDate, fitOption
 #        print h[place]
 #        print functs[place]
         functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
-        functs[place].SetParameter(5, functs[place].GetParameter(1))
+#        functs[place].SetParameter(5, functs[place].GetParameter(1))
+        functs[place].FixParameter(5, h[place].GetMean())
         functs[place].FixParameter(4, functs[place].GetParameter(2))
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
+        functs[place].FixParameter(5, h[place].GetMean())
+        functs[place].ReleaseParameter(4)
+        functs[place].SetParameter(4, functs[place].GetParameter(2))
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
+        functs[place].ReleaseParameter(5)
+        functs[place].SetParameter(4, functs[place].GetParameter(2))
+        functs[place].SetParameter(5, h[place].GetMean())
+        functs[place].ReleaseParameter(4)
         functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
         functs[place].ReleaseParameter(4)
         functs[place].SetParameter(4, functs[place].GetParameter(2))
-#        functs[place].FixParameter(4, functs[place].GetParameter(2))
-#        functs[place].FixParameter(5, functs[place].GetParameter(1))
-        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
-        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
+#        functs[place].FixParameter(5, functs[place].GetParameter(5))
+        functs[place].FixParameter(4, functs[place].GetParameter(4))
         functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
         color = colors[places.index(place)]
         functs[place].SetLineColor(color)
@@ -936,6 +944,8 @@ def extendDates(dates, nextend):
             newDate = "11/%d/20"%(i-245)
         elif i>275 and i<=306:
             newDate = "12/%d/20"%(i-275)
+        elif i>306 and i<=337:
+            newDate = "1/%d/21"%(i-306)
         if not newDate in dates: dates.append(newDate)
     return dates
 
@@ -1243,7 +1253,7 @@ def applyScaleFactors(histo, errorType='3sqrtN'):
         valueP1 = max(valueP1,0)
         average = ((valueM1+valueP1)/2)
         if errorType=='3sqrtN':
-            error = 0.05*abs(value)+ 3*abs(value)**0.5 + 9
+            error = 0.2*abs(value)+ 3*abs(value)**0.5 + 9
         elif errorType=='sqrtN':
             error = (value)**0.5   if (value>=9 and value>=0.25*average) else max(3,abs(value-average)*2)
         elif errorType=='default':
