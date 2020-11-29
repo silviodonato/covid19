@@ -719,19 +719,20 @@ def fitGaussAsymmetric(h, places, firstDate, lastDate, predictionDate, fitOption
     functs_err = {}
     for place in places:
         print "### Fit fitGaussAsymmetric %s ###"%place
-#        functs[place] = copy.copy(ROOT.TF1("function"+place,"[0]*exp(-0.5*( (x<=[5])*(x-[1])/[2] + [4]/[2]*(x>[5])*(x-[1])/[4] )**2) + [3]",firstDate,predictionDate))
-        functs[place] = copy.copy(ROOT.TF1("function"+place,"[0]*exp(-0.5*( (x<=[1])*(x-[1])/[2] + (x>[1])*(x-[1])/[4] )**2) + [3]",firstDate,predictionDate))
+        functs[place] = copy.copy(ROOT.TF1("function"+place,"[0]*exp(-0.5*( (x<=[5])*(x-[1])/[2] + [4]/[2]*(x>[5])*(x-[1])/[4] )**2) + [3]",firstDate,predictionDate))
+#        functs[place] = copy.copy(ROOT.TF1("function"+place,"[0]*exp(-0.5*( (x<=[1])*(x-[1])/[2] + (x>[1])*(x-[1])/[4] )**2) + [3]",firstDate,predictionDate))
         fixSigma = 30
         functs[place].SetParameters(h[place].Integral(), h[place].GetMean(), fixSigma, 0, fixSigma)
-        functs[place].FixParameter(5, 100000)
+#        functs[place].FixParameter(5, 100000)
+ #       functs[place].FixParameter(5, 2)
 #        print h[place]
 #        print functs[place]
         functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
-#        functs[place].SetParameter(5, functs[place].GetParameter(1))
-        functs[place].FixParameter(5, h[place].GetMean())
+        functs[place].SetParameter(5, functs[place].GetParameter(1))
+#        functs[place].FixParameter(5, h[place].GetMean())
         functs[place].FixParameter(4, functs[place].GetParameter(2))
         functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
-        functs[place].FixParameter(5, h[place].GetMean())
+#        functs[place].FixParameter(5, h[place].GetMean())
         functs[place].ReleaseParameter(4)
         functs[place].SetParameter(4, functs[place].GetParameter(2))
         functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
