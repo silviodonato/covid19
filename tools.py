@@ -34,6 +34,7 @@ scuola24=[
 "Sardegna",
 ]
 
+#useLog = False
 useLog = True
 fixSigma = 8
 #maxPar3 = 1E4
@@ -606,11 +607,12 @@ def fitTwoGaussDiff(h, places, firstDate, lastDate, predictionDate, fitOption="0
     functs = {}
     functs_res = {}
     functs_err = {}
+    fixSigma=20
     for place in places:
         print "### Fit %s ###"%place
         functs[place] = copy.copy(ROOT.TF1("function"+place,"gaus(0) + exp(+x/[4]*0-[3]) + gaus(5)",firstDate,predictionDate))
         functs[place].SetParLimits(0, 0, h[place].GetMaximum()*2)
-        functs[place].SetParameters(h[place].GetMaximum(), h[place].GetMean(), fixSigma*10, 1, 1000, 0, 0, 0)
+        functs[place].SetParameters(h[place].GetMaximum(), h[place].GetMean(), fixSigma, 1, 1000, 0, 0, 0)
 
 ##### Fit Exp then Gaus
 #        functs[place].FixParameter(0, functs[place].GetParameter(0))
@@ -684,7 +686,7 @@ def fitGauss(h, places, firstDate, lastDate, predictionDate, fitOption="0SEQ", m
     for place in places:
         print "### Fit %s ###"%place
         functs[place] = copy.copy(ROOT.TF1("function"+place,"gaus + [3]",firstDate,predictionDate))
-        functs[place].SetParameters(h[place].Integral(), h[place].GetMean(), fixSigma)
+        functs[place].SetParameters(h[place].GetBinContent(h[place].GetMaximumBin()), h[place].GetMean(), fixSigma)
         functs[place].FixParameter(2, fixSigma)
         functs[place].FixParameter(3, 1)
 #        print h[place]
@@ -721,10 +723,11 @@ def fitGaussAsymmetric(h, places, firstDate, lastDate, predictionDate, fitOption
         print "### Fit fitGaussAsymmetric %s ###"%place
         functs[place] = copy.copy(ROOT.TF1("function"+place,"[0]*exp(-0.5*( (x<=[5])*(x-[1])/[2] + [4]/[2]*(x>[5])*(x-[1])/[4] )**2) + [3]",firstDate,predictionDate))
 #        functs[place] = copy.copy(ROOT.TF1("function"+place,"[0]*exp(-0.5*( (x<=[1])*(x-[1])/[2] + (x>[1])*(x-[1])/[4] )**2) + [3]",firstDate,predictionDate))
-        fixSigma = 30
-        functs[place].SetParameters(h[place].Integral(), h[place].GetMean(), fixSigma, 0, fixSigma)
+        fixSigma = 20
+        functs[place].SetParameters(h[place].GetBinContent(h[place].GetMaximumBin()), h[place].GetMean(), fixSigma, 0, fixSigma)
+#        functs[place].SetParameters(h[place].GetBinContent(h[place].GetMaximumBin()), h[place].GetMean(), fixSigma, 0, fixSigma)
 #        functs[place].FixParameter(5, 100000)
- #       functs[place].FixParameter(5, 2)
+#        functs[place].FixParameter(3, 0)
 #        print h[place]
 #        print functs[place]
         functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
@@ -741,6 +744,7 @@ def fitGaussAsymmetric(h, places, firstDate, lastDate, predictionDate, fitOption
         functs[place].SetParameter(5, h[place].GetMean())
         functs[place].ReleaseParameter(4)
         functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
+        functs[place].ReleaseParameter(3)
         functs[place].ReleaseParameter(4)
         functs[place].SetParameter(4, functs[place].GetParameter(2))
 #        functs[place].FixParameter(5, functs[place].GetParameter(5))

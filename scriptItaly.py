@@ -35,7 +35,7 @@ if useDatiISTAT:
 dataRegioni, dates = fillDataRegioni('dataItaly/dati-regioni/dpc-covid19-ita-regioni.csv')
 if (doProvince): dataProvince, dates = fillDataRegioni('dataItaly/dati-province/dpc-covid19-ita-province.csv', "denominazione_provincia")
 
-#data,stato,codice_regione,denominazione_regione,lat,long,ricoverati_con_sintomi,terapia_intensiva,totale_ospedalizzati,isolamento_domiciliare,totale_attualmente_positivi,nuovi_attualmente_positivi,dimessi_guariti,deceduti,totale_casi,tamponi
+#data,stato,codice_regione,denominazione_regione,lat,long,ricoverati_con_sintomi,terapia_intensiva,totale_ospedalizzati,isolamento_domiciliare,totale_attualmente_Positive,nuovi_attualmente_Positive,dimessi_guariti,deceduti,totale_casi,tamponi
 
 tests = getColumn(dataRegioni, "tamponi")
 intensivas = getColumn(dataRegioni, "terapia_intensiva")
@@ -51,21 +51,23 @@ if useDatiISTAT:
     newDeathIstats_old = selectComuniDatesAgeGender(dataISTAT, dates, places=None, ages=range(0,30), genders=[2,3])
 
 lastDateData = len(dates)-1
-dates = extendDates(dates, 310)
+dates = extendDates(dates, 350)
 ################
 
 firstDate = 0
 #firstDate = dates.index("6/1/20")
 #firstDate = dates.index("5/15/20")
 #firstDate = dates.index("5/15/20")
-firstDate = dates.index("9/1/20")
+#firstDate = dates.index("9/1/20")
+firstDate = dates.index("10/1/20")
 #firstDate = dates.index("4/1/20")
 #firstDate = 16
 lastDate = lastDateData - 1
 #lastDate = dates.index("2/29/20")
 #lastDate = dates.index("3/1/20")
 #lastDate = 30
-predictionsDate = dates.index("12/31/20")
+#predictionsDate = dates.index("12/31/20")
+predictionsDate = dates.index("1/30/21")
 #predictionsDate = 95
 
 #firstDate = dates.index("3/1/20")
@@ -192,6 +194,7 @@ fitexps, fitexps_res, fitexps_error                = fitExp(newConfirmes_h, plac
 fitexptotals, fitexptotals_res, fitexptotals_error = fitExp(confirmes_h,    places, lastDate-14-1, lastDate-1, predictionsDate)
 #fitexptotals, fitexptotals_res, fitexptotals_error = fitExp(confirmes_h,    places, lastDate-8, lastDate, predictionsDate)
 fitdiffIntensivas, fitdiffIntensivas_res, fitdiffIntensivas_error = fitTwoGaussDiff(newIntensivas_h, places, firstDate, lastDate, predictionsDate)
+fitdiffPositives, fitdiffPositives_res, fitdiffPositives_error = fitTwoGaussDiff(newPositives_h, places, firstDate, lastDate, predictionsDate)
 fitdiffRicoveratis, fitdiffRicoveratis_res, fitdiffRicoveratis_error = fitTwoGaussDiff(newRicoveratis_h, places, firstDate, lastDate, predictionsDate)
 fitdiffDeaths, fitdiffDeaths_res, fitdiffDeaths_error = fitGaussAsymmetric(newDeaths_h, places, firstDate, lastDate, predictionsDate)
 fitdiffRecoveres, fitdiffRecoveres_res, fitdiffRecoveres_error = fitGaussAsymmetric(newRecoveres_h, places, firstDate, lastDate, predictionsDate)
@@ -240,7 +243,7 @@ leg = ROOT.TLegend(0.9,0.1,1.0,0.9)
 
 for place in places:
     confirmes_h[place].GetYaxis().SetTitle("Number of cases")
-    confirmes_h[place].SetMinimum(1)
+    if useLog: confirmes_h[place].SetMinimum(1)
 #    confirmes_h[place].SetBinError(confirmes_h[place].FindBin(lastDate-0.5),1E-9)
     leg.AddEntry(confirmes_h[place], place, "lep")
     confirmes_h[place].Draw("ERR,same")
@@ -265,7 +268,7 @@ if (doProvince):
     confirmesProv_h.values()[0].Draw("ERR")
     for place in province:
         confirmesProv_h[place].GetYaxis().SetTitle("Number of cases")
-        confirmesProv_h[place].SetMinimum(1)
+        if useLog: confirmesProv_h[place].SetMinimum(1)
     #    confirmes_h[place].SetBinError(confirmes_h[place].FindBin(lastDate-0.5),1E-9)
         leg.AddEntry(confirmesProv_h[place], place, "lep")
         confirmesProv_h[place].Draw("ERR,same")
@@ -281,10 +284,16 @@ d2 = ROOT.TCanvas("d2","",resX,resY)
 
 #diffs["Italy"].Draw()
 
+positives = {}
+for place in confirmes:
+    positives[place] = {}
+    for i in range(0, len(confirmes[place])):
+        positives[place][dates[i]] = confirmes[place][dates[i]] - deaths[place][dates[i]] - recoveres[place][dates[i]]
+
 #for place in ['Japan','Italy','Spain','France','South Korea']:
 for place in places:
     newConfirmes_h[place].GetYaxis().SetTitle("Number of cases / day")
-    newConfirmes_h[place].SetMinimum(1)
+    if useLog: newConfirmes_h[place].SetMinimum(1)
     newConfirmes_h[place].Draw("same")
     fitdiffs[place].Draw("same")
 
@@ -308,7 +317,7 @@ if (doProvince):
     #for place in ['Japan','Italy','Spain','France','South Korea']:
     for place in province:
         newConfirmesProv_h[place].GetYaxis().SetTitle("Number of cases / day")
-        newConfirmesProv_h[place].SetMinimum(1)
+        if useLog: newConfirmesProv_h[place].SetMinimum(1)
         newConfirmesProv_h[place].Draw("same")
 
 
@@ -421,11 +430,15 @@ predictionRicoveratis_h = makeHistos("histo_predictionRicoveratis",    predictio
 predictionIntensivas = getPrediction(places, dates, startDate, endDate, intensivas_h, fitdiffIntensivas, fitdiffIntensivas_res, intensivas)
 predictionIntensivas_h = makeHistos("histo_predictionIntensivas",    predictionIntensivas, dates, places, startDate, None, endDate, threshold=0, cutTails=False, errorType='dictionary', lineWidth=3)
 
+predictionPositives = getPrediction(places, dates, startDate, endDate, positives_h, fitdiffPositives, fitdiffPositives_res, positives)
+predictionPositives_h = makeHistos("histo_predictionPositives",    predictionPositives, dates, places, startDate, None, endDate, threshold=0, cutTails=False, errorType='dictionary', lineWidth=3)
+
 
 saveCSV(predictionConfirmes, places, dates, "predictionRegioni.csv", "predictionRegioni_error.csv")
 saveCSV(predictionDeaths, places, dates, "predictionRegioniMorti.csv", "predictionRegioniMorti_error.csv")
 saveCSV(predictionRecoveres, places, dates, "predictionRegioniGuariti.csv", "predictionRegioniGuariti_error.csv")
 saveCSV(predictionIntensivas, places, dates, "predictionRegioniTerapiaIntensiva.csv", "predictionRegioniTerapiaIntensiva_error.csv")
+saveCSV(predictionPositives, places, dates, "predictionRegioniTerapiaPositive.csv", "predictionRegioniPositive_error.csv")
 saveCSV(predictionRicoveratis, places, dates, "predictionRegioniRicoverati.csv", "predictionRegioniRicoverati_error.csv")
 
 
@@ -459,6 +472,8 @@ for place in places:
     fitdiffRecoveres[place].fitResult = fitdiffRecoveres_res[place]
     fitdiffIntensivas[place].error = fitdiffIntensivas_error[place]
     fitdiffIntensivas[place].fitResult = fitdiffIntensivas_res[place]
+    fitdiffPositives[place].error = fitdiffPositives_error[place]
+    fitdiffPositives[place].fitResult = fitdiffPositives_res[place]
     fitdiffRicoveratis[place].error = fitdiffRicoveratis_error[place]
     fitdiffRicoveratis[place].fitResult = fitdiffRicoveratis_res[place]
     fitexps[place].error = fitexps_error[place]
@@ -469,8 +484,8 @@ for place in places:
             fitLinears[place].error = fitLinears_error[place]
             fitLinears[place].res = fitLinears_res[place]
     if not place in newDeathIstatExcess_h: newDeathIstatExcess_h[place] = None
-    savePlotNew([confirmes_h[place], recoveres_h[place], deaths_h[place], predictionConfirmes_h[place], predictionDeaths_h[place], predictionRecoveres_h[place], predictionIntensivas_h[place], predictionRicoveratis_h[place], intensivas_h[place], ricoveratis_h[place], tests_h[place] if useLog else 0, positives_h[place]], [fitexptotals[place]], "plotsRegioni/%s.png"%place, startDate, dates, d3)
-    savePlotNew([newConfirmes_h[place], newRecoveres_h[place], newDeaths_h[place], newDeathIstatExcess_h[place], newIntensivas_h[place], newRicoveratis_h[place], newTests_h[place] if useLog else 0, newPositives_h[place]], [fitexps[place], fitdiffs[place], fitdiffRecoveres[place], fitdiffDeaths[place], fitdiffIntensivas[place], fitdiffRicoveratis[place]], "plotsRegioni/%s_newCases.png"%place, startDate, dates, d3)
+    savePlotNew([confirmes_h[place], recoveres_h[place], deaths_h[place], predictionConfirmes_h[place], predictionDeaths_h[place], predictionRecoveres_h[place], predictionIntensivas_h[place], predictionPositives_h[place], predictionRicoveratis_h[place], intensivas_h[place], ricoveratis_h[place], tests_h[place] if useLog else 0, positives_h[place]], [fitexptotals[place]], "plotsRegioni/%s.png"%place, startDate, dates, d3)
+    savePlotNew([newConfirmes_h[place], newRecoveres_h[place], newDeaths_h[place], newDeathIstatExcess_h[place], newIntensivas_h[place], newRicoveratis_h[place], newTests_h[place] if useLog else 0, newPositives_h[place]], [fitexps[place], fitdiffs[place], fitdiffRecoveres[place], fitdiffDeaths[place], fitdiffIntensivas[place], fitdiffPositives[place], fitdiffRicoveratis[place]], "plotsRegioni/%s_newCases.png"%place, startDate, dates, d3)
 #    savePlotNew([newDeathIstats_old_h[place]], [fitLinears[place]], "plotsRegioni/%s_newCases.png"%place, startDate, d3)
 
 if (doProvince): 
@@ -514,15 +529,15 @@ fitdiffIntensivas['Italia'].Draw("same")
 #intensivas_h['Italia'].Draw()
 #predictionIntensivas_h['Italia'].Draw("same")
 
-#newConfirmes_h['Italia'].Draw()
-#fitdiffs['Italia'].Draw("same")
-#fitdiffs['Italia'].error.Draw("same")
+newConfirmes_h['Italia'].Draw()
+fitdiffs['Italia'].Draw("same")
+fitdiffs['Italia'].error.Draw("same")
 
-newRicoveratis_h['Italia'].Draw()
-fitdiffRicoveratis['Italia'].Draw("same")
+#newRicoveratis_h['Italia'].Draw()
+#fitdiffRicoveratis['Italia'].Draw("same")
 
-newRecoveres_h['Italia'].Draw()
-fitdiffRecoveres['Italia'].Draw("same")
+#newRecoveres_h['Italia'].Draw()
+#fitdiffRecoveres['Italia'].Draw("same")
 
 #hist = newConfirmes_h['Italia']
 
