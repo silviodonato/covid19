@@ -764,6 +764,59 @@ def fitGaussAsymmetric(h, places, firstDate, lastDate, predictionDate, fitOption
         functs_err[place].SetName(name+"_errorBand")
     return functs, functs_res, functs_err
 
+def fitGaussExp(h, places, firstDate, lastDate, predictionDate, fitOption="0SE", maxPar3=maxPar3):
+    functs = {}
+    functs_res = {}
+    functs_err = {}
+    for place in places:
+        print "### Fit fitGaussExp %s ###"%place
+#        functs[place] = copy.copy(ROOT.TF1("function"+place,"[0]*exp( ((x<=[5])* (-0.5) * ((x-[1])/[2])**2) + ((x>[5])*(-0.5)*(([5]-[1])/[2] )**2 / (1. + [4]*[5]) * (1. + [4]*x)) ) + [3]",firstDate,predictionDate))
+        functs[place] = copy.copy(ROOT.TF1("function"+place,"[0]*exp( ((x<=((-[1]+2*[2])/(2*[2]*[3]+1)))* (-0.5) * ((x-[1])/[2])**2) + ((x>((-[1]+2*[2])/(2*[2]*[3]+1)))*(-0.5)*((((-[1]+2*[2])/(2*[2]*[3]+1))-[1])/[2] )**2 / (1. + [4]*((-[1]+2*[2])/(2*[2]*[3]+1))) * (1. + [4]*x)) ) + [3]",firstDate,predictionDate))
+
+#((-[1]+2*[2])/(2*[2]*[3]+1))
+
+#        functs[place] = copy.copy(ROOT.TF1("function"+place,"[0]*exp(-0.5*( (x<=[1])*(x-[1])/[2] + (x>[1])*(x-[1])/[4] )**2) + [3]",firstDate,predictionDate))
+        fixSigma = 20
+        functs[place].SetParameters(h[place].GetBinContent(h[place].GetMaximumBin()), h[place].GetMean(), fixSigma, 0, fixSigma)
+#        functs[place].SetParameters(h[place].GetBinContent(h[place].GetMaximumBin()), h[place].GetMean(), fixSigma, 0, fixSigma)
+#        functs[place].FixParameter(5, 100000)
+#        functs[place].FixParameter(3, 0)
+#        print h[place]
+#        print functs[place]
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
+        functs[place].SetParameter(5, functs[place].GetParameter(1))
+#        functs[place].FixParameter(5, h[place].GetMean())
+        functs[place].FixParameter(4, functs[place].GetParameter(2))
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
+#        functs[place].FixParameter(5, h[place].GetMean())
+        functs[place].ReleaseParameter(4)
+        functs[place].SetParameter(4, functs[place].GetParameter(2))
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
+        functs[place].ReleaseParameter(5)
+        functs[place].SetParameter(4, functs[place].GetParameter(2))
+        functs[place].SetParameter(5, h[place].GetMean())
+        functs[place].ReleaseParameter(4)
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
+        functs[place].ReleaseParameter(3)
+        functs[place].ReleaseParameter(4)
+        functs[place].SetParameter(4, functs[place].GetParameter(2))
+#        functs[place].FixParameter(5, functs[place].GetParameter(5))
+#        functs[place].FixParameter(4, functs[place].GetParameter(4))
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
+        color = colors[places.index(place)]
+        functs[place].SetLineColor(color)
+        functs_err[place] = copy.copy(h[place].Clone(("err"+h[place].GetName())))
+        functs_err[place].Reset()
+        ROOT.TVirtualFitter.GetFitter().GetConfidenceIntervals(functs_err[place], 0.68)
+        functs_err[place].SetStats(ROOT.kFALSE)
+        functs_err[place].SetLineColor(color)
+        functs_err[place].SetFillColor(color)
+        name = h[place].GetName().replace("histo_","functionGaus_")
+        functs[place].SetName(name+"_centralValue") 
+        if functs_res[place].Get(): functs_res[place].SetName(name+"_fitResult")
+        functs_err[place].SetName(name+"_errorBand")
+    return functs, functs_res, functs_err
+
 def fitTwoExp(h, places, firstDate, lastDate, predictionDate, fitOption="0SEQ", maxPar3=maxPar3):
     functs = {}
     functs_res = {}
@@ -1096,7 +1149,7 @@ def savePlotNew(histos, functions, fName, xpred, dates, canvas, ISTAT=False):
                 if function.fitResult.Get(): 
 #                    leg.AddEntry(function, "Exp + Gauss fit", "lp")
 #                    leg.AddEntry(function, "#splitline{Gaussian fit}{#splitline{#mu=%.1f #pm %.1f Nov}{ #sigma=%.1f #pm %.1f}} "%(function.fitResult.GetParams()[1]-Nov1,function.fitResult.GetErrors()[1],function.fitResult.GetParams()[2],function.fitResult.GetErrors()[2]), "lep")
-                    leg.AddEntry(function, "#splitline{Gaussian fit}{#splitline{max %d}{ %.1f Nov}} "%( function.GetMaximum(), function.GetMaximumX() - Nov1), "lep")
+                    leg.AddEntry(function, "#splitline{Gaussian fit}{#splitline{max %d}{ %.1f Nov}} "%( int(function.GetMaximum()), function.GetMaximumX() - Nov1), "lep")
                 else:
                     leg.AddEntry(function, "Gaussian fit", "lp")
             if "Exp" in function.GetName():

@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 #import csv
 #import copy
-from tools import colors, fillDataRegioni, fillDataISTATpickle, newCases, getRatio, makeHistos, fitErf, fitGauss, fitGaussAsymmetric, fitExp, extendDates, saveCSV, savePlotNew, getPrediction, getPredictionErf, getColumn, selectComuniDatesAgeGender, makeCompatible, fitLinear, fitTwoExp, fitExpGauss, applyScaleFactors, useLog, positiveHisto, fitTwoGaussDiff
+from tools import colors, fillDataRegioni, fillDataISTATpickle, newCases, getRatio, makeHistos, fitErf, fitGauss, fitGaussAsymmetric, fitExp, extendDates, saveCSV, savePlotNew, getPrediction, getPredictionErf, getColumn, selectComuniDatesAgeGender, makeCompatible, fitLinear, fitTwoExp, fitExpGauss, applyScaleFactors, useLog, positiveHisto, fitTwoGaussDiff, fitGaussExp
 
 placesTest = []
 #placesTest = ["Italia"]
+#placesTest = ["Veneto"]
 startFromZero = False
 daysSmearing = 1
 #doProvince = False
@@ -189,7 +190,7 @@ for place in places:
             positiveHisto(histo[place])
 
 fits, fits_res, fits_error              = fitErf(confirmes_h,      places, firstDate, lastDate, predictionsDate)
-fitdiffs, fitdiffs_res, fitdiffs_error  = fitGaussAsymmetric(newConfirmes_h, places, firstDate, lastDate, predictionsDate)
+fitdiffs, fitdiffs_res, fitdiffs_error  = fitGaussExp(newConfirmes_h, places, firstDate, lastDate, predictionsDate)
 fitexps, fitexps_res, fitexps_error                = fitExp(newConfirmes_h, places, lastDate-14, lastDate, predictionsDate)
 fitexptotals, fitexptotals_res, fitexptotals_error = fitExp(confirmes_h,    places, lastDate-14-1, lastDate-1, predictionsDate)
 #fitexptotals, fitexptotals_res, fitexptotals_error = fitExp(confirmes_h,    places, lastDate-8, lastDate, predictionsDate)
@@ -498,48 +499,51 @@ if (doProvince):
 
 ROOT.gROOT.SetBatch(0)
 canv=ROOT.TCanvas("canv")
-#intensivas_h['Italia'].Draw()
-#newDeaths_h['Italia'].Draw()
-#fitdiffDeaths['Italia'].Draw("same")
-#print(fitdiffDeaths['Italia'])
-#fitdiffDeaths['Italia'].Print()
-#newDeaths_h['Italia'].Fit(fitdiffDeaths['Italia'])
+p = "Italia"
+p = placesTest[0]
+
+#intensivas_h[p].Draw()
+#newDeaths_h[p].Draw()
+#fitdiffDeaths[p].Draw("same")
+#print(fitdiffDeaths[p])
+#fitdiffDeaths[p].Print()
+#newDeaths_h[p].Fit(fitdiffDeaths[p])
 
 
-#newConfirmes_h['Italia'].Draw()
-#fitdiffs['Italia'].Draw("same")
-#print(fitdiffs['Italia'])
+#newConfirmes_h[p].Draw()
+#fitdiffs[p].Draw("same")
+#print(fitdiffs[p])
 
-#fitdiffs['Italia'].Print()
-#newConfirmes_h['Italia'].Fit(fitdiffs['Italia'])
+#fitdiffs[p].Print()
+#newConfirmes_h[p].Fit(fitdiffs[p])
 
-newIntensivas_h['Italia'].Draw()
-fitdiffIntensivas['Italia'].Draw("same")
+newIntensivas_h[p].Draw()
+fitdiffIntensivas[p].Draw("same")
 
-#newConfirmes_h['Italia'].Draw()
-#fitdiffs['Italia'].Draw("same")
+#newConfirmes_h[p].Draw()
+#fitdiffs[p].Draw("same")
 
 #newConfirmes_h['Liguria'].Draw()
 #fitdiffs['Liguria'].Draw("same")
 
 
-#newDeaths_h['Italia'].Draw()
-#fitdiffDeaths['Italia'].Draw("same")
+#newDeaths_h[p].Draw()
+#fitdiffDeaths[p].Draw("same")
 
-#intensivas_h['Italia'].Draw()
-#predictionIntensivas_h['Italia'].Draw("same")
+#intensivas_h[p].Draw()
+#predictionIntensivas_h[p].Draw("same")
 
-newConfirmes_h['Italia'].Draw()
-fitdiffs['Italia'].Draw("same")
-fitdiffs['Italia'].error.Draw("same")
+newConfirmes_h[p].Draw()
+fitdiffs[p].Draw("same")
+fitdiffs[p].error.Draw("same")
 
-#newRicoveratis_h['Italia'].Draw()
-#fitdiffRicoveratis['Italia'].Draw("same")
+#newRicoveratis_h[p].Draw()
+#fitdiffRicoveratis[p].Draw("same")
 
-#newRecoveres_h['Italia'].Draw()
-#fitdiffRecoveres['Italia'].Draw("same")
+#newRecoveres_h[p].Draw()
+#fitdiffRecoveres[p].Draw("same")
 
-#hist = newConfirmes_h['Italia']
+#hist = newConfirmes_h[p]
 
 #fixSigma=10
 
