@@ -4,6 +4,7 @@
 from tools import colors, fillDataRegioni, fillDataISTATpickle, newCases, getRatio, makeHistos, fitErf, fitGauss, fitGaussAsymmetric, fitExp, extendDates, saveCSV, savePlotNew, getPrediction, getPredictionErf, getColumn, selectComuniDatesAgeGender, makeCompatible, fitLinear, fitTwoExp, fitExpGauss, applyScaleFactors, useLog, positiveHisto, fitTwoGaussDiff, fitGaussExp
 
 placesTest = []
+#placesTest = ["Italia","LaSpezia"]
 #placesTest = ["Italia"]
 #placesTest = ["Veneto"]
 startFromZero = False

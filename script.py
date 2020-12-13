@@ -21,20 +21,28 @@ deaths, dates = fillData('dataWorld/csse_covid_19_data/csse_covid_19_time_series
 recoveres, dates = fillData('dataWorld/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv')
 
 lastDateData = len(dates)-1
-#lastDateData = len(dates)-1-30
-dates = extendDates(dates, 310)
+dates = extendDates(dates, 350)
 ################
 
 firstDate = 0
-#firstDate = dates.index("2/18/20")
+#firstDate = dates.index("6/1/20")
+#firstDate = dates.index("5/15/20")
+#firstDate = dates.index("5/15/20")
+#firstDate = dates.index("9/1/20")
+firstDate = dates.index("10/1/20")
+#firstDate = dates.index("4/1/20")
 #firstDate = 16
-lastDate = lastDateData -1
+lastDate = lastDateData - 1
 #lastDate = dates.index("2/29/20")
 #lastDate = dates.index("3/1/20")
 #lastDate = 30
-predictionsDate = dates.index("11/1/20")
+#predictionsDate = dates.index("12/31/20")
+predictionsDate = dates.index("1/30/21")
 #predictionsDate = 95
 
+#firstDate = dates.index("3/1/20")
+#lastDate  = dates.index("5/1/20")
+#predictionsDate = dates.index("6/30/20")
 
 #firstDate = 10
 #lastDate = 35
@@ -59,7 +67,7 @@ newRecoveres = newCases(recoveres, dates)
 places = []
 for place in confirmes.keys():
     if place == "Others": continue
-    if confirmes[place][dates[lastDate]]>100000:
+    if confirmes[place][dates[lastDate]]>1000000:
         places.append(place)
 
 #places = ["Italy"]
@@ -72,9 +80,14 @@ for place in confirmes.keys():
 #places = ["Jiangxi"]
 #places = ["France"]
 
+#places.remove("World")
+
 
 places = [p[1] for p in sorted([(confirmes[p][dates[lastDate]], p) for p in places], reverse=True)]
-#places.remove("World")
+
+places.remove("World")
+places.remove("Rest of World")
+
 
 print "places:",places
 
@@ -302,8 +315,8 @@ for place in places:
     fitdiffRecoveres[place].fitResult = fitdiffRecoveres_res[place]
     fitexps[place].error = None
     fitexps[place].fitResult = None
-    savePlotNew([confirmes_h[place], recoveres_h[place], deaths_h[place], predictions_h[place], predictionDeaths_h[place], predictionRecoveres_h[place], shiftConf], [fitexptotals[place]], "plots/%s.png"%place, startDate, c3)
-    savePlotNew([newConfirmes_h[place], newRecoveres_h[place], newDeaths_h[place], shiftNewConf], [fitdiffs[place], fitdiffRecoveres[place], fitdiffDeaths[place], fitexps[place]], "plots/%s_newCases.png"%place, startDate, c5)
+    savePlotNew([confirmes_h[place], recoveres_h[place], deaths_h[place], predictions_h[place], predictionDeaths_h[place], predictionRecoveres_h[place], shiftConf], [fitexptotals[place]], "plots/%s.png"%place, startDate, dates, c3)
+    savePlotNew([newConfirmes_h[place], newRecoveres_h[place], newDeaths_h[place], shiftNewConf], [fitdiffs[place], fitdiffRecoveres[place], fitdiffDeaths[place], fitexps[place]], "plots/%s_newCases.png"%place, startDate, dates, c5)
 
 '''
 

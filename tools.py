@@ -94,6 +94,7 @@ colorMap = {
     "newConfirmes":   ROOT.kBlue,
     "newRecoveres":   ROOT.kRed,
     "newDeaths":      ROOT.kBlack,
+    "storico":        ROOT.kMagenta,
     "prediction":      ROOT.kMagenta+2,
     "functionExp":      ROOT.kMagenta,
     "functionExp_newConfirmes":      ROOT.kMagenta,
@@ -107,7 +108,7 @@ colorMap = {
     "Decessi":      ROOT.kBlack,
     "decessi":      ROOT.kBlack,
     "ISTAT":        ROOT.kMagenta+1,
-    "storico":      ROOT.kBlack,
+#    "storico":      ROOT.kBlack,
     "predictionConfirmes":   ROOT.kBlue,
     "predictionRecoveres":   ROOT.kRed,
     "predictionDeaths":      ROOT.kBlack,
@@ -454,11 +455,12 @@ def makeHistos(prefix, dataUnsmeared, dates, places, firstDate, lastDate, predic
             raise Exception("histos[place].GetXaxis().GetBinWidth(1)!=1.0")
         stop = False
         start = False
+        histos[place].GetXaxis().SetNdivisions(7)
         for i in reversed(range(firstDate, predictionDate)):
             binx = histos[place].FindBin(i)
             date = dates[i]
 #            print(binx,date)
-            if type(date)==str and i%2==0: histos[place].GetXaxis().SetBinLabel(  binx, date[:-3] )
+            if type(date)==str and i%7==0: histos[place].GetXaxis().SetBinLabel(  binx, date[:-3] )
             error = 0.
             if date in data.values()[0]:
                 if not date in data[place] or data[place][date]==0: 
@@ -921,7 +923,7 @@ def fitLinear(h, places, firstDate, lastDate, predictionDate, fitOption="0SEQ", 
     functs_err = {}
     for place in places:
         print "### Fit %s ###"%place
-        functs[place] = copy.copy(ROOT.TF1("functionLinear"+str(place),"[0]+[1]*x+[2]*x*x",firstDate,predictionDate))
+        functs[place] = copy.copy(ROOT.TF1("functionLinear"+str(place),"[0]+[1]*x+[2]*x*x+[3]*x*x*x+[4]*x*x*x*x",firstDate,predictionDate))
         functs[place].SetParameters(h[place].GetBinContent(2), 0, 0)
         functs[place].FixParameter(1, 0)
         functs[place].FixParameter(2, 0)

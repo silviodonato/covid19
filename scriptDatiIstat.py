@@ -6,7 +6,7 @@ from operator import itemgetter, attrgetter
 
 
 import ROOT
-#ROOT.gStyle.SetOptStat(0)
+ROOT.gStyle.SetOptStat(0)
 ROOT.gROOT.SetBatch(1)
 #ROOT.gROOT.SetBatch(0)
 
@@ -14,25 +14,28 @@ resX, resY = 1920, 1080
 
 #dataISTAT, dates = fillDataISTATpickle('DatiISTAT/dati-giornalieri-comune/comune_giorno.csv', zerosuppression=100, pickleFileName = "temp_italia.pkl", writePickle = True)
 #dataISTAT, dates = fillDataISTATpickle('dataISTAT/comuni_giornaliero_30giugno.csv', zerosuppression=100, pickleFileName = "temp_italia_31maggio.pkl", writePickle = True)
-dataISTAT, dates = fillDataISTATpickle('dataISTAT/comuni_giornaliero_30settembre.csv',                                                                                      zerosuppression=1000, pickleFileName = "temp_italia_30settembre.pkl", writePickle = True)
+dataISTAT, dates = fillDataISTATpickle('dataISTAT/comuni_giornaliero_30settembre.csv',                                                                                      zerosuppression=1000, pickleFileName = "temp_italia_30settembre.pkl", writePickle = False)
 dataISTAT = makeCompatible(dataISTAT, firstDateDay=1, firstDateMonth=1)
 for i in range(len(dates)):
     dates[i] = dates[i].replace("/0","/")
     if dates[i][0]=="0": dates[i]=dates[i][1:]
 
-dates = extendDates(dates, 300)
+dates = extendDates(dates, 350)
 
 decessi     = selectComuniDatesAgeGender(dataISTAT, dates[:], places=None, ages=range(0,30), genders=[0,1])
 decessi_old = selectComuniDatesAgeGender(dataISTAT, dates[:], places=None, ages=range(0,30), genders=[2,3])
 
 places = decessi.keys()
+placesTest = []
+#placesTest = ["Italia","LaSpezia"]
+if len(placesTest)>0: places = placesTest
 #places = ["Italia"]
 
 
 
 firstDate = 0
 #lastDate = len(dates)-1
-lastDate = dates.index("5/1/20")
+lastDate = dates.index("9/30/20")
 #lastDate = dates.index("3/11/20")
 #predictionsDate = dates.index("6/30/20")
 predictionsDate = dates.index("9/30/20")
@@ -59,7 +62,8 @@ for place in places:
     decessi_excess_only_h[place] = decessi_h[place].Clone("ISTAT"+place)
     decessi_excess_only_h[place].Add(fitLinears[place],-1)
 
-fits, fits_res, fits_error              = fitExp(decessi_excess_only_h,      places, firstDate, lastDate, predictionsDate, maxConstExp=10000)
+#fits, fits_res, fits_error              = fitExp(decessi_excess_only_h,      places, firstDate, lastDate, predictionsDate, maxConstExp=10000)
+fits, fits_res, fits_error              = fitExp(decessi_excess_only_h,      places, dates.index("6/1/20"), lastDate, predictionsDate, maxConstExp=10000)
 fitGausss, fitGausss_res, fitGausss_error              = fitGauss(decessi_excess_only_h,      places, firstDate, dates.index("5/15/20"), predictionsDate, maxPar3=1E-9)
 fitTails, fitTails_res, fitTails_error              = fitExp(decessi_excess_only_h,      places, dates.index("3/27/20"), len(dates)-1, predictionsDate, maxConstExp=10000, tail=True)
 
@@ -97,10 +101,11 @@ firstDeath_f.close()
 for place in places:
 #for place in goodFits:
     decessi_h[place].SetLineColor(ROOT.kBlack)
-    decessi_old_h[place].SetLineColor(ROOT.kMagenta+1)
+    decessi_old_h[place].SetLineColor(ROOT.kMagenta)
+    decessi_excess_only_h[place].SetLineColor(ROOT.kRed)
     decessi_h[place].GetYaxis().SetTitle("Number of deaths / day")
     decessi_h[place].SetMinimum(0.1)
-    decessi_h[place].SetMaximum(2*decessi_h[place].GetMaximum())
+    decessi_h[place].SetMaximum(1.25*decessi_h[place].GetMaximum())
     fits[place].error = fits_error[place]
     fits[place].fitResult = fits_res[place]
     fits_sigOnly[place] = fits[place].Clone(fits[place].GetName()+"_sig")
@@ -129,7 +134,8 @@ for place in places:
     fitTails[place].SetLineStyle(2)
     fitTails[place].error = fitTails_error[place]
     fitTails[place].fitResult = fitTails_res[place]
-    savePlotNew([decessi_h[place], decessi_old_h[place], decessi_excess_only_h[place]], [fits[place], fits_sigOnly[place], fitTails[place], fitGausss[place], fitLinears[place]], "plotsISTAT/%s.png"%place, startDate, d3, True)
+    savePlotNew([decessi_h[place], decessi_old_h[place], decessi_excess_only_h[place]], [fits[place], fits_sigOnly[place], fitGausss[place], fitLinears[place]], "plotsISTAT/%s.png"%place, startDate, dates, d3, True)
+    #, fitTails[place]
 
 
 
