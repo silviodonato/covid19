@@ -950,17 +950,17 @@ def fitExp(h, places, firstDate, lastDate, predictionDate, fitOption="0SEQ", max
     functs_err = {}
     for place in places:
         print "### Fit %s ###"%place
-        functs[place] = copy.copy(ROOT.TF1("functionExp"+str(place),"exp((x-[1])/[0]) + [2]",firstDate,predictionDate))
-        functs[place].SetParameters(5, 10, 0 )
-        if tail: functs[place].SetParameters(-10, 200, 0 )
+        functs[place] = copy.copy(ROOT.TF1("functionExp"+str(place),"exp((x-[1])*[0]) + [2]",firstDate,predictionDate))
+        functs[place].SetParameters(1./5, 10, 0 )
+        if tail: functs[place].SetParameters(-1./10, 200, 0 )
 #        functs[place].FixParameter(2, 0)
 #        print h[place]
 #        print functs[place]
         functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
         functs[place].ReleaseParameter(2)
         functs[place].SetParLimits(2,0,maxConstExp)
-        functs[place].SetParLimits(0,0,100)
-        if tail: functs[place].SetParLimits(0,-100,0)
+        functs[place].SetParLimits(0,-100,100)
+        if tail: functs[place].SetParLimits(0,-100,100)
         functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
         functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
         color = colors[places.index(place)]
@@ -1119,6 +1119,8 @@ def saveCSV(predictions, places, dates, fn_predictions, fn_predictions_error):
 
 
 def savePlotNew(histos, functions, fName, xpred, dates, canvas, ISTAT=False):
+    print(type(dates))
+    print(dates)
     Nov1 = dates.index("11/1/20")
     histos = [h for h in histos if h]
     functions = [f for f in functions if f]
@@ -1148,12 +1150,12 @@ def savePlotNew(histos, functions, fName, xpred, dates, canvas, ISTAT=False):
             if "Gaus" in function.GetName():
                 if function.fitResult.Get(): 
 #                    leg.AddEntry(function, "Exp + Gauss fit", "lp")
-#                    leg.AddEntry(function, "#splitline{Gaussian fit}{#splitline{#mu=%.1f #pm %.1f Nov}{ #sigma=%.1f #pm %.1f}} "%(function.fitResult.GetParams()[1]-Nov1,function.fitResult.GetErrors()[1],function.fitResult.GetParams()[2],function.fitResult.GetErrors()[2]), "lep")
-                    leg.AddEntry(function, "#splitline{Gaussian fit}{#splitline{max %d}{ %.1f Nov}} "%( int(function.GetMaximum()), function.GetMaximumX() - Nov1), "lep")
+                    leg.AddEntry(function, "#splitline{Gaussian fit}{#splitline{#mu=%.1f #pm %.1f Nov}{ #sigma=%.1f #pm %.1f}} "%(function.fitResult.GetParams()[1]-Nov1,function.fitResult.GetErrors()[1],function.fitResult.GetParams()[2],function.fitResult.GetErrors()[2]), "lep")
+#                    leg.AddEntry(function, "#splitline{Gaussian fit}{#splitline{max %d}{ %.1f Nov}} "%( int(function.GetMaximum()), function.GetMaximumX() - Nov1), "lep")
                 else:
                     leg.AddEntry(function, "Gaussian fit", "lp")
             if "Exp" in function.GetName():
-                leg.AddEntry(function, "#splitline{Exponential fit}{#tau_{2} = %.1f days}"%(function.GetParameter(0)*ROOT.TMath.Log(2)), "lep")
+                leg.AddEntry(function, "#splitline{Exponential fit}{#tau_{2} = %.1f days}"%((1./function.GetParameter(0))*ROOT.TMath.Log(2)), "lep")
         else:
             leg.AddEntry(function, function.label, "lp")
             

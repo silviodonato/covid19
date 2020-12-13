@@ -30,7 +30,8 @@ resX, resY = 1920, 1080
 
 if useDatiISTAT: 
 #    dataISTAT, datesISTAT = fillDataISTATpickle('DatiISTAT/dati-giornalieri-comune/comune_giorno.csv',               zerosuppression=100, pickleFileName = "temp_italia.pkl", writePickle = False)
-    dataISTAT, datesISTAT = fillDataISTATpickle('dataISTAT/comuni_giornaliero_30giugno.csv',                                                                                      zerosuppression=100, pickleFileName = "temp_italia_31maggio.pkl", writePickle = False)
+#    dataISTAT, datesISTAT = fillDataISTATpickle('dataISTAT/comuni_giornaliero_30giugno.csv',                                                                                      zerosuppression=100, pickleFileName = "temp_italia_31maggio.pkl", writePickle = False)
+    dataISTAT, datesISTAT = fillDataISTATpickle('dataISTAT/comuni_giornaliero_30settembre.csv',                                                                                      zerosuppression=100, pickleFileName = "temp_italia_30settembre.pkl", writePickle = False)
     dataISTAT = makeCompatible(dataISTAT, firstDateDay=23, firstDateMonth=2)
 
 dataRegioni, dates = fillDataRegioni('dataItaly/dati-regioni/dpc-covid19-ita-regioni.csv')
@@ -190,7 +191,7 @@ for place in places:
             positiveHisto(histo[place])
 
 fits, fits_res, fits_error              = fitErf(confirmes_h,      places, firstDate, lastDate, predictionsDate)
-fitdiffs, fitdiffs_res, fitdiffs_error  = fitGaussExp(newConfirmes_h, places, firstDate, lastDate, predictionsDate)
+fitdiffs, fitdiffs_res, fitdiffs_error  = fitGaussAsymmetric(newConfirmes_h, places, firstDate, lastDate, predictionsDate)
 fitexps, fitexps_res, fitexps_error                = fitExp(newConfirmes_h, places, lastDate-14, lastDate, predictionsDate)
 fitexptotals, fitexptotals_res, fitexptotals_error = fitExp(confirmes_h,    places, lastDate-14-1, lastDate-1, predictionsDate)
 #fitexptotals, fitexptotals_res, fitexptotals_error = fitExp(confirmes_h,    places, lastDate-8, lastDate, predictionsDate)
