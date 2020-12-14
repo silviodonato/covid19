@@ -772,10 +772,14 @@ def fitGaussExp(h, places, firstDate, lastDate, predictionDate, fitOption="0SE",
     functs_err = {}
     for place in places:
         print "### Fit fitGaussExp %s ###"%place
-        functs[place] = copy.copy(ROOT.TF1("function"+place,"[0]*exp( (x<=[5])*(-0.5*(x-[1])**2/[2]) - (x>[5])*(0.5*([5]-[1])**2/[2])/(1+[4]*[5])*(1+[4]*x) ) + [3]",firstDate,predictionDate))
+#        functs[place] = copy.copy(ROOT.TF1("function"+place,"[0]*exp( (x<=[5])*(-0.5*(x-[1])**2/[2]) - (x>[5])*(0.5*([5]-[1])**2/[2])/(1+[4]*[5])*(1+[4]*x) ) + [3]",firstDate,predictionDate))
+
+        functs[place] = copy.copy(ROOT.TF1("function"+place,"[0]*exp( (x<=[5])*(-0.5*(x-[1])**2/[2]) - (x>[5])*(0.5*([5]-[1])**2/[2])/(1+-2/([1] + [5])*[5])*(1+-2/([1] + [5])*x) ) + [3]",firstDate,predictionDate)) ###FUNZIONA! DERIVATA CONTINUA
+#()-[2]*((0.5 *[4]* ([0] - [5])**2)/([4] *[5]* [2] + [2]) - [0]/[2]))
+
         fixSigma = 20
         functs[place].SetParameters(h[place].GetBinContent(h[place].GetMaximumBin()), h[place].GetMean(), fixSigma, 0, fixSigma)
-#        functs[place].FixParameter(5, 100000)
+        functs[place].FixParameter(5, 100000)
 #        functs[place].FixParameter(3, 0)
 #        print h[place]
 #        print functs[place]
