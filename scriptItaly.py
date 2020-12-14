@@ -5,7 +5,7 @@ from tools import colors, fillDataRegioni, fillDataISTATpickle, newCases, getRat
 
 placesTest = []
 #placesTest = ["Italia","LaSpezia"]
-#placesTest = ["Italia"]
+placesTest = ["Italia"]
 #placesTest = ["Veneto"]
 startFromZero = False
 daysSmearing = 1
@@ -192,7 +192,8 @@ for place in places:
             positiveHisto(histo[place])
 
 fits, fits_res, fits_error              = fitErf(confirmes_h,      places, firstDate, lastDate, predictionsDate)
-fitdiffs, fitdiffs_res, fitdiffs_error  = fitGaussAsymmetric(newConfirmes_h, places, firstDate, lastDate, predictionsDate)
+#fitdiffs, fitdiffs_res, fitdiffs_error  = fitGaussAsymmetric(newConfirmes_h, places, firstDate, lastDate, predictionsDate)
+fitdiffs, fitdiffs_res, fitdiffs_error  = fitGaussExp(newConfirmes_h, places, firstDate, lastDate, predictionsDate)
 fitexps, fitexps_res, fitexps_error                = fitExp(newConfirmes_h, places, lastDate-14, lastDate, predictionsDate)
 fitexptotals, fitexptotals_res, fitexptotals_error = fitExp(confirmes_h,    places, lastDate-14-1, lastDate-1, predictionsDate)
 #fitexptotals, fitexptotals_res, fitexptotals_error = fitExp(confirmes_h,    places, lastDate-8, lastDate, predictionsDate)
