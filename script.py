@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 #import csv
 #import copy
-from tools import colors, fillData, newCases, getRatio, makeHistos, fitErf, fitGaussAsymmetric, fitExp, extendDates, saveCSV, savePlotNew, getPrediction, getPredictionErf, shiftHisto
+from tools import colors, fillData, newCases, getRatio, makeHistos, fitErf, fitGaussAsymmetric, fitExp, extendDates, saveCSV, savePlotNew, getPrediction, getPredictionErf, shiftHisto, applyScaleFactors, useLog, positiveHisto
+
+useScaleFactor = True
 
 import ROOT
 ROOT.gStyle.SetOptStat(0)
@@ -99,16 +101,26 @@ fitdiffs   = {}
 
 c1 = ROOT.TCanvas("c1","",resX,resY)
 
-
+smear = 1
+eType = "3sqrtN"
 positives_h     = makeHistos("histo_positives", positives,    dates, places, firstDate, lastDate, predictionsDate, 0, cutTails=False, errorType='cumulative', lineWidth=2, daysSmearing=1)
 confirmes_h     = makeHistos("histo_confirmes", confirmes,    dates, places, firstDate, lastDate, predictionsDate, 0, cutTails=False, errorType='cumulative', lineWidth=2, daysSmearing=1)
 recoveres_h     = makeHistos("histo_recoveres", recoveres,    dates, places, firstDate, lastDate, predictionsDate, 0, cutTails=False, errorType='cumulative', lineWidth=2, daysSmearing=1)
 deaths_h        = makeHistos("histo_deaths",    deaths,       dates, places, firstDate, lastDate, predictionsDate, 0, cutTails=False, errorType='cumulative', lineWidth=2, daysSmearing=1)
 #histos          = makeHistos(confirmes, places, firstDate, lastDate, predictionsDate, cumulativeError=True)
-newConfirmes_h  = makeHistos("histo_newConfirmes", newConfirmes, dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False,  lineWidth=2, daysSmearing=7)
-newRecoveres_h  = makeHistos("histo_newRecoveres", newRecoveres, dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2, daysSmearing=7)
-newDeaths_h     = makeHistos("histo_newDeaths",    newDeaths,    dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2, daysSmearing=7)
+newConfirmes_h  = makeHistos("histo_newConfirmes", newConfirmes, dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False,  lineWidth=2, daysSmearing=smear, errorType=eType)
+newRecoveres_h  = makeHistos("histo_newRecoveres", newRecoveres, dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2, daysSmearing=smear, errorType=eType)
+newDeaths_h     = makeHistos("histo_newDeaths",    newDeaths,    dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2, daysSmearing=smear, errorType=eType)
 #newPositives_h  = makeHistos(newPositives, dates, places, firstDate, lastDate, predictionsDate)
+
+for place in places:
+    if useScaleFactor:
+        for histo in [newConfirmes_h,newConfirmes_h,newRecoveres_h,newDeaths_h]:
+            applyScaleFactors(histo[place], errorType=eType)
+    if useLog:
+        for histo in [newConfirmes_h,newConfirmes_h,newRecoveres_h,newDeaths_h]:
+            positiveHisto(histo[place])
+
 
 fits, fits_res, fits_error                         = fitErf(confirmes_h,      places, firstDate, lastDate, predictionsDate)
 fitdiffs, fitdiffs_res, fitdiffs_error             = fitGaussAsymmetric(newConfirmes_h, places, firstDate, lastDate, predictionsDate)
