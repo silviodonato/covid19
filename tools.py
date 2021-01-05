@@ -338,7 +338,7 @@ def fillDataRegioni(fileName, column_regione = "denominazione_regione"):
             if line_count ==0:
                 labels = row[:]
             else:
-                date = row[labels.index("data")].split(" ")[0].split("T")[0].replace("-0","-").replace("2020-","").replace("-","/").replace("/0","/")+"/20"
+                date = row[labels.index("data")].split(" ")[0].split("T")[0].replace("-0","-").replace("2020-","").replace("2021-","").replace("-","/").replace("/0","/")+"/20"
                 if not date in dates: dates.append(date)
                 regione = row[labels.index(column_regione)]
                 if regione == "Fuori Regione / Provincia Autonoma": continue
