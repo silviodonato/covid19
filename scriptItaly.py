@@ -5,7 +5,7 @@ from tools import colors, fillDataRegioni, fillDataISTATpickle, newCases, getRat
 
 placesTest = []
 #placesTest = ["Italia","LaSpezia"]
-#placesTest = ["Italia"]
+placesTest = ["Italia"]
 #placesTest = ["Veneto"]
 startFromZero = False
 daysSmearing = 1

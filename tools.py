@@ -338,7 +338,9 @@ def fillDataRegioni(fileName, column_regione = "denominazione_regione"):
             if line_count ==0:
                 labels = row[:]
             else:
-                date = row[labels.index("data")].split(" ")[0].split("T")[0].replace("-0","-").replace("2020-","").replace("2021-","").replace("-","/").replace("/0","/")+"/20"
+                date = row[labels.index("data")].split(" ")[0].split("T")[0].replace("-0","-").replace("2020-","").replace("2021-","").replace("-","/").replace("/0","/")
+                if "2020" in row[labels.index("data")]: date = date+"/20"
+                if "2021" in row[labels.index("data")]: date = date+"/21"
                 if not date in dates: dates.append(date)
                 regione = row[labels.index(column_regione)]
                 if regione == "Fuori Regione / Provincia Autonoma": continue
@@ -1001,6 +1003,10 @@ def extendDates(dates, nextend):
             newDate = "12/%d/20"%(i-275)
         elif i>306 and i<=337:
             newDate = "1/%d/21"%(i-306)
+        elif i>337 and i<=365:
+            newDate = "2/%d/21"%(i-337)
+        elif i>365 and i<=396:
+            newDate = "3/%d/21"%(i-365)
         if not newDate in dates: dates.append(newDate)
     return dates
 
