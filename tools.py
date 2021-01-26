@@ -34,8 +34,8 @@ scuola24=[
 "Sardegna",
 ]
 
-#useLog = False
-useLog = True
+useLog = False
+#useLog = True
 fixSigma = 8
 #maxPar3 = 1E4
 maxPar3 = 1
@@ -978,6 +978,7 @@ def fitExp(h, places, firstDate, lastDate, predictionDate, fitOption="0SEQ", max
 
 
 def extendDates(dates, nextend):
+    offset = 365
     ndates = len(dates)
     for i in range(1,nextend):
     #    dates.append(dates[ndates-1]+"+"+str(i))
@@ -1005,8 +1006,34 @@ def extendDates(dates, nextend):
             newDate = "1/%d/21"%(i-306)
         elif i>337 and i<=365:
             newDate = "2/%d/21"%(i-337)
-        elif i>365 and i<=396:
-            newDate = "3/%d/21"%(i-365)
+#        elif i>365 and i<=396:
+#            newDate = "3/%d/21"%i
+        elif i>0+offset and i<=31+offset:
+            newDate = "3/%d/21"%i
+        elif i>31+offset and i<=61+offset:
+            newDate = "4/%d/21"%(i-31-offset)
+        elif i>61+offset and i<=92+offset:
+            newDate = "5/%d/21"%(i-61-offset)
+        elif i>92+offset and i<=122+offset:
+            newDate = "6/%d/21"%(i-92-offset)
+        elif i>122+offset and i<=153+offset:
+            newDate = "7/%d/21"%(i-122-offset)
+        elif i>153+offset and i<=184+offset:
+            newDate = "8/%d/21"%(i-153-offset)
+        elif i>184+offset and i<=214+offset:
+            newDate = "9/%d/21"%(i-184-offset)
+        elif i>214+offset and i<=245+offset:
+            newDate = "10/%d/21"%(i-214-offset)
+        elif i>245+offset and i<=275+offset:
+            newDate = "11/%d/21"%(i-245-offset)
+        elif i>275+offset and i<=306+offset:
+            newDate = "12/%d/21"%(i-275-offset)
+        elif i>306+offset and i<=337+offset:
+            newDate = "1/%d/22"%(i-306-offset)
+        elif i>337+offset and i<=365+offset:
+            newDate = "2/%d/22"%(i-337-offset)
+        elif i>365+offset and i<=396+offset:
+            newDate = "3/%d/22"%i
         if not newDate in dates: dates.append(newDate)
     return dates
 

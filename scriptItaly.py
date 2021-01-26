@@ -5,7 +5,7 @@ from tools import colors, fillDataRegioni, fillDataISTATpickle, newCases, getRat
 
 placesTest = []
 #placesTest = ["Italia","LaSpezia"]
-#placesTest = ["Italia"]
+placesTest = ["Italia"]
 #placesTest = ["Veneto"]
 startFromZero = False
 daysSmearing = 1
@@ -54,7 +54,7 @@ if useDatiISTAT:
     newDeathIstats_old = selectComuniDatesAgeGender(dataISTAT, dates, places=None, ages=range(0,30), genders=[2,3])
 
 lastDateData = len(dates)-1
-dates = extendDates(dates, 350)
+dates = extendDates(dates, 650)
 ################
 
 firstDate = 0
@@ -62,7 +62,9 @@ firstDate = 0
 #firstDate = dates.index("5/15/20")
 #firstDate = dates.index("5/15/20")
 #firstDate = dates.index("9/1/20")
-firstDate = dates.index("10/1/20")
+#firstDate = dates.index("12/30/20")
+#firstDate = dates.index("12/31/20")
+firstDate = dates.index("1/3/21")
 #firstDate = dates.index("4/1/20")
 #firstDate = 16
 lastDate = lastDateData - 1
@@ -70,7 +72,7 @@ lastDate = lastDateData - 1
 #lastDate = dates.index("3/1/20")
 #lastDate = 30
 #predictionsDate = dates.index("12/31/20")
-predictionsDate = dates.index("1/30/21")
+predictionsDate = dates.index("5/3/21")
 #predictionsDate = 95
 
 #firstDate = dates.index("3/1/20")
