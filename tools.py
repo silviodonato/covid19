@@ -385,14 +385,14 @@ def selectComuniDatesAgeGender(dataISTAT, dates, places=None, ages=[], genders=[
                             data[place_][date] = data[place_][date] + dataISTAT[place][date][age][gender] if date in data[place_] else dataISTAT[place][date][age][gender]
     return data
 
-def getColumn(dataRegioni_, label):
+def getColumn(dataRegioni_, label, scaleFactor=1):
     data = {}
     for regione in dataRegioni_:
         for place in regions("", regione, ["Italia"]):
             if not place in data: data[place] = {}
             for date in dataRegioni_[regione]:
                 if not date in data[place]: data[place][date] = 0
-                data[place][date] += int(dataRegioni_[regione][date][label])
+                data[place][date] += int(dataRegioni_[regione][date][label]*scaleFactor)
     return data
 
 def newCases(cases, dates):
