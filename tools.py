@@ -34,8 +34,8 @@ scuola24=[
 "Sardegna",
 ]
 
-useLog = False
-#useLog = True
+#useLog = False
+useLog = True
 fixSigma = 8
 #maxPar3 = 1E4
 maxPar3 = 1
@@ -59,7 +59,7 @@ ROOT.kRed,
 ROOT.kMagenta,
 ROOT.kBlue,
 ROOT.kCyan+1,
-ROOT.kGreen+1,
+ROOT.kGray+1,
 
 ROOT.kOrange,
 ROOT.kPink,
@@ -86,35 +86,45 @@ maps = {
 
 #maps["Centro e Sud"] = maps["Centro"] + maps["Sud"]
 
+positivi    = ROOT.kMagenta+1
+contagiati  = ROOT.kBlue
+ricoverati  = ROOT.kGreen+1
+guariti     = ROOT.kRed
+intensiva   = ROOT.kBlue+2
+test        = ROOT.kGray+2
+decessi     = ROOT.kBlack
+storico     = ROOT.kMagenta
+prediction  = ROOT.kMagenta+2
+istat       = ROOT.kMagenta+1
+funcExp     = ROOT.kMagenta
 colorMap = {
-    "positives":  ROOT.kYellow+2,
-    "histo_confirmes":  ROOT.kBlue,
-    "recoveres":  ROOT.kRed,
-    "deaths":     ROOT.kBlack,
-    "newConfirmes":   ROOT.kBlue,
-    "newRecoveres":   ROOT.kRed,
-    "newDeaths":      ROOT.kBlack,
-    "storico":        ROOT.kMagenta,
-    "prediction":      ROOT.kMagenta+2,
-    "functionExp":      ROOT.kMagenta,
-    "functionExp_newConfirmes":      ROOT.kMagenta,
-    "functionExp_confirmes":      ROOT.kMagenta,
-    "intensiva":      ROOT.kGreen+2,
-    "ricoverati":      ROOT.kOrange+1,
-    "test":      ROOT.kGray+2,
-    "newIntensiva":      ROOT.kGreen+2,
-    "newRicoverati":      ROOT.kOrange+1,
-    "newTest":      ROOT.kGray+2,
-    "Decessi":      ROOT.kBlack,
-    "decessi":      ROOT.kBlack,
-    "ISTAT":        ROOT.kMagenta+1,
-#    "storico":      ROOT.kBlack,
-    "predictionConfirmes":   ROOT.kBlue,
-    "predictionRecoveres":   ROOT.kRed,
-    "predictionDeaths":      ROOT.kBlack,
-    "predictionIntensiva":      ROOT.kGreen+2,
-    "predictionRicoverati":      ROOT.kOrange+1,
-    "predictionTest":      ROOT.kGray+2,
+    "positives": positivi ,
+    "histo_confirmes": contagiati ,
+    "recoveres":  guariti,
+    "deaths":     decessi,
+    "newConfirmes":   contagiati,
+    "newRecoveres":   guariti,
+    "newDeaths":      decessi,
+    "storico":        storico,
+    "prediction":      prediction,
+    "functionExp":      funcExp,
+    "functionExp_newConfirmes":      funcExp,
+    "functionExp_confirmes":      funcExp,
+    "intensiva":      intensiva,
+    "ricoverati":      ricoverati,
+    "test":      test,
+    "newIntensiva":      intensiva,
+    "newRicoverati":      ricoverati,
+    "newTest":      test,
+    "Decessi":      decessi,
+    "decessi":      decessi,
+    "ISTAT":        istat,
+    "predictionConfirmes":   contagiati,
+    "predictionRecoveres":   guariti,
+    "predictionDeaths":      decessi,
+    "predictionIntensiva":      intensiva,
+    "predictionRicoverati":      ricoverati,
+    "predictionTest":      test,
 }
 
 labelMap = {
@@ -392,7 +402,7 @@ def getColumn(dataRegioni_, label, scaleFactor=1):
             if not place in data: data[place] = {}
             for date in dataRegioni_[regione]:
                 if not date in data[place]: data[place][date] = 0
-                data[place][date] += int(dataRegioni_[regione][date][label]*scaleFactor)
+                data[place][date] += int(dataRegioni_[regione][date][label])*scaleFactor
     return data
 
 def newCases(cases, dates):
@@ -1006,10 +1016,8 @@ def extendDates(dates, nextend):
             newDate = "1/%d/21"%(i-306)
         elif i>337 and i<=365:
             newDate = "2/%d/21"%(i-337)
-#        elif i>365 and i<=396:
-#            newDate = "3/%d/21"%i
         elif i>0+offset and i<=31+offset:
-            newDate = "3/%d/21"%i
+            newDate = "3/%d/21"%(i-offset)
         elif i>31+offset and i<=61+offset:
             newDate = "4/%d/21"%(i-31-offset)
         elif i>61+offset and i<=92+offset:
@@ -1107,13 +1115,13 @@ def saveCSV(predictions, places, dates, fn_predictions, fn_predictions_error):
 #        histoTerapiaIntensiva.SetLineStyle(1)
 #        histoTerapiaIntensiva.Draw("HIST,PL,same")
 #    if histoRicoverati: 
-#        histoRicoverati.SetLineColor(ROOT.kOrange+1)
-##        histoRicoverati.SetFillColor(ROOT.kOrange+1)
+#        histoRicoverati.SetLineColor(ROOT.kGreen+1)
+##        histoRicoverati.SetFillColor(ROOT.kGreen+1)
 #        histoRicoverati.SetLineStyle(1)
 #        histoRicoverati.Draw("HIST,PL,same")
 #    if histoTamponi: 
-#        histoTamponi.SetLineColor(ROOT.kGray+2)
-##        histoTamponi.SetFillColor(ROOT.kGray+2)
+#        histoTamponi.SetLineColor(ROOT.kGreen+3)
+##        histoTamponi.SetFillColor(ROOT.kGreen+3)
 #        histoTamponi.SetLineStyle(1)
 #        histoTamponi.Draw("HIST,PL,same")
 #    line = ROOT.TLine(xpred+0.5,0,xpred+0.5,histoConfirmed.GetMaximum())
@@ -1163,16 +1171,21 @@ def savePlotNew(histos, functions, fName, xpred, dates, canvas, ISTAT=False):
     canvas.SetTitle("")
     leg = ROOT.TLegend(0.9,0.1,1.0,0.9)
     maxim = 0
+    minim = 1E9
     for histo in histos:
         maxim = max(maxim, histo.GetMaximum())
+        minim = min(minim, histo.GetMinimum())
+        maxim = min(maxim,1E7)
         if not "prediction" in histo.GetName():
             leg.AddEntry(histo, getLabel(histo.GetName()), "lep")
         if not "ISTAT" in histo.GetName(): histo.SetLineColor(getColor(histo.GetName()))
 #        histo.SetFillColor(getColor(histo.GetName()))
         histo.SetLineStyle(1)
     
+    if useLog: minim=max(1,minim)
+    
     for function in functions:
-        function.SetMinimum(1)
+        function.SetMinimum(minim)
         if not "ISTAT" in histo.GetName(): function.SetLineColor(getColor(function.GetName()))
 #        function.SetFillStyle(0)
         function.SetFillColor(function.GetLineColor())
@@ -1196,6 +1209,7 @@ def savePlotNew(histos, functions, fName, xpred, dates, canvas, ISTAT=False):
     line.SetLineWidth(3)
     histo
     histos[0].SetMaximum(maxim)
+    histos[0].SetMinimum(minim)
     histos[0].Draw("")
     for i, histo in enumerate(reversed(histos+[histos[0]])):
         if i == 0: same = ""

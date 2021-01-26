@@ -3,6 +3,7 @@
 #import copy
 from tools import colors, fillDataRegioni, fillDataISTATpickle, newCases, getRatio, makeHistos, fitErf, fitGauss, fitGaussAsymmetric, fitExp, extendDates, saveCSV, savePlotNew, getPrediction, getPredictionErf, getColumn, selectComuniDatesAgeGender, makeCompatible, fitLinear, fitTwoExp, fitExpGauss, applyScaleFactors, useLog, positiveHisto, fitTwoGaussDiff, fitGaussExp
 
+
 placesTest = []
 #placesTest = ["Italia","LaSpezia"]
 placesTest = ["Italia"]
@@ -40,7 +41,7 @@ if (doProvince): dataProvince, dates = fillDataRegioni('dataItaly/dati-province/
 
 #data,stato,codice_regione,denominazione_regione,lat,long,ricoverati_con_sintomi,terapia_intensiva,totale_ospedalizzati,isolamento_domiciliare,totale_attualmente_Positive,nuovi_attualmente_Positive,dimessi_guariti,deceduti,totale_casi,tamponi
 
-tests = getColumn(dataRegioni, "tamponi")
+tests = getColumn(dataRegioni, "tamponi", )
 intensivas = getColumn(dataRegioni, "terapia_intensiva")
 ricoveratis = getColumn(dataRegioni, "ricoverati_con_sintomi")
 confirmes = getColumn(dataRegioni, "totale_casi")
@@ -61,10 +62,10 @@ firstDate = 0
 #firstDate = dates.index("6/1/20")
 #firstDate = dates.index("5/15/20")
 #firstDate = dates.index("5/15/20")
-#firstDate = dates.index("9/1/20")
+firstDate = dates.index("12/1/20")
 #firstDate = dates.index("12/30/20")
 #firstDate = dates.index("12/31/20")
-firstDate = dates.index("1/3/21")
+#firstDate = dates.index("1/3/21")
 #firstDate = dates.index("4/1/20")
 #firstDate = 16
 lastDate = lastDateData - 1
@@ -72,7 +73,7 @@ lastDate = lastDateData - 1
 #lastDate = dates.index("3/1/20")
 #lastDate = 30
 #predictionsDate = dates.index("12/31/20")
-predictionsDate = dates.index("5/3/21")
+predictionsDate = dates.index("3/1/21")
 #predictionsDate = 95
 
 #firstDate = dates.index("3/1/20")
