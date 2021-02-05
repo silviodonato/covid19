@@ -262,7 +262,7 @@ def fillData(fileName):
 def fillDataISTATpickle(fileName, zerosuppression=0, pickleFileName="temp.pkl", writePickle=True):
     if writePickle:
         print "Writing pickle file"
-        dataISTAT, dates = fillDataISTAT(fileName, zerosuppression=100)
+        dataISTAT, dates = fillDataISTAT(fileName, zerosuppression)
         output = open(pickleFileName,'wb')
         pickle.dump(dataISTAT, output)
         pickle.dump(dates, output)
@@ -930,14 +930,26 @@ def fitLinear(h, places, firstDate, lastDate, predictionDate, fitOption="0SEQ", 
     functs_err = {}
     for place in places:
         print "### Fit %s ###"%place
-        functs[place] = copy.copy(ROOT.TF1("functionLinear"+str(place),"[0]+[1]*x+[2]*x*x+[3]*x*x*x+[4]*x*x*x*x",firstDate,predictionDate))
+        functs[place] = copy.copy(ROOT.TF1("functionLinear"+str(place),"[0]+[1]*x+[2]*x*x+[3]*x*x*x+[4]*x*x*x*x+[5]*x*x*x*x*x+[6]*x*x*x*x*x*x",firstDate,predictionDate))
         functs[place].SetParameters(h[place].GetBinContent(2), 0, 0)
         functs[place].FixParameter(1, 0)
         functs[place].FixParameter(2, 0)
+        functs[place].FixParameter(3, 0)
+        functs[place].FixParameter(4, 0)
+        functs[place].FixParameter(5, 0)
+        functs[place].FixParameter(6, 0)
         functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
         functs[place].ReleaseParameter(1)
         functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
         functs[place].ReleaseParameter(2)
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
+        functs[place].ReleaseParameter(3)
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
+        functs[place].ReleaseParameter(4)
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
+        functs[place].ReleaseParameter(5)
+        functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
+        functs[place].ReleaseParameter(6)
         functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
         color = colors[places.index(place)]
         functs[place].SetLineColor(color)
@@ -1156,7 +1168,8 @@ def saveCSV(predictions, places, dates, fn_predictions, fn_predictions_error):
 #    print fName
 
 
-def savePlotNew(histos, functions, fName, xpred, dates, canvas, ISTAT=False):
+def savePlotNew(histos, functions, fName, xpred, dates, canvas, ISTAT=False, log=useLog):
+    useLog=log
     print(type(dates))
     print(dates)
     Nov1 = dates.index("11/1/20")

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #import csv
 #import copy
-from tools import colors, fillDataISTATpickle, selectComuniDatesAgeGender, newCases, getRatio, makeHistos, fitDecessi, fitErf, fitGauss, fitLinear, fitExp, extendDates, saveCSV, savePlotNew, getPrediction, getPredictionErf, getColumn, makeCompatible
+from tools import colors, fillDataISTATpickle, selectComuniDatesAgeGender, newCases, getRatio, makeHistos, fitDecessi, fitErf, fitGauss, fitLinear, fitExp, extendDates, saveCSV, savePlotNew, getPrediction, getPredictionErf, getColumn, makeCompatible, fillDataRegioni
 from operator import itemgetter, attrgetter
 
 
@@ -14,7 +14,8 @@ resX, resY = 1920, 1080
 
 #dataISTAT, dates = fillDataISTATpickle('DatiISTAT/dati-giornalieri-comune/comune_giorno.csv', zerosuppression=100, pickleFileName = "temp_italia.pkl", writePickle = True)
 #dataISTAT, dates = fillDataISTATpickle('dataISTAT/comuni_giornaliero_30giugno.csv', zerosuppression=100, pickleFileName = "temp_italia_31maggio.pkl", writePickle = True)
-dataISTAT, dates = fillDataISTATpickle('dataISTAT/comuni_giornaliero_30settembre.csv',                                                                                      zerosuppression=1000, pickleFileName = "temp_italia_30settembre.pkl", writePickle = False)
+#dataISTAT, dates = fillDataISTATpickle('dataISTAT/comuni_giornaliero_30settembre.csv',                                                                                      zerosuppression=1000, pickleFileName = "temp_italia_30settembre.pkl", writePickle = False)
+dataISTAT, dates = fillDataISTATpickle('dataISTAT/comuni_giornaliero_30novembre.csv',                                                                                      zerosuppression=10000, pickleFileName = "temp_italia_30novembre.pkl", writePickle = False)
 dataISTAT = makeCompatible(dataISTAT, firstDateDay=1, firstDateMonth=1)
 for i in range(len(dates)):
     dates[i] = dates[i].replace("/0","/")
@@ -32,13 +33,16 @@ if len(placesTest)>0: places = placesTest
 #places = ["Italia"]
 
 
+dataRegioni, dates_nd = fillDataRegioni('dataItaly/dati-regioni/dpc-covid19-ita-regioni.csv')
+deaths = getColumn(dataRegioni, "deceduti")
+newDeaths = newCases(deaths, dates_nd)
 
 firstDate = 0
 #lastDate = len(dates)-1
-lastDate = dates.index("9/30/20")
+lastDate = dates.index("11/30/20")
 #lastDate = dates.index("3/11/20")
 #predictionsDate = dates.index("6/30/20")
-predictionsDate = dates.index("9/30/20")
+predictionsDate = dates.index("11/30/20")
 #predictionsDate = dates.index("3/8/20")
 startDate = lastDate
 #lastDate2015 = dates.index("4/30/20")
@@ -98,6 +102,10 @@ for x in sorted(firstDeathsInv.keys()):
 
 firstDeath_f.close()
 
+daysSmearing=1
+eType = "3sqrtN"
+newDeaths_h     = makeHistos("histo_newDeaths", newDeaths,    dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2, daysSmearing=daysSmearing, errorType=eType)
+
 for place in places:
 #for place in goodFits:
     decessi_h[place].SetLineColor(ROOT.kBlack)
@@ -134,7 +142,11 @@ for place in places:
     fitTails[place].SetLineStyle(2)
     fitTails[place].error = fitTails_error[place]
     fitTails[place].fitResult = fitTails_res[place]
-    savePlotNew([decessi_h[place], decessi_old_h[place], decessi_excess_only_h[place]], [fits[place], fits_sigOnly[place], fitGausss[place], fitLinears[place]], "plotsISTAT/%s.png"%place, startDate, dates, d3, True)
+    if not place in newDeaths_h:
+        newDeaths_h[place]=0
+#    savePlotNew([decessi_h[place], decessi_old_h[place], decessi_excess_only_h[place]], [fits[place], fits_sigOnly[place], fitGausss[place], fitLinears[place]], "plotsISTAT/%s.png"%place, startDate, dates, d3, True)
+    savePlotNew([decessi_h[place], decessi_old_h[place], decessi_excess_only_h[place],newDeaths_h[place]], [fits[place], fits_sigOnly[place], fitGausss[place], fitLinears[place]], "plotsISTAT/%s.png"%place, startDate, dates, d3, True, False)
+    
     #, fitTails[place]
 
 
