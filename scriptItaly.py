@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 #import csv
 #import copy
-from tools import colors, fillDataRegioni, fillDataISTATpickle, newCases, getRatio, makeHistos, fitErf, fitGauss, fitGaussAsymmetric, fitExp, extendDates, saveCSV, savePlotNew, getPrediction, getPredictionErf, getColumn, selectComuniDatesAgeGender, makeCompatible, fitLinear, fitTwoExp, fitExpGauss, applyScaleFactors, useLog, positiveHisto, fitTwoGaussDiff, fitGaussExp
+from tools import colors, fillDataRegioni, fillDataISTATpickle, newCases, getRatio, makeHistos, fitErf, fitGauss, fitGaussAsymmetric, fitExp, extendDates, saveCSV, savePlotNew, getPrediction, getPredictionErf, getColumn, selectComuniDatesAgeGender, makeCompatible, fitLinear, fitTwoExp, fitExpGauss, applyScaleFactors, useLog, positiveHisto, fitTwoGaussDiff, fitGaussExp, getScaled
 
 
-placesTest = []
+#placesTest = []
 #placesTest = ["Italia","LaSpezia"]
 #placesTest = ["Italia"]
 #placesTest = ["Veneto"]
-startFromZero = False
+startFromZero = True
 daysSmearing = 1
 #doProvince = False
 doProvince = True
@@ -62,10 +62,11 @@ firstDate = 0
 #firstDate = dates.index("6/1/20")
 #firstDate = dates.index("5/15/20")
 #firstDate = dates.index("5/15/20")
-firstDate = dates.index("12/1/20")
+#firstDate = dates.index("9/1/20")
+#firstDate = dates.index("12/1/20")
 #firstDate = dates.index("12/30/20")
 #firstDate = dates.index("12/31/20")
-#firstDate = dates.index("1/3/21")
+firstDate = dates.index("1/18/21")
 #firstDate = dates.index("4/1/20")
 #firstDate = 16
 lastDate = lastDateData - 1
@@ -73,7 +74,7 @@ lastDate = lastDateData - 1
 #lastDate = dates.index("3/1/20")
 #lastDate = 30
 #predictionsDate = dates.index("12/31/20")
-predictionsDate = dates.index("3/1/21")
+predictionsDate = dates.index("4/18/21")
 #predictionsDate = 95
 
 #firstDate = dates.index("3/1/20")
@@ -144,6 +145,34 @@ if len(placesTest)>0: places = placesTest
 
 ################
 
+## scale used ##
+confirmes_scale=1
+deaths_scale=40
+deathIstatExcess_scale=20
+intensivas_scale=100 
+ricoveratis_scale=20
+tests_scale=0.10
+
+recoveres_scale=confirmes_scale
+positives_scale=confirmes_scale
+predictionConfirmes_scale=confirmes_scale
+predictionRecoveres_scale=confirmes_scale
+predictionPositives_scale=confirmes_scale
+predictionIntensivas_scale=intensivas_scale
+predictionRicoveratis_scale=ricoveratis_scale
+predictionDeaths_scale=deaths_scale
+
+newConfirmes_scale=confirmes_scale
+newRecoveres_scale=confirmes_scale
+newDeaths_scale=deaths_scale
+newDeathIstatExcess_scale=deaths_scale
+newIntensivas_scale=intensivas_scale 
+newRicoveratis_scale=ricoveratis_scale
+newTests_scale=tests_scale
+newPositives_scale=confirmes_scale
+
+################
+
 fits   = {}
 fits2   = {}
 fitdiffs   = {}
@@ -170,7 +199,8 @@ if startFromZero:
 #            val = float(minVal_-1)
             val = histo[place].GetBinContent(1)
             for i in range(histo[place].GetNbinsX()+2):
-                histo[place].SetBinContent(i, histo[place].GetBinContent(i) - val)
+                if histo[place].GetBinContent(i)!=0:
+                    histo[place].SetBinContent(i, histo[place].GetBinContent(i) - val)
 #            removeOffset(histo[place], firstDate)
 
 #print("CHECK",positives_h[place].GetBinContent(1))
@@ -493,7 +523,12 @@ for place in places:
     if not place in newDeathIstatExcess_h: newDeathIstatExcess_h[place] = None
     savePlotNew([confirmes_h[place], recoveres_h[place], deaths_h[place], predictionConfirmes_h[place], predictionDeaths_h[place], predictionRecoveres_h[place], predictionIntensivas_h[place], predictionPositives_h[place], predictionRicoveratis_h[place], intensivas_h[place], ricoveratis_h[place], tests_h[place] if useLog else 0, positives_h[place]], [fitexptotals[place]], "plotsRegioni/%s.png"%place, startDate, dates, d3)
     savePlotNew([newConfirmes_h[place], newRecoveres_h[place], newDeaths_h[place], newDeathIstatExcess_h[place], newIntensivas_h[place], newRicoveratis_h[place], newTests_h[place] if useLog else 0, newPositives_h[place]], [fitexps[place], fitdiffs[place], fitdiffRecoveres[place], fitdiffDeaths[place], fitdiffIntensivas[place], fitdiffPositives[place], fitdiffRicoveratis[place]], "plotsRegioni/%s_newCases.png"%place, startDate, dates, d3)
-#    savePlotNew([newDeathIstats_old_h[place]], [fitLinears[place]], "plotsRegioni/%s_newCases.png"%place, startDate, d3)
+    
+    savePlotNew([getScaled(newConfirmes_h[place],newConfirmes_scale), getScaled(newRecoveres_h[place],newRecoveres_scale), getScaled(newDeaths_h[place],newDeaths_scale), getScaled(newDeathIstatExcess_h[place],newDeathIstatExcess_scale), getScaled(newIntensivas_h[place],newIntensivas_scale), getScaled(newRicoveratis_h[place],newRicoveratis_scale), getScaled(newTests_h[place],newTests_scale), getScaled(newPositives_h[place],newPositives_scale)], [], "plotsRegioni/%s_newCases_scaled.png"%place, startDate, dates, d3, log=False)
+    
+    fromZero=False
+    savePlotNew([getScaled(confirmes_h[place], confirmes_scale, fromZero), getScaled(recoveres_h[place], recoveres_scale, fromZero), getScaled(deaths_h[place], deaths_scale, fromZero), getScaled(predictionConfirmes_h[place], predictionConfirmes_scale, fromZero), getScaled(predictionDeaths_h[place], predictionDeaths_scale, fromZero), getScaled(predictionRecoveres_h[place], predictionRecoveres_scale, fromZero), getScaled(predictionIntensivas_h[place], predictionIntensivas_scale, fromZero), getScaled(predictionPositives_h[place], predictionPositives_scale, fromZero), getScaled(predictionRicoveratis_h[place], predictionRicoveratis_scale, fromZero), getScaled(intensivas_h[place], intensivas_scale, fromZero), getScaled(ricoveratis_h[place], ricoveratis_scale, fromZero), getScaled(tests_h[place], tests_scale, fromZero), getScaled(positives_h[place], positives_scale, fromZero)], [], "plotsRegioni/%s_scaled.png"%place, startDate, dates, d3, log=False)
+
 
 if (doProvince): 
     for place in province:

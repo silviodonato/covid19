@@ -1168,6 +1168,23 @@ def saveCSV(predictions, places, dates, fn_predictions, fn_predictions_error):
 #    print fName
 
 
+def getScaled(histo, scale, fromZero=False):
+    print(histo,scale)
+    if type(histo)==ROOT.TH1F:
+        histo = histo.Clone(histo.GetName()+"_scaled")
+        histo.Scale(scale)
+        if scale>1: histo.label_sf = "(x%d)"%scale
+        elif scale<1: histo.label_sf = "(x%.2f)"%scale
+        if fromZero:
+            val = histo.GetBinContent(1)
+            for i in range(histo.GetNbinsX()+2):
+                print(i, histo.GetBinContent(i))
+                if histo.GetBinContent(i)!=0:
+                    histo.SetBinContent(i, histo.GetBinContent(i) - val)
+                    print(histo.GetBinContent(i))
+
+    return histo
+
 def savePlotNew(histos, functions, fName, xpred, dates, canvas, ISTAT=False, log=useLog):
     useLog=log
     print(type(dates))
@@ -1186,11 +1203,13 @@ def savePlotNew(histos, functions, fName, xpred, dates, canvas, ISTAT=False, log
     maxim = 0
     minim = 1E9
     for histo in histos:
-        maxim = max(maxim, histo.GetMaximum())
-        minim = min(minim, histo.GetMinimum())
+        maxim = max(maxim, histo.GetMaximum())*1.01
+        minim = min(minim, histo.GetMinimum())-0.01*abs(min(minim, histo.GetMinimum()))
         maxim = min(maxim,1E7)
         if not "prediction" in histo.GetName():
-            leg.AddEntry(histo, getLabel(histo.GetName()), "lep")
+            label = getLabel(histo.GetName())
+            if hasattr(histo,"label_sf"): label="#splitline{%s}{%s}"%(label,histo.label_sf)
+            leg.AddEntry(histo, label, "lep")
         if not "ISTAT" in histo.GetName(): histo.SetLineColor(getColor(histo.GetName()))
 #        histo.SetFillColor(getColor(histo.GetName()))
         histo.SetLineStyle(1)
