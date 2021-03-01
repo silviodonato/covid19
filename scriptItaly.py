@@ -86,6 +86,10 @@ predictionsDate = dates.index("4/18/21")
 #lastDate = 35
 #predictionsDate = 35
 
+#firstDate = dates.index("10/1/20")
+#lastDate = dates.index("10/15/20")
+#predictionsDate = lastDate+1
+
 ################
 
 #confirmes = deaths

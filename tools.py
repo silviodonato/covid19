@@ -1353,23 +1353,26 @@ def getPredictionErf(places, dates, firstDate, finalDate, histo, functErfs, func
     return predictions
 
 def applyScaleFactors(histo, errorType='3sqrtN'):
+    print ("Getting scale factors: "+histo.GetName())
     sfs = [1.]*7
     count = [0]*7
     tot = 0.001
     countTot = 0.001
-    for i in range(7,len(histo)+1):
-        if histo.GetBinContent(i)>0:
-            val = histo.GetBinContent(i)/(0.001+sum(histo.GetBinContent(i-j) for j in range(0,7)))
-            val = max(val, 0.)
+    offset=0
+    for i in range(5-offset,len(histo)+1-offset):
+        sum7binsBef = sum(histo.GetBinContent(i-j) for j in range(offset,7+offset))
+        binVal = histo.GetBinContent(i)
+        if binVal>0 and sum7binsBef>0:
+            print(i,sum7binsBef,binVal,sum7binsBef/binVal/7)
+            val = sum7binsBef/binVal
             sfs[i%7] += val
             tot += val
-            if val!=0: count[i%7] += 1
-            if val!=0: countTot += 1
+            count[i%7] += 1
+            countTot += 1
     
-    print ("Getting scale factors: "+histo.GetName())
     sfAverage = 0
     for i in range(7):
-        sfs[i] = count[i]/sfs[i] * tot/countTot
+        sfs[i] = sfs[i]/count[i] * countTot/tot if count[i]>0 else 1.
         sfAverage += sfs[i]
     sfAverage = sfAverage/7
     for i in range(7):
