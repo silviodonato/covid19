@@ -1395,7 +1395,8 @@ def applyScaleFactors(histo, errorType='3sqrtN'):
         valueP1 = max(valueP1,0)
         average = ((valueM1+valueP1)/2)
         if errorType=='3sqrtN':
-            error = 0.2*abs(value)+ 3*abs(value)**0.5 + 9
+            error = 0.05*abs(value)+ 2*abs(value)**0.5 + 9
+#            error = abs(value)**0.5 + 9
         elif errorType=='sqrtN':
             error = (value)**0.5   if (value>=9 and value>=0.25*average) else max(3,abs(value-average)*2)
         elif errorType=='default':
