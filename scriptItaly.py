@@ -7,6 +7,7 @@ from tools import colors, fillDataRegioni, fillDataISTATpickle, newCases, getRat
 placesTest = []
 #placesTest = ["Italia","LaSpezia"]
 #placesTest = ["Italia"]
+#placesTest = ["Umbria"]
 #placesTest = ["Basilicata"]
 #placesTest = ["Toscana"]
 #placesTest = ["Veneto"]

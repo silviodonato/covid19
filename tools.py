@@ -791,6 +791,8 @@ def fitGaussExp(h, places, firstDate, lastDate, predictionDate, fitOption="0SE",
 
         fixSigma = 20
         functs[place].SetParameters(h[place].GetBinContent(h[place].GetMaximumBin()), h[place].GetMean(), fixSigma, 0, fixSigma)
+        print("FitInitValue:",h[place].GetBinContent(h[place].GetMaximumBin()), h[place].GetMean(), fixSigma, 0, fixSigma)
+
         functs[place].FixParameter(5, 100000)
 #        functs[place].FixParameter(3, 0)
 #        print h[place]
@@ -811,6 +813,13 @@ def fitGaussExp(h, places, firstDate, lastDate, predictionDate, fitOption="0SE",
         functs[place].ReleaseParameter(3)
         functs[place].ReleaseParameter(4)
 #        functs[place].FixParameter(5, functs[place].GetParameter(5))
+
+#        functs[place].FixParameter(0, h[place].GetBinContent(h[place].GetMaximumBin()))
+#        functs[place].FixParameter(1, h[place].GetMean())
+#        functs[place].FixParameter(2, fixSigma)
+#        functs[place].FixParameter(3, 0)
+#        functs[place].FixParameter(4, fixSigma)
+        
         functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
         color = colors[places.index(place)]
         functs[place].SetLineColor(color)
@@ -1187,8 +1196,8 @@ def getScaled(histo, scale, fromZero=False):
 
 def savePlotNew(histos, functions, fName, xpred, dates, canvas, ISTAT=False, log=useLog):
     useLog=log
-    print(type(dates))
-    print(dates)
+#    print(type(dates))
+#    print(dates)
     Nov1 = dates.index("11/1/20")
     histos = [h for h in histos if h]
     functions = [f for f in functions if f]
