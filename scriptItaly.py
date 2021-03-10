@@ -233,15 +233,15 @@ for place in places:
 
 fits, fits_res, fits_error              = fitErf(confirmes_h,      places, firstDate, lastDate, predictionsDate)
 #fitdiffs, fitdiffs_res, fitdiffs_error  = fitGaussAsymmetric(newConfirmes_h, places, firstDate, lastDate, predictionsDate)
-fitdiffs, fitdiffs_res, fitdiffs_error  = fitGaussExp(newConfirmes_h, places, firstDate, lastDate, predictionsDate)
+fitdiffs, fitdiffs_res, fitdiffs_error  = fitExpGauss(newConfirmes_h, places, firstDate, lastDate, predictionsDate)
 fitexps, fitexps_res, fitexps_error                = fitExp(newConfirmes_h, places, lastDate-14, lastDate, predictionsDate)
 fitexptotals, fitexptotals_res, fitexptotals_error = fitExp(confirmes_h,    places, lastDate-14-1, lastDate-1, predictionsDate)
 #fitexptotals, fitexptotals_res, fitexptotals_error = fitExp(confirmes_h,    places, lastDate-8, lastDate, predictionsDate)
 fitdiffIntensivas, fitdiffIntensivas_res, fitdiffIntensivas_error = fitTwoGaussDiff(newIntensivas_h, places, firstDate, lastDate, predictionsDate)
 fitdiffPositives, fitdiffPositives_res, fitdiffPositives_error = fitTwoGaussDiff(newPositives_h, places, firstDate, lastDate, predictionsDate)
 fitdiffRicoveratis, fitdiffRicoveratis_res, fitdiffRicoveratis_error = fitTwoGaussDiff(newRicoveratis_h, places, firstDate, lastDate, predictionsDate)
-fitdiffDeaths, fitdiffDeaths_res, fitdiffDeaths_error = fitGaussExp(newDeaths_h, places, firstDate, lastDate, predictionsDate)
-fitdiffRecoveres, fitdiffRecoveres_res, fitdiffRecoveres_error = fitGaussExp(newRecoveres_h, places, firstDate, lastDate, predictionsDate)
+fitdiffDeaths, fitdiffDeaths_res, fitdiffDeaths_error = fitExpGauss(newDeaths_h, places, firstDate, lastDate, predictionsDate)
+fitdiffRecoveres, fitdiffRecoveres_res, fitdiffRecoveres_error = fitExpGauss(newRecoveres_h, places, firstDate, lastDate, predictionsDate)
 
 newDeathIstatExcess_h = {}
 if useDatiISTAT: 
