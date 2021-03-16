@@ -1,2 +1,2 @@
-cd dataItaly/ && git pull origin master &
-cd dataWorld/ && git pull origin master &
+cd dataItaly/ && git pull --force origin master &
+cd dataWorld/ && git pull --force origin master &
