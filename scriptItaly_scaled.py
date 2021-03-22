@@ -3,15 +3,12 @@
 #import copy
 from tools import colors, fillDataRegioni, fillDataISTATpickle, newCases, getRatio, makeHistos, fitErf, fitGauss, fitGaussAsymmetric, fitExp, extendDates, saveCSV, savePlotNew, getPrediction, getPredictionErf, getColumn, selectComuniDatesAgeGender, makeCompatible, fitLinear, fitTwoExp, fitExpGauss, applyScaleFactors, useLog, positiveHisto, fitTwoGaussDiff, fitGaussExp, getScaled
 
-
 placesTest = []
 #placesTest = ["Italia","LaSpezia"]
 placesTest = ["Italia"]
-#placesTest = ["Umbria"]
-#placesTest = ["Basilicata"]
-#placesTest = ["Toscana"]
 #placesTest = ["Veneto"]
-startFromZero = True
+startFromZero = False
+#startFromZero = True
 daysSmearing = 1
 #doProvince = False
 doProvince = True
@@ -44,12 +41,16 @@ if (doProvince): dataProvince, dates = fillDataRegioni('dataItaly/dati-province/
 
 #data,stato,codice_regione,denominazione_regione,lat,long,ricoverati_con_sintomi,terapia_intensiva,totale_ospedalizzati,isolamento_domiciliare,totale_attualmente_Positive,nuovi_attualmente_Positive,dimessi_guariti,deceduti,totale_casi,tamponi
 
-tests = getColumn(dataRegioni, "casi_testati", )
-intensivas = getColumn(dataRegioni, "terapia_intensiva")
-ricoveratis = getColumn(dataRegioni, "ricoverati_con_sintomi")
-confirmes = getColumn(dataRegioni, "totale_casi")
-deaths = getColumn(dataRegioni, "deceduti")
-recoveres = getColumn(dataRegioni, "dimessi_guariti")
+SF_test=0.1
+SF_ricoverati=20
+SF_intensiva=200
+SF_decessi=30
+tests = getColumn(dataRegioni, "tamponi", scaleFactor=SF_test)
+intensivas = getColumn(dataRegioni, "terapia_intensiva", scaleFactor=SF_intensiva)
+ricoveratis = getColumn(dataRegioni, "ricoverati_con_sintomi", scaleFactor=SF_ricoverati)
+confirmes = getColumn(dataRegioni, "totale_casi", scaleFactor=1.)
+deaths = getColumn(dataRegioni, "deceduti", scaleFactor=SF_decessi)
+recoveres = getColumn(dataRegioni, "dimessi_guariti", scaleFactor=1.)
 if (doProvince): confirmesProv = getColumn(dataProvince, "totale_casi")
 
 if useDatiISTAT: 
@@ -69,8 +70,7 @@ firstDate = 0
 #firstDate = dates.index("12/1/20")
 #firstDate = dates.index("12/30/20")
 #firstDate = dates.index("12/31/20")
-firstDate = dates.index("8/23/20")
-#firstDate = dates.index("1/18/21")
+firstDate = dates.index("1/3/21")
 #firstDate = dates.index("4/1/20")
 #firstDate = 16
 lastDate = lastDateData - 1
@@ -78,8 +78,11 @@ lastDate = lastDateData - 1
 #lastDate = dates.index("3/1/20")
 #lastDate = 30
 #predictionsDate = dates.index("12/31/20")
-predictionsDate = dates.index("4/18/21")
+predictionsDate = dates.index("5/3/21")
 #predictionsDate = 95
+
+#firstDate = dates.index("3/1/20")
+#predictionsDate = dates.index("2/1/21")
 
 #firstDate = dates.index("3/1/20")
 #lastDate  = dates.index("5/1/20")
@@ -89,10 +92,6 @@ predictionsDate = dates.index("4/18/21")
 #lastDate = 35
 #predictionsDate = 35
 
-#firstDate = dates.index("10/1/20")
-#lastDate = dates.index("10/15/20")
-#predictionsDate = lastDate+1
-
 ################
 
 #confirmes = deaths
@@ -101,7 +100,7 @@ positives = {}
 for place in confirmes:
     positives[place] = {}
     for i in range(0, len(confirmes[place])):
-        positives[place][dates[i]] = confirmes[place][dates[i]] - deaths[place][dates[i]] - recoveres[place][dates[i]]
+        positives[place][dates[i]] = confirmes[place][dates[i]] - deaths[place][dates[i]]/SF_decessi - recoveres[place][dates[i]]
 
 
 newConfirmes = newCases(confirmes, dates)
@@ -153,34 +152,6 @@ if len(placesTest)>0: places = placesTest
 
 ################
 
-## scale used ##
-confirmes_scale=1
-deaths_scale=40
-deathIstatExcess_scale=20
-intensivas_scale=100 
-ricoveratis_scale=20
-tests_scale=0.10
-
-recoveres_scale=confirmes_scale
-positives_scale=confirmes_scale
-predictionConfirmes_scale=confirmes_scale
-predictionRecoveres_scale=confirmes_scale
-predictionPositives_scale=confirmes_scale
-predictionIntensivas_scale=intensivas_scale
-predictionRicoveratis_scale=ricoveratis_scale
-predictionDeaths_scale=deaths_scale
-
-newConfirmes_scale=confirmes_scale
-newRecoveres_scale=confirmes_scale
-newDeaths_scale=deaths_scale
-newDeathIstatExcess_scale=deaths_scale
-newIntensivas_scale=intensivas_scale 
-newRicoveratis_scale=ricoveratis_scale
-newTests_scale=tests_scale
-newPositives_scale=confirmes_scale
-
-################
-
 fits   = {}
 fits2   = {}
 fitdiffs   = {}
@@ -196,7 +167,6 @@ tests_h    = makeHistos("histo_tests", tests,           dates, places, firstDate
 ricoveratis_h    = makeHistos("histo_ricoveratis", ricoveratis,           dates, places, firstDate, lastDate, predictionsDate, 0, cutTails=False, errorType='cumulative', lineWidth=2, daysSmearing=1)
 intensivas_h    = makeHistos("histo_intensivas", intensivas,           dates, places, firstDate, lastDate, predictionsDate, 0, cutTails=False, errorType='cumulative', lineWidth=2, daysSmearing=1)
 
-
 if startFromZero:
     for place in places:
         for histo in [positives_h,confirmes_h,recoveres_h,deaths_h,tests_h,ricoveratis_h,intensivas_h]:
@@ -208,8 +178,7 @@ if startFromZero:
 #            val = float(minVal_-1)
             val = histo[place].GetBinContent(1)
             for i in range(histo[place].GetNbinsX()+2):
-                if histo[place].GetBinContent(i)!=0:
-                    histo[place].SetBinContent(i, histo[place].GetBinContent(i) - val)
+                histo[place].SetBinContent(i, histo[place].GetBinContent(i) - val)
 #            removeOffset(histo[place], firstDate)
 
 #print("CHECK",positives_h[place].GetBinContent(1))
@@ -225,21 +194,7 @@ newRicoveratis_h = makeHistos("histo_newRicoveratis", newRicoveratis,    dates, 
 newIntensivas_h     = makeHistos("histo_newIntensivas", newIntensivas,    dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2, daysSmearing=daysSmearing, errorType=eType)
 newPositives_h  = makeHistos("histo_newpositives", newPositives, dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2, daysSmearing=daysSmearing, errorType=eType)
 
-
-## fix "negative" test on 12/17/20
-for date in ['12/5/20','12/6/20','12/6/20','12/17/20','12/18/20','2/6/21']:
-    fixDate = dates.index(date)
-    if "Italia" in newTests_h:
-        histo = newTests_h["Italia"]
-        histo.SetBinContent(histo.FindBin(fixDate), histo.GetBinContent(histo.FindBin(fixDate)-1))
-
 for place in places:
-#    positiveHisto(tests_h[place])
-#    positiveHisto(newTests_h[place])
-#    positiveHisto(confirmes_h[place])
-#    positiveHisto(newConfirmes_h[place])
-#    positiveHisto(deaths_h[place])
-#    positiveHisto(newDeaths_h[place])
     if useScaleFactor:
         for histo in [newPositives_h,newConfirmes_h,newRecoveres_h,newDeaths_h,newTests_h,newRicoveratis_h,newIntensivas_h]:
             applyScaleFactors(histo[place], errorType=eType)
@@ -249,15 +204,15 @@ for place in places:
 
 fits, fits_res, fits_error              = fitErf(confirmes_h,      places, firstDate, lastDate, predictionsDate)
 #fitdiffs, fitdiffs_res, fitdiffs_error  = fitGaussAsymmetric(newConfirmes_h, places, firstDate, lastDate, predictionsDate)
-fitdiffs, fitdiffs_res, fitdiffs_error  = fitExpGauss(newConfirmes_h, places, firstDate, lastDate, predictionsDate)
+fitdiffs, fitdiffs_res, fitdiffs_error  = fitGaussExp(newConfirmes_h, places, firstDate, lastDate, predictionsDate)
 fitexps, fitexps_res, fitexps_error                = fitExp(newConfirmes_h, places, lastDate-14, lastDate, predictionsDate)
 fitexptotals, fitexptotals_res, fitexptotals_error = fitExp(confirmes_h,    places, lastDate-14-1, lastDate-1, predictionsDate)
 #fitexptotals, fitexptotals_res, fitexptotals_error = fitExp(confirmes_h,    places, lastDate-8, lastDate, predictionsDate)
 fitdiffIntensivas, fitdiffIntensivas_res, fitdiffIntensivas_error = fitTwoGaussDiff(newIntensivas_h, places, firstDate, lastDate, predictionsDate)
 fitdiffPositives, fitdiffPositives_res, fitdiffPositives_error = fitTwoGaussDiff(newPositives_h, places, firstDate, lastDate, predictionsDate)
 fitdiffRicoveratis, fitdiffRicoveratis_res, fitdiffRicoveratis_error = fitTwoGaussDiff(newRicoveratis_h, places, firstDate, lastDate, predictionsDate)
-fitdiffDeaths, fitdiffDeaths_res, fitdiffDeaths_error = fitExpGauss(newDeaths_h, places, firstDate, lastDate, predictionsDate)
-fitdiffRecoveres, fitdiffRecoveres_res, fitdiffRecoveres_error = fitExpGauss(newRecoveres_h, places, firstDate, lastDate, predictionsDate)
+fitdiffDeaths, fitdiffDeaths_res, fitdiffDeaths_error = fitGaussExp(newDeaths_h, places, firstDate, lastDate, predictionsDate)
+fitdiffRecoveres, fitdiffRecoveres_res, fitdiffRecoveres_error = fitGaussExp(newRecoveres_h, places, firstDate, lastDate, predictionsDate)
 
 newDeathIstatExcess_h = {}
 if useDatiISTAT: 
@@ -544,32 +499,9 @@ for place in places:
             fitLinears[place].error = fitLinears_error[place]
             fitLinears[place].res = fitLinears_res[place]
     if not place in newDeathIstatExcess_h: newDeathIstatExcess_h[place] = None
-    savePlotNew([confirmes_h[place], recoveres_h[place], deaths_h[place], predictionConfirmes_h[place], predictionDeaths_h[place], predictionRecoveres_h[place], predictionIntensivas_h[place], predictionPositives_h[place], predictionRicoveratis_h[place], intensivas_h[place], ricoveratis_h[place], tests_h[place] if useLog else 0, positives_h[place]], [fitexptotals[place]], "plotsRegioni/%s.png"%place, startDate, dates, d3)
-    savePlotNew([newConfirmes_h[place], newRecoveres_h[place], newDeaths_h[place], newDeathIstatExcess_h[place], newIntensivas_h[place], newRicoveratis_h[place], newTests_h[place] if useLog else 0, newPositives_h[place]], [fitexps[place], fitdiffs[place], fitdiffRecoveres[place], fitdiffDeaths[place], fitdiffIntensivas[place], fitdiffPositives[place], fitdiffRicoveratis[place]], "plotsRegioni/%s_newCases.png"%place, startDate, dates, d3)
-    
-    savePlotNew([getScaled(newConfirmes_h[place],newConfirmes_scale), getScaled(newRecoveres_h[place],newRecoveres_scale), getScaled(newDeaths_h[place],newDeaths_scale), getScaled(newDeathIstatExcess_h[place],newDeathIstatExcess_scale), getScaled(newIntensivas_h[place],newIntensivas_scale), getScaled(newRicoveratis_h[place],newRicoveratis_scale), getScaled(newTests_h[place],newTests_scale), getScaled(newPositives_h[place],newPositives_scale)], [fitexps[place], fitdiffs[place], fitdiffRecoveres[place], fitdiffPositives[place]], "plotsRegioni/%s_newCases_scaled.png"%place, startDate, dates, d3, log=False)
-    
-    fromZero=False
-    savePlotNew([getScaled(confirmes_h[place], confirmes_scale, fromZero), getScaled(recoveres_h[place], recoveres_scale, fromZero), getScaled(deaths_h[place], deaths_scale, fromZero), getScaled(predictionConfirmes_h[place], predictionConfirmes_scale, fromZero), getScaled(predictionDeaths_h[place], predictionDeaths_scale, fromZero), getScaled(predictionRecoveres_h[place], predictionRecoveres_scale, fromZero), getScaled(predictionIntensivas_h[place], predictionIntensivas_scale, fromZero), getScaled(predictionPositives_h[place], predictionPositives_scale, fromZero), getScaled(predictionRicoveratis_h[place], predictionRicoveratis_scale, fromZero), getScaled(intensivas_h[place], intensivas_scale, fromZero), getScaled(ricoveratis_h[place], ricoveratis_scale, fromZero), getScaled(tests_h[place], tests_scale, fromZero), getScaled(positives_h[place], positives_scale, fromZero)], [fitexptotals[place]], "plotsRegioni/%s_scaled.png"%place, startDate, dates, d3, log=False)
-    
-    positiveToTestRatio = newConfirmes_h[place].Clone("positiveToTestRatio_"+place)
-    positiveToTestRatio.Reset()
-    positiveToTestRatio.Divide(newConfirmes_h[place], newTests_h[place])
-#    positiveHisto(positiveToTestRatio)
-    
-#    for i in range(positiveToTestRatio.GetNbins()+2):
-#        if positiveToTestRatio.GetBinContent(i)<0: positiveToTestRatio.SetBinContent(i,0)
-    
-    deathToRecoverRatio = deaths_h[place].Clone("deathToRecoverRatio_"+place)
-    deathToRecoverRatio.Reset()
-    deathToRecoverRatio.Divide(deaths_h[place], recoveres_h[place])
-    
-    deathDailyToRecoverRatio = newDeaths_h[place].Clone("deathDailyToRecoverRatio_"+place)
-    deathDailyToRecoverRatio.Reset()
-    deathDailyToRecoverRatio.Divide(newDeaths_h[place], newRecoveres_h[place])
-
-    savePlotNew([getScaled(positiveToTestRatio,0.2), deathToRecoverRatio,deathDailyToRecoverRatio], [], "plotsRegioni/%s_rapporto.png"%place, startDate, dates, d3, log=False)
-
+    savePlotNew([confirmes_h[place], recoveres_h[place], deaths_h[place], predictionConfirmes_h[place], predictionDeaths_h[place], predictionRecoveres_h[place], predictionIntensivas_h[place], predictionPositives_h[place], predictionRicoveratis_h[place], intensivas_h[place], ricoveratis_h[place], tests_h[place] , positives_h[place]], [fitexptotals[place]], "plotsRegioni/%s.png"%place, startDate, dates, d3)
+    savePlotNew([newConfirmes_h[place], newRecoveres_h[place], newDeaths_h[place], newDeathIstatExcess_h[place], newIntensivas_h[place], newRicoveratis_h[place], newTests_h[place] , newPositives_h[place]], [fitexps[place], fitdiffs[place], fitdiffRecoveres[place], fitdiffDeaths[place], fitdiffIntensivas[place], fitdiffPositives[place], fitdiffRicoveratis[place]], "plotsRegioni/%s_newCases.png"%place, startDate, dates, d3)
+#    savePlotNew([newDeathIstats_old_h[place]], [fitLinears[place]], "plotsRegioni/%s_newCases.png"%place, startDate, d3)
 
 if (doProvince): 
     for place in province:
@@ -615,9 +547,9 @@ fitdiffIntensivas[p].Draw("same")
 #intensivas_h[p].Draw()
 #predictionIntensivas_h[p].Draw("same")
 
-newConfirmes_h[p].Draw()
-fitdiffs[p].Draw("same")
-fitdiffs[p].error.Draw("same")
+#newConfirmes_h[p].Draw()
+#fitdiffs[p].Draw("same")
+#fitdiffs[p].error.Draw("same")
 
 #newRicoveratis_h[p].Draw()
 #fitdiffRicoveratis[p].Draw("same")

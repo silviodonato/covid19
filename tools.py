@@ -102,6 +102,9 @@ colorMap = {
     "histo_confirmes": contagiati ,
     "recoveres":  guariti,
     "deaths":     decessi,
+    "positiveToTestRatio":     funcExp,
+    "deathToRecoverRatio":     contagiati,
+    "deathDailyToRecoverRatio":     decessi,
     "newConfirmes":   contagiati,
     "newRecoveres":   guariti,
     "newDeaths":      decessi,
@@ -132,6 +135,9 @@ labelMap = {
     "confirmes":  "Casi totali",
     "recoveres":  "Guariti",
     "deaths":     "Decessi",
+    "positiveToTestRatio":     "Tasso positivita'",
+    "deathToRecoverRatio":     "Decessi/Guariti (cumulato)",
+    "deathDailyToRecoverRatio":     "Decessi/Guariti (giornaliero)",
     "prediction":      "Prediction",
     "intensiva":      "Terapia Intensiva",
     "ricoverati":      "Ricoverati",
@@ -402,6 +408,7 @@ def getColumn(dataRegioni_, label, scaleFactor=1):
             if not place in data: data[place] = {}
             for date in dataRegioni_[regione]:
                 if not date in data[place]: data[place][date] = 0
+                if dataRegioni_[regione][date][label] == "": dataRegioni_[regione][date][label] = 0
                 data[place][date] += int(dataRegioni_[regione][date][label])*scaleFactor
     return data
 
@@ -1421,7 +1428,7 @@ def applyScaleFactors(histo, errorType='3sqrtN'):
 
 def positiveHisto(histo):
     histo.SetMinimum(0.1)
-    return
+#    return
     for i in range(0,len(histo)+2):
         val = histo.GetBinContent(i)
         if val<0.1 and val!=0:
