@@ -6,7 +6,7 @@ from tools import colors, fillDataRegioni, fillDataISTATpickle, newCases, getRat
 
 placesTest = []
 #placesTest = ["Italia","LaSpezia"]
-placesTest = ["Italia"]
+#placesTest = ["Italia"]
 #placesTest = ["Umbria"]
 #placesTest = ["Basilicata"]
 #placesTest = ["Toscana"]
@@ -227,11 +227,12 @@ newPositives_h  = makeHistos("histo_newpositives", newPositives, dates, places, 
 
 
 ## fix "negative" test on 12/17/20
-for date in ['12/5/20','12/6/20','12/6/20','12/17/20','12/18/20','2/6/21']:
-    fixDate = dates.index(date)
-    if "Italia" in newTests_h:
-        histo = newTests_h["Italia"]
-        histo.SetBinContent(histo.FindBin(fixDate), histo.GetBinContent(histo.FindBin(fixDate)-1))
+for place in places:
+    for date in ['12/5/20','12/6/20','12/6/20','12/17/20','12/18/20','2/6/21']:
+        fixDate = dates.index(date)
+        if place in newTests_h:
+            histo = newTests_h[place]
+            histo.SetBinContent(histo.FindBin(fixDate), histo.GetBinContent(histo.FindBin(fixDate)-1))
 
 for place in places:
 #    positiveHisto(tests_h[place])
