@@ -57,8 +57,14 @@ if useDatiISTAT:
     newDeathIstats     = selectComuniDatesAgeGender(dataISTAT, dates, places=None, ages=range(0,30), genders=[0,1])
     newDeathIstats_old = selectComuniDatesAgeGender(dataISTAT, dates, places=None, ages=range(0,30), genders=[2,3])
 
+#for d in ['12/5/20','12/6/20','12/6/20','12/17/20','12/18/20','2/6/21','3/22/21']:
+#    if d in dates:
+#        dates.remove(d)
+
 lastDateData = len(dates)-1
 dates = extendDates(dates, 650)
+
+
 ################
 
 firstDate = 0
@@ -226,13 +232,26 @@ newIntensivas_h     = makeHistos("histo_newIntensivas", newIntensivas,    dates,
 newPositives_h  = makeHistos("histo_newpositives", newPositives, dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2, daysSmearing=daysSmearing, errorType=eType)
 
 
-## fix "negative" test on 12/17/20
+### fix "negative" test on 12/17/20
 for place in places:
-    for date in ['12/5/20','12/6/20','12/6/20','12/17/20','12/18/20','2/6/21']:
+#    for date in ['12/5/20','12/6/20','12/6/20','12/17/20','12/18/20','2/6/21','3/21/21','3/22/21','3/23/21','3/24/21']:
+    for date in ['3/22/21']:
         fixDate = dates.index(date)
-        if place in newTests_h:
-            histo = newTests_h[place]
-            histo.SetBinContent(histo.FindBin(fixDate), histo.GetBinContent(histo.FindBin(fixDate)-1))
+        for histos in [newTests_h, newConfirmes_h, newRecoveres_h]:
+            if place in histos:
+                bin_ = histos[place].FindBin(fixDate)
+                print("AAA",bin_,place)
+                print(histos[place].GetBinContent(bin_))
+                histos[place].SetBinContent(bin_, histos[place].GetBinContent(bin_-7))
+#                histos[place].SetBinContent(bin_, 0)
+                print(histos[place].GetBinContent(bin_))
+                histos[place].Modify()
+
+print(newTests_h[place])
+print(newTests_h[place].GetBinContent(bin_))
+print(newConfirmes_h[place].GetBinContent(bin_))
+print(newRecoveres_h[place].GetBinContent(bin_))
+
 
 for place in places:
 #    positiveHisto(tests_h[place])
@@ -242,11 +261,16 @@ for place in places:
 #    positiveHisto(deaths_h[place])
 #    positiveHisto(newDeaths_h[place])
     if useScaleFactor:
-        for histo in [newPositives_h,newConfirmes_h,newRecoveres_h,newDeaths_h,newTests_h,newRicoveratis_h,newIntensivas_h]:
-            applyScaleFactors(histo[place], errorType=eType)
+        for histos in [newPositives_h,newConfirmes_h,newRecoveres_h,newDeaths_h,newTests_h,newRicoveratis_h,newIntensivas_h]:
+            applyScaleFactors(histos[place], errorType=eType)
+            pass
     if useLog:
         for histo in [newPositives_h,newConfirmes_h,newRecoveres_h,newDeaths_h,newTests_h,newRicoveratis_h,newIntensivas_h,positives_h,confirmes_h,recoveres_h,deaths_h,tests_h,ricoveratis_h,intensivas_h]:
-            positiveHisto(histo[place])
+#            positiveHisto(histo[place])
+            pass
+
+
+print(newTests_h[place])
 
 fits, fits_res, fits_error              = fitErf(confirmes_h,      places, firstDate, lastDate, predictionsDate)
 #fitdiffs, fitdiffs_res, fitdiffs_error  = fitGaussAsymmetric(newConfirmes_h, places, firstDate, lastDate, predictionsDate)

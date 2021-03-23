@@ -1398,7 +1398,11 @@ def applyScaleFactors(histo, errorType='3sqrtN'):
     
     for i in range(1,len(histo)+1):
         if histo.GetBinContent(i)>0:
+            print("XXX")
+            print(histo.GetBinContent(i))
+            print(histo.GetBinContent(i) * sfs[i%7])
             histo.SetBinContent(i, histo.GetBinContent(i)*sfs[i%7])
+            print(histo.GetBinContent(i))
 
     ## Update Error
     oldValue = 0
