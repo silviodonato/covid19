@@ -240,12 +240,12 @@ for place in places:
         for histos in [newTests_h, newConfirmes_h, newRecoveres_h]:
             if place in histos:
                 bin_ = histos[place].FindBin(fixDate)
-                print("AAA",bin_,place)
-                print(histos[place].GetBinContent(bin_))
+#                print("AAA",bin_,place)
+#                print(histos[place].GetBinContent(bin_))
                 histos[place].SetBinContent(bin_, histos[place].GetBinContent(bin_-7))
 #                histos[place].SetBinContent(bin_, 0)
-                print(histos[place].GetBinContent(bin_))
-                histos[place].Modify()
+#                print(histos[place].GetBinContent(bin_))
+#                histos[place].Modify()
 
 print(newTests_h[place])
 print(newTests_h[place].GetBinContent(bin_))
