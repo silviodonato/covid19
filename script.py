@@ -107,6 +107,7 @@ for place in confirmes.keys():
     if confirmes[place][dates[lastDate]]>1000000:
         places.append(place)
 
+places = ["Israel"]
 #places = ["Italy"]
 #places = ["United Kingdom"]
 #places = ["Rest of Europe"]
