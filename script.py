@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 #import csv
 #import copy
-from tools import colors, fillData, newCases, getRatio, makeHistos, fitErf, fitGaussAsymmetric, fitExp, extendDates, saveCSV, savePlotNew, getPrediction, getPredictionErf, shiftHisto, applyScaleFactors, useLog, positiveHisto
+from tools import colors, fillData, newCases, getRatio, makeHistos, fitErf, fitGaussAsymmetric, fitExp, extendDates, saveCSV, savePlotNew, getPrediction, getPredictionErf, shiftHisto, applyScaleFactors, useLog, positiveHisto, getScaled
 
 useScaleFactor = True
+startFromZero = True
 
 import ROOT
 ROOT.gStyle.SetOptStat(0)
@@ -23,7 +24,7 @@ deaths, dates = fillData('dataWorld/csse_covid_19_data/csse_covid_19_time_series
 recoveres, dates = fillData('dataWorld/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv')
 
 lastDateData = len(dates)-1
-dates = extendDates(dates, 350)
+dates = extendDates(dates, 650)
 ################
 
 firstDate = 0
@@ -31,7 +32,11 @@ firstDate = 0
 #firstDate = dates.index("5/15/20")
 #firstDate = dates.index("5/15/20")
 #firstDate = dates.index("9/1/20")
-firstDate = dates.index("10/1/20")
+#firstDate = dates.index("12/1/20")
+#firstDate = dates.index("12/30/20")
+#firstDate = dates.index("12/31/20")
+firstDate = dates.index("9/1/20")
+#firstDate = dates.index("1/18/21")
 #firstDate = dates.index("4/1/20")
 #firstDate = 16
 lastDate = lastDateData - 1
@@ -39,8 +44,9 @@ lastDate = lastDateData - 1
 #lastDate = dates.index("3/1/20")
 #lastDate = 30
 #predictionsDate = dates.index("12/31/20")
-predictionsDate = dates.index("1/30/21")
+predictionsDate = dates.index("4/18/21")
 #predictionsDate = 95
+
 
 #firstDate = dates.index("3/1/20")
 #lastDate  = dates.index("5/1/20")
@@ -64,6 +70,35 @@ newConfirmes = newCases(confirmes, dates)
 newDeaths = newCases(deaths, dates)
 newRecoveres = newCases(recoveres, dates)
 
+################
+
+## scale used ##
+confirmes_scale=1
+deaths_scale=40
+deathIstatExcess_scale=20
+intensivas_scale=100 
+ricoveratis_scale=20
+tests_scale=0.10
+
+recoveres_scale=confirmes_scale
+positives_scale=confirmes_scale
+predictionConfirmes_scale=confirmes_scale
+predictionRecoveres_scale=confirmes_scale
+predictionPositives_scale=confirmes_scale
+predictionIntensivas_scale=intensivas_scale
+predictionRicoveratis_scale=ricoveratis_scale
+predictionDeaths_scale=deaths_scale
+
+newConfirmes_scale=confirmes_scale
+newRecoveres_scale=confirmes_scale
+newDeaths_scale=deaths_scale
+newDeathIstatExcess_scale=deaths_scale
+newIntensivas_scale=intensivas_scale 
+newRicoveratis_scale=ricoveratis_scale
+newTests_scale=tests_scale
+newPositives_scale=confirmes_scale
+
+
 ###########################
 
 places = []
@@ -72,7 +107,6 @@ for place in confirmes.keys():
     if confirmes[place][dates[lastDate]]>1000000:
         places.append(place)
 
-#places = ["Italy"]
 #places = ["Italy"]
 #places = ["United Kingdom"]
 #places = ["Rest of Europe"]
@@ -87,9 +121,10 @@ for place in confirmes.keys():
 
 places = [p[1] for p in sorted([(confirmes[p][dates[lastDate]], p) for p in places], reverse=True)]
 
-places.remove("World")
-places.remove("Rest of World")
+if "World" in place: places.remove("World")
+if "Rest of World" in place: places.remove("Rest of World")
 
+#places = ["Italy"]
 
 print "places:",places
 
@@ -108,6 +143,23 @@ confirmes_h     = makeHistos("histo_confirmes", confirmes,    dates, places, fir
 recoveres_h     = makeHistos("histo_recoveres", recoveres,    dates, places, firstDate, lastDate, predictionsDate, 0, cutTails=False, errorType='cumulative', lineWidth=2, daysSmearing=1)
 deaths_h        = makeHistos("histo_deaths",    deaths,       dates, places, firstDate, lastDate, predictionsDate, 0, cutTails=False, errorType='cumulative', lineWidth=2, daysSmearing=1)
 #histos          = makeHistos(confirmes, places, firstDate, lastDate, predictionsDate, cumulativeError=True)
+
+if startFromZero:
+    for place in places:
+        for histo in [positives_h,confirmes_h,recoveres_h,deaths_h]:
+            minVal_ = histo[place].GetBinContent(1)
+            for ibin in range(1,lastDate-firstDate):
+                val = histo[place].GetBinContent(ibin)
+                if val < minVal_:
+                    minVal_ = val
+#            val = float(minVal_-1)
+            val = histo[place].GetBinContent(1)
+            for i in range(histo[place].GetNbinsX()+2):
+                if histo[place].GetBinContent(i)!=0:
+                    histo[place].SetBinContent(i, histo[place].GetBinContent(i) - val)
+#            removeOffset(histo[place], firstDate)
+
+
 newConfirmes_h  = makeHistos("histo_newConfirmes", newConfirmes, dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False,  lineWidth=2, daysSmearing=smear, errorType=eType)
 newRecoveres_h  = makeHistos("histo_newRecoveres", newRecoveres, dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2, daysSmearing=smear, errorType=eType)
 newDeaths_h     = makeHistos("histo_newDeaths",    newDeaths,    dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2, daysSmearing=smear, errorType=eType)
@@ -129,7 +181,7 @@ fitexptotals, fitexptotals_res, fitexptotals_error = fitExp(confirmes_h,      pl
 fitdiffDeaths, fitdiffDeaths_res, fitdiffDeaths_error = fitGaussAsymmetric(newDeaths_h, places, firstDate, lastDate, predictionsDate)
 fitdiffRecoveres, fitdiffRecoveres_res, fitdiffRecoveres_error = fitGaussAsymmetric(newRecoveres_h, places, firstDate, lastDate, predictionsDate)
 
-for a in positives_h.values(): a.SetName('histo_')
+for a in positives_h.values(): a.SetName('positives_'+a.GetName())
 
 #for place in places:
 #    fits2[place] = copy.copy(ROOT.TF1("function"+place,"[0]*(1+TMath::Erf((x-[1])/[2])) + [3]",0,predictionsDate))
@@ -329,6 +381,22 @@ for place in places:
     fitexps[place].fitResult = None
     savePlotNew([confirmes_h[place], recoveres_h[place], deaths_h[place], predictions_h[place], predictionDeaths_h[place], predictionRecoveres_h[place], shiftConf], [fitexptotals[place]], "plots/%s.png"%place, startDate, dates, c3)
     savePlotNew([newConfirmes_h[place], newRecoveres_h[place], newDeaths_h[place], shiftNewConf], [fitdiffs[place], fitdiffRecoveres[place], fitdiffDeaths[place], fitexps[place]], "plots/%s_newCases.png"%place, startDate, dates, c5)
+
+    savePlotNew([getScaled(newConfirmes_h[place],newConfirmes_scale), getScaled(newRecoveres_h[place],newRecoveres_scale), getScaled(newDeaths_h[place],newDeaths_scale)], [fitexps[place], fitdiffs[place], fitdiffRecoveres[place]], "plots/%s_newCases_scaled.png"%place, startDate, dates, c5, log=False)
+    
+    fromZero=False
+    savePlotNew([getScaled(confirmes_h[place], confirmes_scale, fromZero), getScaled(recoveres_h[place], recoveres_scale, fromZero), getScaled(deaths_h[place], deaths_scale, fromZero), getScaled(predictionDeaths_h[place], predictionDeaths_scale, fromZero), getScaled(predictionRecoveres_h[place], predictionRecoveres_scale, fromZero), getScaled(positives_h[place], positives_scale, fromZero)], [fitexptotals[place]], "plots/%s_scaled.png"%place, startDate, dates, c5, log=False)
+    
+    
+    deathToRecoverRatio = deaths_h[place].Clone("deathToRecoverRatio_"+place)
+    deathToRecoverRatio.Reset()
+    deathToRecoverRatio.Divide(deaths_h[place], recoveres_h[place])
+    
+    deathDailyToRecoverRatio = newDeaths_h[place].Clone("deathDailyToRecoverRatio_"+place)
+    deathDailyToRecoverRatio.Reset()
+    deathDailyToRecoverRatio.Divide(newDeaths_h[place], newRecoveres_h[place])
+
+    savePlotNew([deathToRecoverRatio,deathDailyToRecoverRatio], [], "plots/%s_rapporto.png"%place, startDate, dates, c5, log=False)
 
 '''
 
