@@ -1252,7 +1252,7 @@ def savePlotNew(histos, functions, fName, xpred, dates, canvas, ISTAT=False, log
             leg.AddEntry(function, function.label, "lp")
             
     if maxim>0 and useLog: maxim = 10**int(ROOT.TMath.Log10(maxim)+1)
-    if maxim>0 and not useLog: maxim = int(maxim      /10**int(ROOT.TMath.Log10(maxim))     +1)*10**int(ROOT.TMath.Log10(maxim))
+    if maxim>0 and not useLog: maxim = (1.+int(maxim*100      /10**int(ROOT.TMath.Log10(maxim*100))     ))*10**int(ROOT.TMath.Log10(maxim*100))/100
     if minim<0 and not useLog: minim = -int(abs(minim)/10**int(ROOT.TMath.Log10(abs(minim)))+2)*10**int(ROOT.TMath.Log10(abs(minim)))
     
     line = ROOT.TLine(xpred+0.5,0,xpred+0.5,maxim)

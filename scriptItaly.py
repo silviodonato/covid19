@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 #import csv
 #import copy
-from tools import colors, fillDataRegioni, fillDataISTATpickle, newCases, getRatio, makeHistos, fitErf, fitGauss, fitGaussAsymmetric, fitExp, extendDates, saveCSV, savePlotNew, getPrediction, getPredictionErf, getColumn, selectComuniDatesAgeGender, makeCompatible, fitLinear, fitTwoExp, fitExpGauss, applyScaleFactors, useLog, positiveHisto, fitTwoGaussDiff, fitGaussExp, getScaled
+from tools import colors, fillDataRegioni, fillDataISTATpickle, newCases, getRatio, makeHistos, fitErf, fitGauss, fitGaussAsymmetric, fitExp, extendDates, saveCSV, savePlotNew, getPrediction, getPredictionErf, getColumn, selectComuniDatesAgeGender, makeCompatible, fitLinear, fitTwoExp, fitGaussExp, applyScaleFactors, useLog, positiveHisto, fitTwoGaussDiff, fitGaussExp, getScaled
 
 
 placesTest = []
 #placesTest = ["Italia","LaSpezia"]
 #placesTest = ["Italia"]
+#placesTest = ["Liguria"]
 #placesTest = ["Umbria"]
 #placesTest = ["Basilicata"]
 #placesTest = ["Toscana"]
@@ -76,7 +77,7 @@ firstDate = 0
 #firstDate = dates.index("12/30/20")
 #firstDate = dates.index("12/31/20")
 #firstDate = dates.index("8/23/20")
-firstDate = dates.index("1/18/21")
+firstDate = dates.index("2/15/21")
 #firstDate = dates.index("4/1/20")
 #firstDate = 16
 lastDate = lastDateData - 1
@@ -84,7 +85,7 @@ lastDate = lastDateData - 1
 #lastDate = dates.index("3/1/20")
 #lastDate = 30
 #predictionsDate = dates.index("12/31/20")
-predictionsDate = dates.index("4/18/21")
+predictionsDate = dates.index("5/15/21")
 #predictionsDate = 95
 
 #firstDate = dates.index("3/1/20")
@@ -274,15 +275,15 @@ print(newTests_h[place])
 
 fits, fits_res, fits_error              = fitErf(confirmes_h,      places, firstDate, lastDate, predictionsDate)
 #fitdiffs, fitdiffs_res, fitdiffs_error  = fitGaussAsymmetric(newConfirmes_h, places, firstDate, lastDate, predictionsDate)
-fitdiffs, fitdiffs_res, fitdiffs_error  = fitExpGauss(newConfirmes_h, places, firstDate, lastDate, predictionsDate)
+fitdiffs, fitdiffs_res, fitdiffs_error  = fitGaussExp(newConfirmes_h, places, firstDate, lastDate, predictionsDate)
 fitexps, fitexps_res, fitexps_error                = fitExp(newConfirmes_h, places, lastDate-14, lastDate, predictionsDate)
 fitexptotals, fitexptotals_res, fitexptotals_error = fitExp(confirmes_h,    places, lastDate-14-1, lastDate-1, predictionsDate)
 #fitexptotals, fitexptotals_res, fitexptotals_error = fitExp(confirmes_h,    places, lastDate-8, lastDate, predictionsDate)
 fitdiffIntensivas, fitdiffIntensivas_res, fitdiffIntensivas_error = fitTwoGaussDiff(newIntensivas_h, places, firstDate, lastDate, predictionsDate)
 fitdiffPositives, fitdiffPositives_res, fitdiffPositives_error = fitTwoGaussDiff(newPositives_h, places, firstDate, lastDate, predictionsDate)
 fitdiffRicoveratis, fitdiffRicoveratis_res, fitdiffRicoveratis_error = fitTwoGaussDiff(newRicoveratis_h, places, firstDate, lastDate, predictionsDate)
-fitdiffDeaths, fitdiffDeaths_res, fitdiffDeaths_error = fitExpGauss(newDeaths_h, places, firstDate, lastDate, predictionsDate)
-fitdiffRecoveres, fitdiffRecoveres_res, fitdiffRecoveres_error = fitExpGauss(newRecoveres_h, places, firstDate, lastDate, predictionsDate)
+fitdiffDeaths, fitdiffDeaths_res, fitdiffDeaths_error = fitGaussExp(newDeaths_h, places, firstDate, lastDate, predictionsDate)
+fitdiffRecoveres, fitdiffRecoveres_res, fitdiffRecoveres_error = fitGaussExp(newRecoveres_h, places, firstDate, lastDate, predictionsDate)
 
 newDeathIstatExcess_h = {}
 if useDatiISTAT: 
