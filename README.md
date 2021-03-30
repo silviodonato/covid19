@@ -25,6 +25,13 @@ unzip -d dataISTAT Dataset-decessi-comunali-giornalieri-e-tracciato-record_al30g
 rm Dataset-decessi-comunali-giornalieri-e-tracciato-record_al30giugno.zip
 ```
 
+Get dataVaccini
+
+```
+git clone git@github.com:italia/covid19-opendata-vaccini.git dataVaccini
+
+```
+
 Run scripts
 
 ```
@@ -56,3 +63,11 @@ cd dataWorld
 git pull origin master
 cd ..                           
 ```
+
+```
+cd dataVaccini
+git pull origin master
+cd ..
+```
+
+
