@@ -243,6 +243,7 @@ for i,cat in enumerate(reversed([x for _,x in sorted(zip(ratio.values(),ratio.ke
 #    histos[cat].SetMaximum(max_*1.1)
     histos[cat].SetLineColor(colors[i])
     histos[cat].SetMaximum(2.)
+    histos[cat].SetMinimum(0.02)
     if i==0:
         histos[cat].Draw("HIST")
     else:
