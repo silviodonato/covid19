@@ -238,7 +238,7 @@ for i,cat in enumerate(cats):
 
 leg = ROOT.TLegend(0.1,0.35,0.35,0.9)
 
-c1 = ROOT.TCanvas("c1")
+c1 = ROOT.TCanvas("c1","",1920, 1080)
 for i,cat in enumerate(reversed([x for _,x in sorted(zip(ratio.values(),ratio.keys()))])):
 #    histos[cat].SetMaximum(max_*1.1)
     histos[cat].SetLineColor(colors[i])
