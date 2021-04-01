@@ -1,9 +1,48 @@
 import ROOT,csv
 from datetime import date
 
-anagraficaFileName ="dataVaccini/dati/anagrafica-vaccini-summary-latest.csv"
+#cumulative = False
+cumulative = True
+
+colors = [
+ROOT.kBlack,
+
+ROOT.kYellow+1,
+ROOT.kRed,
+ROOT.kMagenta,
+ROOT.kBlue,
+ROOT.kCyan+1,
+ROOT.kGreen+1,
+
+ROOT.kOrange,
+ROOT.kPink,
+ROOT.kViolet,
+ROOT.kAzure,
+ROOT.kTeal,
+ROOT.kSpring,
+
+ROOT.kGray,
+] 
+colors += colors
+
+#anagraficaFileName ="dataVaccini/dati/anagrafica-vaccini-summary-latest.csv"
 consegneFileName ="dataVaccini/dati/consegne-vaccini-latest.csv"
 somministrazioniFileName = "dataVaccini/dati/somministrazioni-vaccini-latest.csv"
+
+def getPlot(somministrazioniTree, selection, dosi= "prima_dose+seconda_dose", cumulative=True, hname = None):
+    sel = "1. * %s * (%s)"%(selection,dosi)
+    somministrazioniTree.Draw("data_somministrazione >> histo", sel, "HIST")
+    histo = ROOT.histo
+    if cumulative:
+        histo = histo.GetCumulative()
+    if hname==None:
+        hname = "histo_"+selection+dosi
+        if cumulative: hname = hname + "cumul"
+    histo = histo.Clone(hname)
+    print(hname)
+    print(sel)
+    return histo
+
 
 def convertData(label, data):
     
@@ -106,11 +145,11 @@ def updateROOTfile(fileName, rootFileName):
     fil_.Close()
     print("DONE")
 
-anagrafica = getAnagrafica("dataVaccini/dati/anagrafica-vaccini-summary-latest.csv")
+#anagrafica = getAnagrafica("dataVaccini/dati/anagrafica-vaccini-summary-latest.csv")
 consegneROOTFileName = consegneFileName.replace(".csv",".root")
 somministrazioniROOTFileName = somministrazioniFileName.replace(".csv",".root")
-updateROOTfile(somministrazioniFileName, somministrazioniROOTFileName)
-updateROOTfile(consegneFileName, consegneROOTFileName)
+#updateROOTfile(somministrazioniFileName, somministrazioniROOTFileName)
+#updateROOTfile(consegneFileName, consegneROOTFileName)
 
 somministrazioniFile = ROOT.TFile.Open(somministrazioniROOTFileName)
 consegneFile = ROOT.TFile.Open(consegneROOTFileName)
@@ -129,15 +168,97 @@ histo2.Draw("HIST")
 histo.Draw("HIST,SAME")
 ''')
 
-selection = "(fornitore==-1) * (fascia_anagrafica==90)"
 #selection = "(fornitore==-1) * (codice_regione_ISTAT==7)"
-c1 = ROOT.TCanvas("c1")
-somministrazioniTree.Draw("data_somministrazione >> histo","1. * %s * (prima_dose+seconda_dose)"%selection,"HIST")
-histo = ROOT.histo.GetCumulative()
+#somministrazioniTree.Draw("data_somministrazione >> histo","1. * %s * (prima_dose+seconda_dose)"%selection,"HIST")
+#histo = ROOT.histo.GetCumulative()
 #consegneTree.Draw("data_consegna >> histo2","1. * %s * (numero_dosi)"%selection,"HIST")
 #histo2 = ROOT.histo2.GetCumulative()
 #histo2.Draw("HIST")
-histo.Draw("HIST,SAME")
+#histo.Draw("HIST,SAME")
+
+#selection = "(fornitore==-1) * (fascia_anagrafica==90)"
+
+norms = {
+    "categoria_operatori_sanitari_sociosanitari":1.876108E6,
+    "categoria_personale_non_sanitario":0.31E6,
+    "categoria_ospiti_rsa":0.34E6,
+    "categoria_over80":4.64E6,
+    "categoria_forze_armate":0.55E6,
+    "categoria_personale_scolastico":1.49E6,
+    "categoria_altro":60E6,
+    "prima_dose":60E6,
+    "seconda_dose":60E6,
+    16:2.169E6, 
+    20:6.130E6, 
+    30:6.817E6, 
+    40:8.940E6, 
+    50:9.407E6, 
+    60:7.379E6, 
+    70:5.944E6, 
+    80:3.628E6,
+    90:0.792E6, 
+}
+
+cats = [
+    "categoria_operatori_sanitari_sociosanitari",
+    "categoria_personale_non_sanitario",
+    "categoria_ospiti_rsa",
+    "categoria_forze_armate",
+    "categoria_personale_scolastico",
+    "categoria_altro",
+    "categoria_over80",
+    90, 
+    80,
+    70, 
+    60, 
+    50, 
+    40, 
+    30, 
+    20, 
+    16, 
+    "prima_dose",
+    "seconda_dose",
+]
+
+max_=0
+histos = {}
+for i,cat in enumerate(cats):
+    dosi = str(cat)
+    selection = "1"
+    if type(cat)==int: 
+        dosi = "(categoria_altro) * (fascia_anagrafica==%d)"%cat
+    histos[cat] = getPlot(somministrazioniTree, selection = selection, dosi = dosi, cumulative = cumulative, hname="histo_%s"%str(cat))
+    histos[cat].SetLineColor(colors[i])
+    histos[cat].SetLineWidth(3)
+    histos[cat].SetFillStyle(0)
+    histos[cat].Scale(1./norms[cat])
+    if not "sanitari" in str(cat): 
+        max_ = max(max_, histos[cat].GetMaximum())
+
+leg = ROOT.TLegend(0.1,0.35,0.35,0.9)
+
+c1 = ROOT.TCanvas("c1")
+for i,cat in enumerate(cats):
+#    histos[cat].SetMaximum(max_*1.1)
+    histos[cat].SetMaximum(2.)
+    if i==0:
+        histos[cat].Draw("HIST")
+    else:
+        histos[cat].Draw("HIST,same")
+    leg.AddEntry(histos[cat],str(cat).replace("categoria_",""),"l");
+leg.Draw("same")
+
+c1.SetGridx()
+c1.SetGridy()
+#c1.GetListOfPrimitives()[1].GetYaxis().SetRangeUser(0, 2.)
+##c1.GetListOfPrimitives()[1].GetYaxis().SetRangeUser(0, max_*1.1)
+c1.Modified()
+c1.Update()
+
+c1.SaveAs("vaccini.png")
+
+c1.SetLogy()
+c1.SaveAs("vaccini_log.png")
 
 #integral = ROOT.histo.GetIntegral()
 #for i in ROOT.histo:
@@ -164,6 +285,7 @@ codice_NUTS2,
 codice_regione_ISTAT,
 nome_area'''
 
+#FASCIA ANAGRAFICA: [20, 16, 30, 50, 40, 60, 70, 90, 80]
 
 '''
 01 PIEMONTE
