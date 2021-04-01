@@ -222,24 +222,26 @@ cats = [
 
 max_=0
 histos = {}
+ratio = {}
 for i,cat in enumerate(cats):
     dosi = str(cat)
     selection = "1"
     if type(cat)==int: 
-        dosi = "(categoria_altro) * (fascia_anagrafica==%d)"%cat
+        dosi = "(prima_dose+seconda_dose) * (fascia_anagrafica==%d)"%cat
     histos[cat] = getPlot(somministrazioniTree, selection = selection, dosi = dosi, cumulative = cumulative, hname="histo_%s"%str(cat))
-    histos[cat].SetLineColor(colors[i])
     histos[cat].SetLineWidth(3)
     histos[cat].SetFillStyle(0)
     histos[cat].Scale(1./norms[cat])
+    ratio[cat] = histos[cat].GetMaximum()
     if not "sanitari" in str(cat): 
         max_ = max(max_, histos[cat].GetMaximum())
 
 leg = ROOT.TLegend(0.1,0.35,0.35,0.9)
 
 c1 = ROOT.TCanvas("c1")
-for i,cat in enumerate(cats):
+for i,cat in enumerate(reversed([x for _,x in sorted(zip(ratio.values(),ratio.keys()))])):
 #    histos[cat].SetMaximum(max_*1.1)
+    histos[cat].SetLineColor(colors[i])
     histos[cat].SetMaximum(2.)
     if i==0:
         histos[cat].Draw("HIST")
