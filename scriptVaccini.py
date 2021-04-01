@@ -243,7 +243,7 @@ for i,cat in enumerate(reversed([x for _,x in sorted(zip(ratio.values(),ratio.ke
 #    histos[cat].SetMaximum(max_*1.1)
     histos[cat].SetLineColor(colors[i])
     histos[cat].SetMaximum(2.)
-    histos[cat].SetMinimum(0.02)
+#    histos[cat].SetMinimum(0.02)
     if i==0:
         histos[cat].Draw("HIST")
     else:
@@ -253,7 +253,7 @@ leg.Draw("same")
 
 c1.SetGridx()
 c1.SetGridy()
-#c1.GetListOfPrimitives()[1].GetYaxis().SetRangeUser(0, 2.)
+c1.GetListOfPrimitives()[1].GetYaxis().SetRangeUser(0.02, 2.)
 ##c1.GetListOfPrimitives()[1].GetYaxis().SetRangeUser(0, max_*1.1)
 c1.Modified()
 c1.Update()
