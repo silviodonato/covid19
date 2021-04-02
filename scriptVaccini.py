@@ -223,49 +223,59 @@ cats = [
 max_=0
 histos = {}
 ratio = {}
-for i,cat in enumerate(cats):
-    dosi = str(cat)
-    selection = "1"
-    if type(cat)==int: 
-        dosi = "(prima_dose+seconda_dose) * (fascia_anagrafica==%d)"%cat
-    histos[cat] = getPlot(somministrazioniTree, selection = selection, dosi = dosi, cumulative = cumulative, hname="histo_%s"%str(cat))
-    histos[cat].SetLineWidth(3)
-    histos[cat].SetFillStyle(0)
-    histos[cat].Scale(1./norms[cat])
-    ratio[cat] = histos[cat].GetMaximum()
-    if not "sanitari" in str(cat): 
-        max_ = max(max_, histos[cat].GetMaximum())
+for tipo in ["prima_dose","seconda_dose","somministrazioni"]:
+    for i,cat in enumerate(cats):
+        dosi = str(cat)
+        if tipo == "somministrazioni":
+            if type(cat)==int: 
+                dosi = "(prima_dose+seconda_dose) * (fascia_anagrafica==%d)"%cat
+            else:
+                dosi = "(%s)"%cat
+        elif type(cat)==int:
+            dosi = "(%s) * (fascia_anagrafica==%d)"%(tipo,cat)
+        else:
+            continue
+        histos[cat] = getPlot(somministrazioniTree, selection = "1", dosi = dosi, cumulative = cumulative, hname="histo_%s"%str(cat))
+        histos[cat].SetLineWidth(3)
+        histos[cat].SetFillStyle(0)
+        histos[cat].Scale(1./norms[cat])
+        ratio[cat] = histos[cat].GetMaximum()
+        if not "sanitari" in str(cat): 
+            max_ = max(max_, histos[cat].GetMaximum())
+    
+    if tipo=="somministrazioni": leg = ROOT.TLegend(0.1,0.35,0.35,0.9)
+    else: leg = ROOT.TLegend(0.1,0.35,0.2,0.9)
+    
+    c1 = ROOT.TCanvas("c1","",1920, 1080)
+    for i,cat in enumerate(reversed([x for _,x in sorted(zip(ratio.values(),ratio.keys()))])):
+    #    histos[cat].SetMaximum(max_*1.1)
+        histos[cat].SetLineColor(colors[i])
+        if tipo=="somministrazioni": histos[cat].SetMaximum(2.)
+        else: histos[cat].SetMaximum(1.)
+    #    histos[cat].SetMinimum(0.02)
+        if i==0:
+            histos[cat].Draw("HIST")
+        else:
+            histos[cat].Draw("HIST,same")
+        leg.AddEntry(histos[cat],str(cat).replace("categoria_",""),"l");
+    leg.Draw("same")
 
-leg = ROOT.TLegend(0.1,0.35,0.35,0.9)
+    c1.SetGridx()
+    c1.SetGridy()
+    c1.GetListOfPrimitives()[1].GetYaxis().SetRangeUser(0.02, 2.)
+    ##c1.GetListOfPrimitives()[1].GetYaxis().SetRangeUser(0, max_*1.1)
+    c1.Modified()
+    c1.Update()
 
-c1 = ROOT.TCanvas("c1","",1920, 1080)
-for i,cat in enumerate(reversed([x for _,x in sorted(zip(ratio.values(),ratio.keys()))])):
-#    histos[cat].SetMaximum(max_*1.1)
-    histos[cat].SetLineColor(colors[i])
-    histos[cat].SetMaximum(2.)
-#    histos[cat].SetMinimum(0.02)
-    if i==0:
-        histos[cat].Draw("HIST")
-    else:
-        histos[cat].Draw("HIST,same")
-    leg.AddEntry(histos[cat],str(cat).replace("categoria_",""),"l");
-leg.Draw("same")
+    c1.SetLogy(0)
+    c1.SaveAs("%s.png"%tipo)
 
-c1.SetGridx()
-c1.SetGridy()
-c1.GetListOfPrimitives()[1].GetYaxis().SetRangeUser(0.02, 2.)
-##c1.GetListOfPrimitives()[1].GetYaxis().SetRangeUser(0, max_*1.1)
-c1.Modified()
-c1.Update()
+    c1.SetLogy()
+    c1.SaveAs("%s_log.png"%tipo)
 
-c1.SaveAs("vaccini.png")
-
-c1.SetLogy()
-c1.SaveAs("vaccini_log.png")
-
-#integral = ROOT.histo.GetIntegral()
-#for i in ROOT.histo:
-#    ROOT.histo.SetBinContent(i, integral[i])
+    #integral = ROOT.histo.GetIntegral()
+    #for i in ROOT.histo:
+    #    ROOT.histo.SetBinContent(i, integral[i])
 
 '''
 data_somministrazione,
