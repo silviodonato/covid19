@@ -25,20 +25,34 @@ ROOT.kGray,
 ] 
 colors += colors
 
+refDate = date(2021,4,1)
+#histoMax = (date.today() - refDate).days+1
+histoMax = (date(2021,6,1) - refDate).days+0.5
+histoMin = (date(2021,1,1) - refDate).days-0.5
+histoN = int(histoMax - histoMin)
+lastDate = (date.today() - refDate).days-1
+
 #anagraficaFileName ="dataVaccini/dati/anagrafica-vaccini-summary-latest.csv"
 consegneFileName ="dataVaccini/dati/consegne-vaccini-latest.csv"
 somministrazioniFileName = "dataVaccini/dati/somministrazioni-vaccini-latest.csv"
 
 def getPlot(somministrazioniTree, selection, dosi= "prima_dose+seconda_dose", cumulative=True, hname = None):
-    sel = "1. * %s * (%s)"%(selection,dosi)
-    somministrazioniTree.Draw("data_somministrazione >> histo", sel, "HIST")
-    histo = ROOT.histo
-    if cumulative:
-        histo = histo.GetCumulative()
     if hname==None:
         hname = "histo_"+selection+dosi
         if cumulative: hname = hname + "cumul"
+    sel = "1. * %s * (%s)"%(selection,dosi)
+    somministrazioniTree.Draw("data_somministrazione >> %s(%s,%s,%s)"%(hname,histoN,histoMin,histoMax), sel, "HIST")
+#    somministrazioniTree.Draw("data_somministrazione >> histo2", sel, "HIST")
+#    print('somministrazioniTree.Draw("data_somministrazione >> histo2(%s,%s,%s)", "%s", "HIST")'%(histoN,histoMin,histoMax,sel))
+    print(getattr(ROOT,hname))
+    histo = getattr(ROOT,hname).Clone(hname)
+    if cumulative:
+        histo = histo.GetCumulative()
+        for i in range(histo.FindBin(lastDate+1),histo.GetNbinsX()+1): 
+#            print("SetZero",i)
+            histo.SetBinContent(i,0)
     histo = histo.Clone(hname)
+    histo.Sumw2()
     print(hname)
     print(sel)
     return histo
@@ -48,7 +62,7 @@ def convertData(label, data):
     
     if 'data' in label:
         yyyy, mm, dd = data.split("-")
-        delta = date(int(yyyy), int(mm), int(dd)) - date(2021,1,1)
+        delta = date(int(yyyy), int(mm), int(dd)) - refDate
         return str(delta.days)
     elif label=='fornitore':
         if 'Pfizer'in data:
@@ -148,8 +162,8 @@ def updateROOTfile(fileName, rootFileName):
 #anagrafica = getAnagrafica("dataVaccini/dati/anagrafica-vaccini-summary-latest.csv")
 consegneROOTFileName = consegneFileName.replace(".csv",".root")
 somministrazioniROOTFileName = somministrazioniFileName.replace(".csv",".root")
-#updateROOTfile(somministrazioniFileName, somministrazioniROOTFileName)
-#updateROOTfile(consegneFileName, consegneROOTFileName)
+updateROOTfile(somministrazioniFileName, somministrazioniROOTFileName)
+updateROOTfile(consegneFileName, consegneROOTFileName)
 
 somministrazioniFile = ROOT.TFile.Open(somministrazioniROOTFileName)
 consegneFile = ROOT.TFile.Open(consegneROOTFileName)
@@ -197,6 +211,7 @@ norms = {
     70:5.944E6, 
     80:3.628E6,
     90:0.792E6, 
+    0:60.36E6, 
 }
 
 cats = [
@@ -216,14 +231,16 @@ cats = [
     30, 
     20, 
     16, 
+    0,
     "prima_dose",
     "seconda_dose",
 ]
 
 max_=0
-histos = {}
-ratio = {}
 for tipo in ["prima_dose","seconda_dose","somministrazioni"]:
+    fits = {}
+    histos = {}
+    ratio = {}
     for i,cat in enumerate(cats):
         dosi = str(cat)
         if tipo == "somministrazioni":
@@ -235,10 +252,18 @@ for tipo in ["prima_dose","seconda_dose","somministrazioni"]:
             dosi = "(%s) * (fascia_anagrafica==%d)"%(tipo,cat)
         else:
             continue
-        histos[cat] = getPlot(somministrazioniTree, selection = "1", dosi = dosi, cumulative = cumulative, hname="histo_%s"%str(cat))
+        dosi = dosi.replace(" * (fascia_anagrafica==0)","") ## fascia_anagrafica = 0 means all fascia_anagrafica
+        histos[cat] = getPlot(somministrazioniTree, selection = "1", dosi = dosi, cumulative = cumulative, hname="histo_%s_%s"%(str(cat),tipo))
         histos[cat].SetLineWidth(3)
         histos[cat].SetFillStyle(0)
-        histos[cat].Scale(1./norms[cat])
+        histos[cat].Scale(100./norms[cat])
+        fits[cat] = ROOT.TF1(str(cat)+tipo,"pol1",lastDate-7+0.5,histoMax)
+        fits[cat].SetLineStyle(9)
+        if cat==0 or cat=="prima_dose" or cat=="seconda_dose": 
+            width = 5
+            fits[cat].SetLineWidth(width)
+            histos[cat].SetLineWidth(width)
+        histos[cat].Fit(fits[cat],"W","",lastDate-7+0.5,lastDate+0.5)
         ratio[cat] = histos[cat].GetMaximum()
         if not "sanitari" in str(cat): 
             max_ = max(max_, histos[cat].GetMaximum())
@@ -250,28 +275,37 @@ for tipo in ["prima_dose","seconda_dose","somministrazioni"]:
     for i,cat in enumerate(reversed([x for _,x in sorted(zip(ratio.values(),ratio.keys()))])):
     #    histos[cat].SetMaximum(max_*1.1)
         histos[cat].SetLineColor(colors[i])
-        if tipo=="somministrazioni": histos[cat].SetMaximum(2.)
-        else: histos[cat].SetMaximum(1.)
+        fits[cat].SetLineColor(colors[i])
+        if tipo=="somministrazioni": histos[cat].SetMaximum(200.)
+        else: histos[cat].SetMaximum(100.)
     #    histos[cat].SetMinimum(0.02)
         if i==0:
+            histos[cat].GetXaxis().SetTitle("Giorni dal 1 Aprile")
+            histos[cat].GetYaxis().SetTitle(tipo.replace("_"," ")+" (%)")
+            histos[cat].SetTitle(tipo.replace("_"," "))
             histos[cat].Draw("HIST")
+            fits[cat].Draw("same")
         else:
+            fits[cat].Draw("same")
             histos[cat].Draw("HIST,same")
-        leg.AddEntry(histos[cat],str(cat).replace("categoria_",""),"l");
+        label = str(cat).replace("categoria_","")
+        label = label.replace("_"," ")
+        if label == "0": label = "all"
+        leg.AddEntry(histos[cat],label,"l");
     leg.Draw("same")
 
     c1.SetGridx()
     c1.SetGridy()
-    c1.GetListOfPrimitives()[1].GetYaxis().SetRangeUser(0.02, 2.)
+#    c1.GetListOfPrimitives()[1].GetYaxis().SetRangeUser(0.02, 2.)
     ##c1.GetListOfPrimitives()[1].GetYaxis().SetRangeUser(0, max_*1.1)
     c1.Modified()
     c1.Update()
 
     c1.SetLogy(0)
-    c1.SaveAs("%s.png"%tipo)
+    c1.SaveAs("plotVaccini/%s.png"%tipo)
 
     c1.SetLogy()
-    c1.SaveAs("%s_log.png"%tipo)
+    c1.SaveAs("plotVaccini/%s_log.png"%tipo)
 
     #integral = ROOT.histo.GetIntegral()
     #for i in ROOT.histo:
