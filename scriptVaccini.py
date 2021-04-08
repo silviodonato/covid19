@@ -1,6 +1,11 @@
 import ROOT,csv
 from datetime import date
+from tools import applyScaleFactors
 
+fitRange = 7
+functionRange = 30
+#functionRange = fitRange
+applySF = True
 #cumulative = False
 cumulative = True
 
@@ -239,77 +244,99 @@ cats = [
 max_=0
 for tipo in ["prima_dose","seconda_dose","somministrazioni"]:
     fits = {}
-    histos = {}
-    ratio = {}
-    for i,cat in enumerate(cats):
-        dosi = str(cat)
-        if tipo == "somministrazioni":
-            if type(cat)==int: 
-                dosi = "(prima_dose+seconda_dose) * (fascia_anagrafica==%d)"%cat
+    fitdiffs = {}
+    for cumulative in [False,True]:
+        histos = {}
+        ratio = {}
+        for i,cat in enumerate(cats):
+            dosi = str(cat)
+            if tipo == "somministrazioni":
+                if type(cat)==int: 
+                    dosi = "(prima_dose+seconda_dose) * (fascia_anagrafica==%d)"%cat
+                else:
+                    dosi = "(%s)"%cat
+            elif type(cat)==int:
+                dosi = "(%s) * (fascia_anagrafica==%d)"%(tipo,cat)
             else:
-                dosi = "(%s)"%cat
-        elif type(cat)==int:
-            dosi = "(%s) * (fascia_anagrafica==%d)"%(tipo,cat)
-        else:
-            continue
-        dosi = dosi.replace(" * (fascia_anagrafica==0)","") ## fascia_anagrafica = 0 means all fascia_anagrafica
-        histos[cat] = getPlot(somministrazioniTree, selection = "1", dosi = dosi, cumulative = cumulative, hname="histo_%s_%s"%(str(cat),tipo))
-        histos[cat].SetLineWidth(3)
-        histos[cat].SetFillStyle(0)
-        histos[cat].Scale(100./norms[cat])
-        fits[cat] = ROOT.TF1(str(cat)+tipo,"pol1",lastDate-7+0.5,histoMax)
-        fits[cat].SetLineStyle(9)
-        if cat==0 or cat=="prima_dose" or cat=="seconda_dose": 
-            width = 5
-            fits[cat].SetLineWidth(width)
-            histos[cat].SetLineWidth(width)
-        histos[cat].Fit(fits[cat],"W","",lastDate-7+0.5,lastDate+0.5)
-        ratio[cat] = histos[cat].GetMaximum()
-        if not "sanitari" in str(cat): 
-            max_ = max(max_, histos[cat].GetMaximum())
-    
-    if tipo=="somministrazioni": leg = ROOT.TLegend(0.1,0.35,0.35,0.9)
-    else: leg = ROOT.TLegend(0.1,0.35,0.2,0.9)
-    
-    c1 = ROOT.TCanvas("c1","",1920, 1080)
-    for i,cat in enumerate(reversed([x for _,x in sorted(zip(ratio.values(),ratio.keys()))])):
-    #    histos[cat].SetMaximum(max_*1.1)
-        histos[cat].SetLineColor(colors[i])
-        fits[cat].SetLineColor(colors[i])
-        if tipo=="somministrazioni": histos[cat].SetMaximum(200.)
-        else: histos[cat].SetMaximum(100.)
-    #    histos[cat].SetMinimum(0.02)
-        if i==0:
-            histos[cat].GetXaxis().SetTitle("Giorni dal 1 Aprile")
-            histos[cat].GetYaxis().SetTitle(tipo.replace("_"," ")+" (%)")
-            histos[cat].SetTitle(tipo.replace("_"," "))
-            histos[cat].Draw("HIST")
-            fits[cat].Draw("same")
-        else:
-            fits[cat].Draw("same")
-            histos[cat].Draw("HIST,same")
-        label = str(cat).replace("categoria_","")
-        label = label.replace("_"," ")
-        if label == "0": label = "all"
-        leg.AddEntry(histos[cat],label,"l");
-    leg.Draw("same")
+                continue
+            dosi = dosi.replace(" * (fascia_anagrafica==0)","") ## fascia_anagrafica = 0 means all fascia_anagrafica
+            histos[cat] = getPlot(somministrazioniTree, selection = "1", dosi = dosi, cumulative = cumulative, hname="histo_%s_%s%s"%(str(cat),tipo,"" if  cumulative else "_daily"))
+            if not cumulative and applySF:
+                applyScaleFactors(histos[cat])
+            histos[cat].SetLineWidth(3)
+            histos[cat].SetFillStyle(0)
+            histos[cat].Scale(100./norms[cat])
+            if cumulative:
+                fits[cat] = ROOT.TF1(str(cat)+tipo,"[0]+[1]*x",lastDate-functionRange+0.5,histoMax)
+                p1 = fitdiffs[cat].GetParameter(0)
+                p0 = histos[cat].GetBinContent(histos[cat].FindBin(lastDate))-p1*lastDate
+                fits[cat].FixParameter(1, p1)
+                fits[cat].FixParameter(0, p0)
+                fits[cat].SetLineStyle(9)
+            else:
+                fitdiffs[cat] = ROOT.TF1(str(cat)+tipo,"[0]",lastDate-functionRange+0.5,histoMax)
+                fitdiffs[cat].SetLineStyle(9)
+            if cat==0 or cat=="prima_dose" or cat=="seconda_dose": 
+                width = 5
+                if cumulative:
+                    fits[cat].SetLineWidth(width)
+                else:
+                    fitdiffs[cat].SetLineWidth(width)
+                histos[cat].SetLineWidth(width)
+            if not cumulative: histos[cat].Fit(fitdiffs[cat],"W","",lastDate-fitRange+0.5,lastDate+0.5)
+            ratio[cat] = histos[cat].GetMaximum()
+            if not "sanitari" in str(cat): 
+                max_ = max(max_, histos[cat].GetMaximum())
+        
+        if tipo=="somministrazioni": leg = ROOT.TLegend(0.1,0.35,0.35,0.9)
+        else: leg = ROOT.TLegend(0.1,0.35,0.2,0.9)
+        
+        c1 = ROOT.TCanvas("c1","",1920, 1080)
+        for i,cat in enumerate(reversed([x for _,x in sorted(zip(ratio.values(),ratio.keys()))])):
+        #    histos[cat].SetMaximum(max_*1.1)
+            histos[cat].SetLineColor(colors[i])
+            if cumulative:
+                fits[cat].SetLineColor(colors[i])
+                if tipo=="somministrazioni": histos[cat].SetMaximum(200.)
+                else: histos[cat].SetMaximum(100.)
+            else:
+                fitdiffs[cat].SetLineColor(colors[i])
+        #    histos[cat].SetMinimum(0.02)
+            if i==0:
+                histos[cat].GetXaxis().SetTitle("Giorni dal 1 Aprile")
+                histos[cat].GetYaxis().SetTitle(tipo.replace("_"," ")+" (%)")
+                histos[cat].SetTitle(tipo.replace("_"," "))
+                histos[cat].Draw("HIST")
+            else:
+                histos[cat].Draw("HIST,same")
+            if cumulative:
+                fits[cat].Draw("same")
+            else:
+                fitdiffs[cat].Draw("same")
+            label = str(cat).replace("categoria_","")
+            label = label.replace("_"," ")
+            if label == "0": label = "all"
+            leg.AddEntry(histos[cat],label,"l");
+        leg.Draw("same")
 
-    c1.SetGridx()
-    c1.SetGridy()
-#    c1.GetListOfPrimitives()[1].GetYaxis().SetRangeUser(0.02, 2.)
-    ##c1.GetListOfPrimitives()[1].GetYaxis().SetRangeUser(0, max_*1.1)
-    c1.Modified()
-    c1.Update()
+        c1.SetGridx()
+        c1.SetGridy()
+    #    c1.GetListOfPrimitives()[1].GetYaxis().SetRangeUser(0.02, 2.)
+        ##c1.GetListOfPrimitives()[1].GetYaxis().SetRangeUser(0, max_*1.1)
+        c1.Modified()
+        c1.Update()
 
-    c1.SetLogy(0)
-    c1.SaveAs("plotVaccini/%s.png"%tipo)
+        plotName=tipo
+        if not cumulative: plotName=tipo+"_daily"
+        c1.SetLogy(0)
+        c1.SaveAs("plotVaccini/%s.png"%plotName)
 
-    c1.SetLogy()
-    c1.SaveAs("plotVaccini/%s_log.png"%tipo)
+        c1.SetLogy()
+        c1.SaveAs("plotVaccini/%s_log.png"%plotName)
 
-    #integral = ROOT.histo.GetIntegral()
-    #for i in ROOT.histo:
-    #    ROOT.histo.SetBinContent(i, integral[i])
+        #integral = ROOT.histo.GetIntegral()
+        #for i in ROOT.histo:
+        #    ROOT.histo.SetBinContent(i, integral[i])
 
 '''
 data_somministrazione,
