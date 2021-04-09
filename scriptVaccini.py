@@ -2,6 +2,9 @@ import ROOT,csv
 from datetime import date
 from tools import applyScaleFactors
 
+ROOT.gROOT.SetBatch(True)
+#ROOT.gROOT.SetBatch(False)
+
 fitRange = 7
 functionRange = 30
 #functionRange = fitRange
@@ -53,9 +56,9 @@ def getPlot(somministrazioniTree, selection, dosi= "prima_dose+seconda_dose", cu
     histo = getattr(ROOT,hname).Clone(hname)
     if cumulative:
         histo = histo.GetCumulative()
-        for i in range(histo.FindBin(lastDate+1),histo.GetNbinsX()+1): 
+    for i in range(histo.FindBin(lastDate+1),histo.GetNbinsX()+1): 
 #            print("SetZero",i)
-            histo.SetBinContent(i,0)
+        histo.SetBinContent(i,0)
     histo = histo.Clone(hname)
     histo.Sumw2()
     print(hname)
@@ -274,7 +277,7 @@ for tipo in ["prima_dose","seconda_dose","somministrazioni"]:
                 fits[cat].FixParameter(0, p0)
                 fits[cat].SetLineStyle(9)
             else:
-                fitdiffs[cat] = ROOT.TF1(str(cat)+tipo,"[0]",lastDate-functionRange+0.5,histoMax)
+                fitdiffs[cat] = ROOT.TF1(str(cat)+tipo,"[0]",lastDate-fitRange+0.5,lastDate+0.5)
                 fitdiffs[cat].SetLineStyle(9)
             if cat==0 or cat=="prima_dose" or cat=="seconda_dose": 
                 width = 5
