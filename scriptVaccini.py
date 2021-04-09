@@ -5,7 +5,7 @@ from tools import applyScaleFactors
 ROOT.gROOT.SetBatch(True)
 #ROOT.gROOT.SetBatch(False)
 
-fitRange = 7
+fitRange = 3
 functionRange = 30
 #functionRange = fitRange
 applySF = True
