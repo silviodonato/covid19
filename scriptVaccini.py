@@ -40,7 +40,8 @@ histoMax = (date(2021,7,1) - refDate).days+0.5
 #histoMin = (date(2021,3,1) - refDate).days-0.5
 #histoMin = (date(2021,2,18) - refDate).days-0.5
 histoMin = (date(2020,12,1) - refDate).days-0.5
-x_min=(date(2021,3,1) - refDate).days-0.5
+histoMin = (date(2021,3,1) - refDate).days-0.5
+#x_min=(date(2021,3,1) - refDate).days-0.5
 histoN = int(histoMax - histoMin)
 #lastDate = (date.today() - refDate).days-2
 #lastDate = 0
@@ -53,7 +54,7 @@ excludedDays.append((date(2021,3,16) - refDate).days)
 excludedDays.append((date(2021,3,17) - refDate).days)
 excludedDays.append((date(2021,3,18) - refDate).days)
 excludedDays.append((date(2021,3,19) - refDate).days)
-#excludedDays.append(histoMin)
+excludedDays.append(histoMin)
 excludedDays.append(histoMin-1)
 
 #anagraficaFileName ="dataVaccini/dati/anagrafica-vaccini-summary-latest.csv"
@@ -65,7 +66,7 @@ def getPlot(somministrazioniTree, selection, dosi= "prima_dose+seconda_dose", cu
         hname = "histo_"+selection+dosi
         if cumulative: hname = hname + "cumul"
     sel = "1. * %s * (%s)"%(selection,dosi)
-    somministrazioniTree.Draw("data_somministrazione >> %s(%s,%s,%s)"%(hname,histoN,histoMin,histoMax), sel, "HIST")
+    somministrazioniTree.Draw("max(%s,data_somministrazione) >> %s(%s,%s,%s)"%(histoMin,hname,histoN,histoMin,histoMax), sel, "HIST")
 #    somministrazioniTree.Draw("data_somministrazione >> histo2", sel, "HIST")
 #    print('somministrazioniTree.Draw("data_somministrazione >> histo2(%s,%s,%s)", "%s", "HIST")'%(histoN,histoMin,histoMax,sel))
     print(getattr(ROOT,hname))
@@ -349,7 +350,7 @@ for tipo in ["prima_dose","seconda_dose","somministrazioni"]:
                 histos[cat].GetYaxis().SetTitle(tipo.replace("_"," ")+" (%)")
                 histos[cat].SetTitle(tipo.replace("_"," "))
                 histos[cat].Draw("HIST")
-                histos[cat].GetXaxis().SetRangeUser(x_min, histoMax)
+#                histos[cat].GetXaxis().SetRangeUser(x_min, histoMax)
             else:
                 histos[cat].Draw("HIST,same")
             if cumulative:
