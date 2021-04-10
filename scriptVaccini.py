@@ -8,6 +8,7 @@ ROOT.gROOT.SetBatch(True)
 fitRange = 3
 functionRange = 30
 #functionRange = fitRange
+applySF = False
 applySF = True
 #cumulative = False
 cumulative = True
@@ -35,10 +36,25 @@ colors += colors
 
 refDate = date(2021,4,1)
 #histoMax = (date.today() - refDate).days+1
-histoMax = (date(2021,6,1) - refDate).days+0.5
-histoMin = (date(2021,1,1) - refDate).days-0.5
+histoMax = (date(2021,7,1) - refDate).days+0.5
+#histoMin = (date(2021,3,1) - refDate).days-0.5
+#histoMin = (date(2021,2,18) - refDate).days-0.5
+histoMin = (date(2020,12,1) - refDate).days-0.5
+x_min=(date(2021,3,1) - refDate).days-0.5
 histoN = int(histoMax - histoMin)
-lastDate = (date.today() - refDate).days-1
+#lastDate = (date.today() - refDate).days-2
+#lastDate = 0
+
+excludedDays = []
+excludedDays.append((date(2021,4,3) - refDate).days)
+excludedDays.append((date(2021,4,4) - refDate).days)
+excludedDays.append((date(2021,4,5) - refDate).days)
+excludedDays.append((date(2021,3,16) - refDate).days)
+excludedDays.append((date(2021,3,17) - refDate).days)
+excludedDays.append((date(2021,3,18) - refDate).days)
+excludedDays.append((date(2021,3,19) - refDate).days)
+#excludedDays.append(histoMin)
+excludedDays.append(histoMin-1)
 
 #anagraficaFileName ="dataVaccini/dati/anagrafica-vaccini-summary-latest.csv"
 consegneFileName ="dataVaccini/dati/consegne-vaccini-latest.csv"
@@ -56,14 +72,32 @@ def getPlot(somministrazioniTree, selection, dosi= "prima_dose+seconda_dose", cu
     histo = getattr(ROOT,hname).Clone(hname)
     if cumulative:
         histo = histo.GetCumulative()
-    for i in range(histo.FindBin(lastDate+1),histo.GetNbinsX()+1): 
+#    for i in range(histo.FindBin(lastDate+1),histo.GetNbinsX()+1): 
+    for i in reversed(range(1,histo.GetNbinsX())):
+#        lastDate=10
+#        break
+#        print(i, histo.GetBinContent(i), histo.GetBinContent(i+1))
+        if histo.GetBinContent(i)==histo.GetBinContent(i+1):
+            histo.SetBinContent(i+1,0)
+#            print(i+1,0)
+        else:
+            if cumulative:
+                histo.SetBinContent(i+1,0)
+                lastDate=histo.GetBinCenter(i)
+            else:
+                histo.SetBinContent(i+1,0)
+                histo.SetBinContent(i,0)
+                lastDate=histo.GetBinCenter(i)-1
+            print ("lastDate=",lastDate)
+            break
+    for excludedDay in excludedDays: 
+        histo.SetBinContent(histo.FindBin(excludedDay),0)
 #            print("SetZero",i)
-        histo.SetBinContent(i,0)
     histo = histo.Clone(hname)
     histo.Sumw2()
     print(hname)
     print(sel)
-    return histo
+    return histo, lastDate
 
 
 def convertData(label, data):
@@ -246,9 +280,11 @@ cats = [
 
 max_=0
 for tipo in ["prima_dose","seconda_dose","somministrazioni"]:
+#for tipo in ["somministrazioni"]:
     fits = {}
     fitdiffs = {}
     for cumulative in [False,True]:
+#    for cumulative in [False]:
         histos = {}
         ratio = {}
         for i,cat in enumerate(cats):
@@ -263,7 +299,7 @@ for tipo in ["prima_dose","seconda_dose","somministrazioni"]:
             else:
                 continue
             dosi = dosi.replace(" * (fascia_anagrafica==0)","") ## fascia_anagrafica = 0 means all fascia_anagrafica
-            histos[cat] = getPlot(somministrazioniTree, selection = "1", dosi = dosi, cumulative = cumulative, hname="histo_%s_%s%s"%(str(cat),tipo,"" if  cumulative else "_daily"))
+            histos[cat], lastDate = getPlot(somministrazioniTree, selection = "1", dosi = dosi, cumulative = cumulative, hname="histo_%s_%s%s"%(str(cat),tipo,"" if  cumulative else "_daily"))
             if not cumulative and applySF:
                 applyScaleFactors(histos[cat])
             histos[cat].SetLineWidth(3)
@@ -291,8 +327,11 @@ for tipo in ["prima_dose","seconda_dose","somministrazioni"]:
             if not "sanitari" in str(cat): 
                 max_ = max(max_, histos[cat].GetMaximum())
         
-        if tipo=="somministrazioni": leg = ROOT.TLegend(0.1,0.35,0.35,0.9)
-        else: leg = ROOT.TLegend(0.1,0.35,0.2,0.9)
+        x0,y0,dx,dy = 0.1,0.99,0.08,0.55
+        if tipo=="somministrazioni": dx = 0.25
+        x0=1.-dx-0.01
+#        if not cumulative or tipo!="somministrazioni": x0=1.-dx-0.01
+        leg = ROOT.TLegend(x0,y0-dy,x0+dx,y0)
         
         c1 = ROOT.TCanvas("c1","",1920, 1080)
         for i,cat in enumerate(reversed([x for _,x in sorted(zip(ratio.values(),ratio.keys()))])):
@@ -310,6 +349,7 @@ for tipo in ["prima_dose","seconda_dose","somministrazioni"]:
                 histos[cat].GetYaxis().SetTitle(tipo.replace("_"," ")+" (%)")
                 histos[cat].SetTitle(tipo.replace("_"," "))
                 histos[cat].Draw("HIST")
+                histos[cat].GetXaxis().SetRangeUser(x_min, histoMax)
             else:
                 histos[cat].Draw("HIST,same")
             if cumulative:
