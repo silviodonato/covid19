@@ -20,8 +20,8 @@ SI <- (intervallo.seriale/sum(intervallo.seriale))
 
 curva.epidemica <- read.table("curva_epidemica_Italia_2021-04-07")
 #curva.epidemica <- read.table("curva_epidemica_Italia_anon_2020-12-02")
-#curva.epidemica[,1] <- as.Date(curva.epidemica[,1])
-curva.epidemica[,1] <- as.Date(curva.epidemica[,2])
+curva.epidemica[,1] <- as.Date(curva.epidemica[,1])
+#curva.epidemica[,1] <- as.Date(curva.epidemica[,2])
 names(curva.epidemica) <- c("dates", "local", "imported") ## assegno i nomi richiesti dal pacchetto EpiEstim
 
 ## calcolo la stima di R applicando la funzione estimate_R del pacchetto EpiEstim
