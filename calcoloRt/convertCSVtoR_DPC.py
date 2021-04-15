@@ -14,6 +14,7 @@ todos = [
 ]
 index = {}
 files = {}
+prevValue = {}
 
 todoIndex = []
 firstLine = True
@@ -24,6 +25,7 @@ for l in file_.readlines():
         for todo in todos:
             index[todo] = labels.index(todo)
             files[todo] = ''
+            prevValue[todo] = "0"
         index["data"] = labels.index("data")
         firstLine = False
     else:
@@ -32,10 +34,13 @@ for l in file_.readlines():
         yyyy, mm, dd = data.split("T")[0].split("-")
         if int(yyyy)<=2020 and int(mm)<=2: continue
         for todo in todos:
-            value = els[index[todo]]
-            if value == "": value = "0"
+            valuet = els[index[todo]][:]
+            if valuet == "": valuet = "0"
+            if "deceduti": value = str(int(valuet) - int(prevValue[todo]))
+            if int(value)<0: value="0"
             nl = "%s-%s-%s %s 0\n"%(yyyy, mm, dd, value)
             files[todo] += nl
+            prevValue[todo] = valuet[:]
 
 file_.close()
 
