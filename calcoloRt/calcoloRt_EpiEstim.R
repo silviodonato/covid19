@@ -5,11 +5,11 @@ library(EpiEstim)
 
 startPoint = 60
 for (file_ in c(
-    "decessi.R",
-    "casi_prelievo_diagnosi.R",
-    "curva_epidemica_Italia_2021-04-07",
-    "casi_inizio_sintomi.R",
-    "casi_inizio_sintomi_sint.R"
+    "decessi.Rdata",
+    "casi_prelievo_diagnosi.Rdata",
+    "casi_inizio_sintomi.Rdata",
+    "casi_inizio_sintomi_sint.Rdata",
+    "curva_epidemica_Italia_ufficiale.Rdata"
     )){
 
     print(file_)
@@ -30,9 +30,7 @@ for (file_ in c(
     ## leggo la curva epidemica da un file con 3 colonne separate da spazi: data, numero di casi trasmessi localmente, numero di casi importati
 
     curva.epidemica <- read.table(file_)
-    #curva.epidemica <- read.table("curva_epidemica_Italia_anon_2020-12-02")
     curva.epidemica[,1] <- as.Date(curva.epidemica[,1])
-    #curva.epidemica[,1] <- as.Date(curva.epidemica[,2])
     names(curva.epidemica) <- c("dates", "local", "imported") ## assegno i nomi richiesti dal pacchetto EpiEstim
 
     ## calcolo la stima di R applicando la funzione estimate_R del pacchetto EpiEstim
@@ -63,6 +61,7 @@ for (file_ in c(
     ## visualizzazione grafica dei risultati
     par(mar=c(7,5,1,1))
     pdf(file=paste("RPlots",file_,".pdf", sep=""))
+    png(file=paste("RPlots",file_,".png", sep=""))
     plot(R.upperCI, type='l', lwd=2, col='gray', axes=FALSE, ylim=c(0, 2), ylab=expression(R[t]), xlab="", xlim=c(startPoint, length(date)))
     lines(R.medio, type='l', lwd=3, col='gray20')
     lines(R.lowerCI, type='l', lwd=2, col='gray')
