@@ -3,7 +3,7 @@ rm(list=ls())
 graphics.off()
 library(EpiEstim)
 
-startPoint = 60
+startPoint = 300
 for (file_ in c(
     "dpc_nuovi_positivi.Rdata",
     "dpc_ingressi_terapia_intensiva.Rdata",
