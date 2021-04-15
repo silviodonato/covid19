@@ -4,6 +4,10 @@ unzip calcolo_rt_italia.zip
 cp calcolo_Rt_Italia/curva_epidemica_Italia_20* curva_epidemica_Italia_ufficiale.Rdata
 rm -rf calcolo_rt_italia.zip calcolo_Rt_Italia
 
+rm -rf dpc-covid19-ita-andamento-nazionale.csv
+wget https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-andamento-nazionale/dpc-covid19-ita-andamento-nazionale.csv
+./convertCSVtoR_DPC.py dpc-covid19-ita-andamento-nazionale.csv
+
 rm covid_19-iss.xlsx
 curl -LO  --ciphers 'DEFAULT:!DH'  https://www.epicentro.iss.it/coronavirus/open-data/covid_19-iss.xlsx
 

@@ -5,6 +5,9 @@ library(EpiEstim)
 
 startPoint = 60
 for (file_ in c(
+    "dpc_nuovi_positivi.Rdata",
+    "dpc_ingressi_terapia_intensiva.Rdata",
+    "dpc_deceduti.Rdata",
     "decessi.Rdata",
     "casi_prelievo_diagnosi.Rdata",
     "casi_inizio_sintomi.Rdata",
