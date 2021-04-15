@@ -61,7 +61,7 @@ for (file_ in c(
     ## visualizzazione grafica dei risultati
     par(mar=c(7,5,1,1))
     pdf(file=paste("RPlots",file_,".pdf", sep=""))
-    png(file=paste("RPlots",file_,".png", sep=""), width = 1280/4, height = 768/4, units='px')
+    png(file=paste("RPlots",file_,".png", sep=""), width = 1280, height = 768, units='px')
     plot(R.upperCI, type='l', lwd=2, col='gray', axes=FALSE, ylim=c(0, 2), ylab=expression(R[t]), xlab="", xlim=c(startPoint, length(date)))
     lines(R.medio, type='l', lwd=3, col='gray20')
     lines(R.lowerCI, type='l', lwd=2, col='gray')
