@@ -1,4 +1,4 @@
 #python2 script.py >& logWorld &
 python2 scriptItaly.py >& logItaly &
 python2 scriptVaccini.py >& logVaccini &
-(./getIssData.sh >& logRt) && (Rscript calcoloRt_EpiEstim.R >& logRt2) &
+cd calcoloRt && (./getIssData.sh >& logRt) && (Rscript calcoloRt_EpiEstim.R >& logRt2) &
