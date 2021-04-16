@@ -61,6 +61,7 @@ for (file_ in c(
     sel.date <- stima$R[, "t_end"]
     date <- curva.epidemica[sel.date,1] 
 
+    startPoint = length(date) - 7*12
     ## visualizzazione grafica dei risultati
     par(mar=c(7,5,1,1))
     pdf(file=paste("RPlots",file_,".pdf", sep=""))
@@ -70,6 +71,6 @@ for (file_ in c(
     lines(R.lowerCI, type='l', lwd=2, col='gray')
     axis(1, at=1:length(R.medio), label=date, las=2)
     axis(2, las=2)
-    grid((length(date)-startPoint)/28, 20, lwd = 2) # Nx, Ny, size
+    grid((length(date)-startPoint)/7, 20, lwd = 2) # Nx, Ny, size
     print(file_)
 }
