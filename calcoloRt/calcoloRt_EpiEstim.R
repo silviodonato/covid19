@@ -3,6 +3,19 @@ rm(list=ls())
 graphics.off()
 library(EpiEstim)
 
+## parametri dell'intervallo seriale stimati da dati di contact tracing lombardi
+shape.stimato <- 1.87
+rate.stimato <- 0.28
+
+## massimo numero di giorni dell'intervallo seriale
+N <- 300
+
+## definisco la distribuzione dell'intervallo seriale
+intervallo.seriale <- dgamma(0:N, shape=shape.stimato, rate=rate.stimato) 
+
+## normalizzo la distribuzione dell'intervallo seriale in modo che la somma faccia 1
+SI <- (intervallo.seriale/sum(intervallo.seriale)) 
+
 startPoint = 300
 for (file_ in c(
     "dpc_nuovi_positivi.Rdata",
@@ -17,21 +30,7 @@ for (file_ in c(
 
     print(file_)
 
-    ## parametri dell'intervallo seriale stimati da dati di contact tracing lombardi
-    shape.stimato <- 1.87
-    rate.stimato <- 0.28
-
-    ## massimo numero di giorni dell'intervallo seriale
-    N <- 300
-
-    ## definisco la distribuzione dell'intervallo seriale
-    intervallo.seriale <- dgamma(0:N, shape=shape.stimato, rate=rate.stimato) 
-
-    ## normalizzo la distribuzione dell'intervallo seriale in modo che la somma faccia 1
-    SI <- (intervallo.seriale/sum(intervallo.seriale)) 
-
     ## leggo la curva epidemica da un file con 3 colonne separate da spazi: data, numero di casi trasmessi localmente, numero di casi importati
-
     curva.epidemica <- read.table(file_)
     curva.epidemica[,1] <- as.Date(curva.epidemica[,1])
     names(curva.epidemica) <- c("dates", "local", "imported") ## assegno i nomi richiesti dal pacchetto EpiEstim
@@ -62,15 +61,18 @@ for (file_ in c(
     date <- curva.epidemica[sel.date,1] 
 
     startPoint = length(date) - 7*12
+    ymax = 1.55
+    ymin = 0.45
+    ysize = 0.1
     ## visualizzazione grafica dei risultati
     par(mar=c(7,5,1,1))
     pdf(file=paste("RPlots",file_,".pdf", sep=""))
     png(file=paste("RPlots",file_,".png", sep=""), width = 1280, height = 768, units='px')
-    plot(R.upperCI, type='l', lwd=2, col='gray', axes=FALSE, ylim=c(0, 2), ylab=expression(R[t]), xlab="", xlim=c(startPoint, length(date)))
+    plot(R.upperCI, type='l', lwd=2, col='gray', axes=FALSE, ylim=c(ymin, ymax), ylab=expression(R[t]), xlab="", xlim=c(startPoint, length(date)))
     lines(R.medio, type='l', lwd=3, col='gray20')
     lines(R.lowerCI, type='l', lwd=2, col='gray')
     axis(1, at=1:length(R.medio), label=date, las=2)
     axis(2, las=2)
-    grid((length(date)-startPoint)/7, 20, lwd = 2) # Nx, Ny, size
+    grid((length(date)-startPoint)/7, 12, lwd = 2) # Nx, Ny, size
     print(file_)
 }
