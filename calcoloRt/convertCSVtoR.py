@@ -1,26 +1,39 @@
 #!/usr/bin/python3
 import sys
-from datetime import datetime
+from datetime import datetime, timedelta
 
-fileName = sys.argv[1]
-print(fileName)
+beginDate = datetime(2020, 8, 1)
+endDate = datetime(2021, 5, 15)
 
-file_ = open(fileName,'r')
-newfile = open(fileName.replace(".csv",".Rdata"),'w')
+print(endDate)
 
-for l in file_.readlines():
-    els = l.split(",")
-    if len(els)==3:
-        data1, data2, value = els
-        value = value.replace("\n","")
-        value = value.replace("<","")
-        if ("/2021" in data1 or "/2020" in data1) and ("/2021" in data2 or "/2020" in data2):
-            dd1, mm1, yyyy1 = data1.split("/")
-            dd, mm, yyyy = data2.split("/")
-            if int(yyyy)<=2020 and int(mm)<=2: continue
-            if ((datetime(int(yyyy),int(mm),int(dd)) - datetime(int(yyyy1),int(mm1),int(dd1))).days)>=-2: continue
-            nl = "%s-%s-%s %s 0\n"%(yyyy, mm, dd, value)
-            newfile.write(nl)
+if __name__ == '__main__':
+    fileName = sys.argv[1]
+    print(fileName)
+    
+    file_ = open(fileName,'r')
+    newfile = open(fileName.replace(".csv",".Rdata"),'w')
+    
+    for l in file_.readlines():
+        els = l.split(",")
+        if len(els)==3:
+            iss_date, data, value = els
+            value = value.replace("\n","")
+            value = value.replace("<","")
+            if ("/2021" in data or "/2020" in data):
+                dd, mm, yyyy = data.split("/")
+                date = datetime(int(yyyy), int(mm), int(dd))
+                if date>beginDate:
+                    nl = "%s %s 0\n"%(date.strftime("%Y-%m-%d"), value)
+                    newfile.write(nl)
+                    lastvalue = value
 
-file_.close()
-newfile.close()
+    lastvalue = 0
+    while date<endDate:
+        date += timedelta(days=1)
+        nl = "%s %s 0\n"%(date.strftime("%Y-%m-%d"), lastvalue)
+        newfile.write(nl)
+
+
+    file_.close()
+    newfile.close()
