@@ -1,12 +1,22 @@
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  4309  100  4309    0     0   9148      0 --:--:-- --:--:-- --:--:--  9129
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  4309  100  4309    0     0  28163      0 --:--:-- --:--:-- --:--:-- 28163
 Archive:  calcolo_rt_italia.zip
    creating: calcolo_Rt_Italia/
   inflating: calcolo_Rt_Italia/calcoloRt_EpiEstim.R  
   inflating: calcolo_Rt_Italia/curva_epidemica_Italia_2021-04-14  
+--2021-04-20 17:43:02--  https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-andamento-nazionale/dpc-covid19-ita-andamento-nazionale.csv
+Resolving raw.githubusercontent.com (raw.githubusercontent.com)... 185.199.110.133, 185.199.108.133, 185.199.109.133, ...
+Connecting to raw.githubusercontent.com (raw.githubusercontent.com)|185.199.110.133|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 51586 (50K) [text/plain]
+Saving to: ‘dpc-covid19-ita-andamento-nazionale.csv’
 
-Redirecting output to ‘wget-log.9’.
+     0K .......... .......... .......... .......... .......... 99% 7.02M 0s
+    50K                                                       100%  719G=0.007s
+
+2021-04-20 17:43:02 (7.07 MB/s) - ‘dpc-covid19-ita-andamento-nazionale.csv’ saved [51586/51586]
+
 2021-05-15 00:00:00
 dpc-covid19-ita-andamento-nazionale.csv
 ['data', 'stato', 'ricoverati_con_sintomi', 'terapia_intensiva', 'totale_ospedalizzati', 'isolamento_domiciliare', 'totale_positivi', 'variazione_totale_positivi', 'nuovi_positivi', 'dimessi_guariti', 'deceduti', 'casi_da_sospetto_diagnostico', 'casi_da_screening', 'totale_casi', 'tamponi', 'casi_testati', 'note', 'ingressi_terapia_intensiva', 'note_test', 'note_casi', 'totale_positivi_test_molecolare', 'totale_positivi_test_antigenico_rapido', 'tamponi_test_molecolare', 'tamponi_test_antigenico_rapido\n']
@@ -271,10 +281,11 @@ dpc-covid19-ita-andamento-nazionale.csv
 2021-04-17 00:00:00 0.853346 13116
 2021-04-18 00:00:00 1.019799 12945
 2021-04-19 00:00:00 1.438239 12749
-2021-04-19 00:00:00
+2021-04-20 00:00:00 1.108412 13383
+2021-04-20 00:00:00
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 82135  100 82135    0     0   105k      0 --:--:-- --:--:-- --:--:--  105k
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 82135  100 82135    0     0  1162k      0 --:--:-- --:--:-- --:--:-- 1162k
 2021-05-15 00:00:00
 casi_inizio_sintomi_sint.csv
 2021-05-15 00:00:00
