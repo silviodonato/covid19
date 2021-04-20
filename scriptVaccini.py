@@ -151,8 +151,11 @@ def updateROOTfile(fileName, rootFileName):
         "categoria_operatori_sanitari_sociosanitari",
         "categoria_personale_non_sanitario",
         "categoria_ospiti_rsa",
+        "categoria_60_69",
+        "categoria_70_79",
         "categoria_over80",
         "categoria_forze_armate",
+        "categoria_soggetti_fragili",
         "categoria_personale_scolastico",
         "categoria_altro",
         "prima_dose",
@@ -237,14 +240,17 @@ histo.Draw("HIST,SAME")
 
 norms = {
     "categoria_operatori_sanitari_sociosanitari":1.876108E6,
-    "categoria_personale_non_sanitario":0.31E6,
+    "categoria_personale_non_sanitario":2.17E6, 
     "categoria_ospiti_rsa":0.34E6,
+    "categoria_60_69":7.379E6,
+    "categoria_70_79":5.944E6,
     "categoria_over80":4.64E6,
     "categoria_forze_armate":0.55E6,
+    "categoria_soggetti_fragili":2.08E6+5.87E6, #ultravulnerabili + vulnerabili
     "categoria_personale_scolastico":1.49E6,
-    "categoria_altro":60E6,
-    "prima_dose":60E6,
-    "seconda_dose":60E6,
+    "categoria_altro":50E6,
+    "prima_dose":50E6,
+    "seconda_dose":50E6,
     16:2.169E6, 
     20:6.130E6, 
     30:6.817E6, 
@@ -257,6 +263,12 @@ norms = {
     0:60.36E6, 
 }
 
+norms["categoria_altro"] = 50E6
+for norm in norms:
+    if type(norm)==str and "categoria" in norm and norm !="categoria_altro":
+        norms["categoria_altro"]-=norms[norm]
+print("Norm altro = ", norms["categoria_altro"])
+
 cats = [
     "categoria_operatori_sanitari_sociosanitari",
     "categoria_personale_non_sanitario",
@@ -264,7 +276,10 @@ cats = [
     "categoria_forze_armate",
     "categoria_personale_scolastico",
     "categoria_altro",
+    "categoria_60_69",
+    "categoria_70_79",
     "categoria_over80",
+    "categoria_soggetti_fragili",
     90, 
     80,
     70, 
