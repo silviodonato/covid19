@@ -34,7 +34,7 @@ ROOT.kGray,
 ] 
 colors += colors
 
-refDate = date(2021,4,1)
+refDate = date(2021,3,31) 
 #histoMax = (date.today() - refDate).days+1
 histoMax = (date(2021,7,1) - refDate).days+0.5
 #histoMin = (date(2021,3,1) - refDate).days-0.5
@@ -79,21 +79,24 @@ def getPlot(somministrazioniTree, selection, dosi= "prima_dose+seconda_dose", cu
 #        break
 #        print(i, histo.GetBinContent(i), histo.GetBinContent(i+1))
         if histo.GetBinContent(i)==histo.GetBinContent(i+1):
-            histo.SetBinContent(i+1,0)
+            pass
+#            histo.SetBinContent(i+1,0)
 #            print(i+1,0)
         else:
             if cumulative:
-                histo.SetBinContent(i+1,0)
+#                histo.SetBinContent(i+1,0)
                 lastDate=histo.GetBinCenter(i)
             else:
-                histo.SetBinContent(i+1,0)
-                histo.SetBinContent(i,0)
+#                histo.SetBinContent(i+1,0)
+#                histo.SetBinContent(i,0)
                 lastDate=histo.GetBinCenter(i)-1
             print ("lastDate=",lastDate)
             break
     for excludedDay in excludedDays: 
         histo.SetBinContent(histo.FindBin(excludedDay),0)
 #            print("SetZero",i)
+    for date in range(int(lastDate)+2,int(lastDate)+100):
+        histo.SetBinContent(histo.FindBin(date),0)
     histo = histo.Clone(hname)
     histo.Sumw2()
     print(hname)
