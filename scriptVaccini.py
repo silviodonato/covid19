@@ -364,7 +364,7 @@ for tipo in ["prima_dose","seconda_dose","somministrazioni"]:
                 fitdiffs[cat].SetLineColor(colors[i])
         #    histos[cat].SetMinimum(0.02)
             if i==0:
-                histos[cat].GetXaxis().SetTitle("Giorni dal 1 Aprile")
+                histos[cat].GetXaxis().SetTitle("Giorni dal 31 Marzo")
                 histos[cat].GetYaxis().SetTitle(tipo.replace("_"," ")+" (%)")
                 histos[cat].SetTitle(tipo.replace("_"," "))
                 histos[cat].Draw("HIST")
