@@ -80,15 +80,15 @@ def getPlot(somministrazioniTree, selection, dosi= "prima_dose+seconda_dose", cu
 #        print(i, histo.GetBinContent(i), histo.GetBinContent(i+1))
         if histo.GetBinContent(i)==histo.GetBinContent(i+1):
             pass
-#            histo.SetBinContent(i+1,0)
+            histo.SetBinContent(i+1,0)
 #            print(i+1,0)
         else:
             if cumulative:
-#                histo.SetBinContent(i+1,0)
+                histo.SetBinContent(i+1,0)
                 lastDate=histo.GetBinCenter(i)
             else:
-#                histo.SetBinContent(i+1,0)
-#                histo.SetBinContent(i,0)
+                histo.SetBinContent(i+1,0)
+                histo.SetBinContent(i,0)
                 lastDate=histo.GetBinCenter(i)-1
             print ("lastDate=",lastDate)
             break
