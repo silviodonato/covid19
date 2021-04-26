@@ -1,21 +1,21 @@
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:--  0:00:01 --:--:--     0  0     0    0     0    0     0      0      0 --:--:--  0:00:02 --:--:--     0  0     0    0     0    0     0      0      0 --:--:--  0:00:03 --:--:--     0  0     0    0     0    0     0      0      0 --:--:--  0:00:04 --:--:--     0  0     0    0     0    0     0      0      0 --:--:--  0:00:05 --:--:--     0100  4366  100  4366    0     0    782      0  0:00:05  0:00:05 --:--:--   965
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  4366  100  4366    0     0  30746      0 --:--:-- --:--:-- --:--:-- 30746
 Archive:  calcolo_rt_italia.zip
    creating: calcolo_Rt_Italia/
   inflating: calcolo_Rt_Italia/calcoloRt_EpiEstim.R  
   inflating: calcolo_Rt_Italia/curva_epidemica_Italia_2021-04-21  
---2021-04-25 18:41:23--  https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-andamento-nazionale/dpc-covid19-ita-andamento-nazionale.csv
-Resolving raw.githubusercontent.com (raw.githubusercontent.com)... 185.199.108.133, 185.199.109.133, 185.199.110.133, ...
-Connecting to raw.githubusercontent.com (raw.githubusercontent.com)|185.199.108.133|:443... connected.
+--2021-04-26 18:56:06--  https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-andamento-nazionale/dpc-covid19-ita-andamento-nazionale.csv
+Resolving raw.githubusercontent.com (raw.githubusercontent.com)... 185.199.110.133, 185.199.111.133, 185.199.108.133, ...
+Connecting to raw.githubusercontent.com (raw.githubusercontent.com)|185.199.110.133|:443... connected.
 HTTP request sent, awaiting response... 200 OK
-Length: 52335 (51K) [text/plain]
+Length: 52484 (51K) [text/plain]
 Saving to: ‘dpc-covid19-ita-andamento-nazionale.csv’
 
-     0K .......... .......... .......... .......... .......... 97%  564K 0s
-    50K .                                                     100% 2114G=0.09s
+     0K .......... .......... .......... .......... .......... 97% 7.05M 0s
+    50K .                                                     100% 50.1M=0.007s
 
-2021-04-25 18:41:24 (577 KB/s) - ‘dpc-covid19-ita-andamento-nazionale.csv’ saved [52335/52335]
+2021-04-26 18:56:06 (7.20 MB/s) - ‘dpc-covid19-ita-andamento-nazionale.csv’ saved [52484/52484]
 
 2021-05-15 00:00:00
 dpc-covid19-ita-andamento-nazionale.csv
@@ -257,11 +257,11 @@ dpc-covid19-ita-andamento-nazionale.csv
 2021-03-24 00:00:00 0.936199 19910
 2021-03-25 00:00:00 0.855101 20350
 2021-03-26 00:00:00 0.788904 18923
-2021-03-27 00:00:00 0.853346 20343
+2021-03-27 00:00:00 0.853346 20289
 2021-03-28 00:00:00 1.019799 19999
 2021-03-29 00:00:00 1.438239 18576
-2021-03-30 00:00:00 1.108412 17753
-2021-03-31 00:00:00 0.936199 21226
+2021-03-30 00:00:00 1.108412 17749
+2021-03-31 00:00:00 0.936199 21079
 2021-04-01 00:00:00 0.855101 20222
 2021-04-02 00:00:00 0.788904 17302
 2021-04-03 00:00:00 0.853346 18143
@@ -287,10 +287,11 @@ dpc-covid19-ita-andamento-nazionale.csv
 2021-04-23 00:00:00 0.788904 11645
 2021-04-24 00:00:00 0.853346 11791
 2021-04-25 00:00:00 1.019799 13419
-2021-04-25 00:00:00
+2021-04-26 00:00:00 1.438239 12144
+2021-04-26 00:00:00
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:--  0:00:01 --:--:--     0100 83333  100 83333    0     0  57990      0  0:00:01  0:00:01 --:--:-- 58031
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 83457  100 83457    0     0  1116k      0 --:--:-- --:--:-- --:--:-- 1116k
 2021-05-15 00:00:00
 casi_inizio_sintomi_sint.csv
 2021-05-15 00:00:00
