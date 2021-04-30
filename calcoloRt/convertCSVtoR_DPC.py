@@ -6,22 +6,32 @@ from convertCSVtoR import beginDate, endDate
 applySF = True
 
 nuovi_positivi_sfs ={}
-nuovi_positivi_sfs[0] = 1.019799
-nuovi_positivi_sfs[1] = 1.438239
-nuovi_positivi_sfs[2] = 1.108412
-nuovi_positivi_sfs[3] = 0.936199
-nuovi_positivi_sfs[4] = 0.855101
-nuovi_positivi_sfs[5] = 0.788904
-nuovi_positivi_sfs[6] = 0.853346
+nuovi_positivi_sfs[0] = 1.011004
+nuovi_positivi_sfs[1] = 1.467008
+nuovi_positivi_sfs[2] = 1.130304
+nuovi_positivi_sfs[3] = 0.928682
+nuovi_positivi_sfs[4] = 0.732461
+nuovi_positivi_sfs[5] = 0.817663
+nuovi_positivi_sfs[6] = 0.912878
 
 deceduti_sfs = {}
-deceduti_sfs[0] = 1.374735
-deceduti_sfs[1] = 1.047937
-deceduti_sfs[2] = 0.804842
-deceduti_sfs[3] = 0.903648
-deceduti_sfs[4] = 0.895749
-deceduti_sfs[5] = 0.933157
-deceduti_sfs[6] = 1.039933
+deceduti_sfs[0] = 1.388488
+deceduti_sfs[1] = 1.055654
+deceduti_sfs[2] = 0.849036
+deceduti_sfs[3] = 0.888550
+deceduti_sfs[4] = 0.855787
+deceduti_sfs[5] = 0.893791
+deceduti_sfs[6] = 1.068693
+
+intensiva_sfs = {}
+intensiva_sfs[0] = 1.171685
+intensiva_sfs[1] = 1.157867
+intensiva_sfs[2] = 0.874199
+intensiva_sfs[3] = 0.950866
+intensiva_sfs[4] = 0.855041
+intensiva_sfs[5] = 0.911119
+intensiva_sfs[6] = 1.079224
+
 
 fileName = sys.argv[1]
 print(fileName)

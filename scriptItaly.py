@@ -47,6 +47,7 @@ if (doProvince): dataProvince, dates = fillDataRegioni('dataItaly/dati-province/
 
 tests = getColumn(dataRegioni, "casi_testati", )
 intensivas = getColumn(dataRegioni, "terapia_intensiva")
+newIntensivas = getColumn(dataRegioni, "ingressi_terapia_intensiva")
 ricoveratis = getColumn(dataRegioni, "ricoverati_con_sintomi")
 confirmes = getColumn(dataRegioni, "totale_casi")
 deaths = getColumn(dataRegioni, "deceduti")
@@ -77,7 +78,7 @@ firstDate = 0
 #firstDate = dates.index("12/30/20")
 #firstDate = dates.index("12/31/20")
 #firstDate = dates.index("8/23/20")
-firstDate = dates.index("2/15/21")
+firstDate = dates.index("4/11/21")
 #firstDate = dates.index("1/1/21")
 #firstDate = dates.index("12/20/20")
 #firstDate = dates.index("4/1/20")
@@ -87,7 +88,7 @@ lastDate = lastDateData - 1
 #lastDate = dates.index("3/1/20")
 #lastDate = 30
 #predictionsDate = dates.index("12/31/20")
-predictionsDate = dates.index("5/15/21")
+predictionsDate = dates.index("7/11/21")
 #predictionsDate = 95
 
 #firstDate = dates.index("3/1/20")
@@ -117,7 +118,7 @@ newConfirmes = newCases(confirmes, dates)
 newDeaths = newCases(deaths, dates)
 newRecoveres = newCases(recoveres, dates)
 newTests = newCases(tests, dates)
-newIntensivas = newCases(intensivas, dates)
+#newIntensivas = newCases(intensivas, dates) # newIntensivas taken from ingressi_terapia_intensiva
 newRicoveratis = newCases(ricoveratis, dates)
 newPositives = newCases(positives, dates)
 
@@ -166,7 +167,7 @@ if len(placesTest)>0: places = placesTest
 confirmes_scale=1
 deaths_scale=40
 deathIstatExcess_scale=20
-intensivas_scale=100 
+intensivas_scale=90 
 ricoveratis_scale=20
 tests_scale=0.10
 
@@ -204,6 +205,7 @@ deaths_h    = makeHistos("histo_deaths", deaths,           dates, places, firstD
 tests_h    = makeHistos("histo_tests", tests,           dates, places, firstDate, lastDate, predictionsDate, 0, cutTails=False, errorType='cumulative', lineWidth=2, daysSmearing=1)
 ricoveratis_h    = makeHistos("histo_ricoveratis", ricoveratis,           dates, places, firstDate, lastDate, predictionsDate, 0, cutTails=False, errorType='cumulative', lineWidth=2, daysSmearing=1)
 intensivas_h    = makeHistos("histo_intensivas", intensivas,           dates, places, firstDate, lastDate, predictionsDate, 0, cutTails=False, errorType='cumulative', lineWidth=2, daysSmearing=1)
+
 
 
 if startFromZero:
@@ -264,7 +266,7 @@ for place in places:
 #    positiveHisto(deaths_h[place])
 #    positiveHisto(newDeaths_h[place])
     if useScaleFactor:
-        for histos in [newPositives_h,newConfirmes_h,newRecoveres_h,newDeaths_h,newTests_h,newRicoveratis_h,newIntensivas_h]:
+        for histos in [newPositives_h,newConfirmes_h,newRecoveres_h,newDeaths_h,newTests_h,newIntensivas_h]: #newRicoveratis_h,
             applyScaleFactors(histos[place], errorType=eType)
             pass
     if useLog:
