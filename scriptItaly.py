@@ -6,7 +6,7 @@ from tools import colors, fillDataRegioni, fillDataISTATpickle, newCases, getRat
 
 placesTest = []
 #placesTest = ["Italia","LaSpezia"]
-#placesTest = ["Italia"]
+placesTest = ["Italia"]
 #placesTest = ["Liguria"]
 #placesTest = ["Umbria"]
 #placesTest = ["Basilicata"]
@@ -83,6 +83,7 @@ firstDate = dates.index("4/11/21")
 #firstDate = dates.index("12/20/20")
 #firstDate = dates.index("4/1/20")
 #firstDate = 16
+firstDate = dates.index("10/1/20")
 lastDate = lastDateData - 1
 #lastDate = dates.index("2/29/20")
 #lastDate = dates.index("3/1/20")
@@ -584,7 +585,7 @@ for place in places:
     
     positiveToTestRatio = newConfirmes_h[place].Clone("positiveToTestRatio_"+place)
     positiveToTestRatio.Reset()
-    positiveToTestRatio.Divide(newConfirmes_h[place], newTests_h[place])
+    positiveToTestRatio.Divide(newTests_h[place], newConfirmes_h[place])
 #    positiveHisto(positiveToTestRatio)
     
 #    for i in range(positiveToTestRatio.GetNbins()+2):
@@ -592,11 +593,11 @@ for place in places:
     
     deathToRecoverRatio = deaths_h[place].Clone("deathToRecoverRatio_"+place)
     deathToRecoverRatio.Reset()
-    deathToRecoverRatio.Divide(deaths_h[place], recoveres_h[place])
+    deathToRecoverRatio.Divide(recoveres_h[place], deaths_h[place])
     
     deathDailyToRecoverRatio = newDeaths_h[place].Clone("deathDailyToRecoverRatio_"+place)
     deathDailyToRecoverRatio.Reset()
-    deathDailyToRecoverRatio.Divide(newDeaths_h[place], newRecoveres_h[place])
+    deathDailyToRecoverRatio.Divide(newRecoveres_h[place], newDeaths_h[place])
 
     savePlotNew([getScaled(positiveToTestRatio,0.2), deathToRecoverRatio,deathDailyToRecoverRatio], [], "plotsRegioni/%s_rapporto.png"%place, startDate, dates, d3, log=False)
 

@@ -98,6 +98,9 @@ prediction  = ROOT.kMagenta+2
 istat       = ROOT.kMagenta+1
 funcExp     = ROOT.kMagenta
 colorMap = {
+    "casiSintomatici" : guariti,    
+    "prelievi": positivi ,
+    "casi": test ,
     "positives": positivi ,
     "histo_confirmes": contagiati ,
     "recoveres":  guariti,
@@ -131,6 +134,9 @@ colorMap = {
 }
 
 labelMap = {
+    "casiSintomatici":  "Casi sint",
+    "casi":  "Casi totali",
+    "prelievi":  "Prelievo",
     "positives":  "Positivi",
     "confirmes":  "Casi totali",
     "recoveres":  "Guariti",
@@ -343,6 +349,38 @@ def fillDataISTAT(fileName, zerosuppression=0, pickleFileName="temp.pkl", writeP
     provinceMap[provincia].add(place)
     regioniMap[regione].add(place)
 
+def fillDataISS(fileName):
+    data = {}
+    dates = []
+    regione = "Italia"
+    indexData = 1
+    data[regione] = {}
+    with open(fileName) as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=',')
+        line_count = 0
+        for row in csv_reader:
+#            print "XXX",row
+            if line_count ==0:
+                labels = row[:]
+            else:
+#                index = labels.index("iss_date")
+                date = row[indexData]
+                if ("/" in date) and not("01/2020" in date) and not("02/2020" in date):
+                    dd, mm, yyyy = date.split("/")
+                    dd = str(int(dd))
+                    mm = str(int(mm))
+#                    if len(dd)<2: dd = "0"+dd
+#                    if len(mm)<2: mm = "0"+mm
+                    date = "%s/%s/%s"%(mm,dd,yyyy.replace("202","2"))
+                    if not date in dates: dates.append(date)
+                    data[regione][date] = {}
+                    for i,label in enumerate(labels):
+                        val = row[i].replace("<","")
+                        data[regione][date][label] = val
+#                        print date, label, val
+            line_count+=1
+    return data, dates
+
 def fillDataRegioni(fileName, column_regione = "denominazione_regione"):
     data = {}
     dates = []
@@ -407,6 +445,8 @@ def getColumn(dataRegioni_, label, scaleFactor=1):
         for place in regions("", regione, ["Italia"]):
             if not place in data: data[place] = {}
             for date in dataRegioni_[regione]:
+#                print(regione, date, label)
+#                print(dataRegioni_[regione][date][label])
                 if not date in data[place]: data[place][date] = 0
                 if dataRegioni_[regione][date][label] == "": dataRegioni_[regione][date][label] = 0
                 data[place][date] += int(dataRegioni_[regione][date][label])*scaleFactor
@@ -478,14 +518,19 @@ def makeHistos(prefix, dataUnsmeared, dates, places, firstDate, lastDate, predic
         for i in reversed(range(firstDate, predictionDate)):
             binx = histos[place].FindBin(i)
             date = dates[i]
+#            print("date",date)      
 #            print(binx,date)
             if type(date)==str and i%7==0: histos[place].GetXaxis().SetBinLabel(  binx, date[:-3] )
             error = 0.
+#            print(date, data.values()[0])
+#            print(date in data.values()[0])
             if date in data.values()[0]:
+#                print("EEE",date)
                 if not date in data[place] or data[place][date]==0: 
 #                    histos[place].SetBinContent(binx, 0)
 #                    histos[place].SetBinError(binx, 0)
                     continue
+#                print("AAAA")
                 if errorType=='dictionary': ## if dictionary, data is (value, error)
                     value = data[place][date][0]
                     error = data[place][date][1]
@@ -508,8 +553,10 @@ def makeHistos(prefix, dataUnsmeared, dates, places, firstDate, lastDate, predic
                         error = 9.+(value)**0.5+0*0.25*(value) if value>=9 else 12.+abs(value-9.)                    ## error 10 + sqrt(N) + 0*25% N
                         if i>=1: error = max(error, abs(value-valueM1))
                         if i<=lastDate: error = max(error, abs(value-valueP1))
+#                print(binx,value)
                 if True or value>threshold:
                     if True or not stop:
+#                            print(binx,value)
                             histos[place].SetBinContent(binx, value)
                             histos[place].SetBinError(binx, error)
                             start = True
@@ -1368,14 +1415,14 @@ def getPredictionErf(places, dates, firstDate, finalDate, histo, functErfs, func
                 pass
     return predictions
 
-def applyScaleFactors(histo, errorType='3sqrtN', threshold=0):
+def applyScaleFactors(histo, errorType='3sqrtN', threshold=0, maximum =int(1E9)):
     print ("Getting scale factors: "+histo.GetName())
     sfs = [1.]*7
     count = [0]*7
     tot = 0.001
     countTot = 0.001
     offset=0
-    for i in range(5-offset,len(histo)+1-offset):
+    for i in range(5-offset,min(len(histo)+1-offset,maximum)):
         sum7binsBef = sum(histo.GetBinContent(i-j) for j in range(offset,7+offset))
 #        sum7binsBefCorr = sum(histo.GetBinContent(i-j)>0 for j in range(offset,7+offset))/7
 #        if sum7binsBefCorr>0:
