@@ -6,7 +6,7 @@ from tools import colors, fillDataRegioni, fillDataISTATpickle, newCases, getRat
 
 placesTest = []
 #placesTest = ["Italia","LaSpezia"]
-placesTest = ["Italia"]
+#placesTest = ["Italia"]
 #placesTest = ["Liguria"]
 #placesTest = ["Umbria"]
 #placesTest = ["Basilicata"]
@@ -83,7 +83,7 @@ firstDate = dates.index("4/11/21")
 #firstDate = dates.index("12/20/20")
 #firstDate = dates.index("4/1/20")
 #firstDate = 16
-firstDate = dates.index("10/1/20")
+#firstDate = dates.index("10/1/20")
 lastDate = lastDateData - 1
 #lastDate = dates.index("2/29/20")
 #lastDate = dates.index("3/1/20")
