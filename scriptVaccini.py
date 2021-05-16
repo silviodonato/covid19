@@ -36,7 +36,7 @@ colors += colors
 
 refDate = date(2021,4,30) 
 #histoMax = (date.today() - refDate).days+1
-histoMax = (date(2021,7,1) - refDate).days+0.5
+histoMax = (date(2021,8,1) - refDate).days+0.5
 #histoMin = (date(2021,3,1) - refDate).days-0.5
 #histoMin = (date(2021,2,18) - refDate).days-0.5
 histoMin = (date(2020,12,1) - refDate).days-0.5
@@ -242,31 +242,33 @@ histo.Draw("HIST,SAME")
 #selection = "(fornitore==-1) * (fascia_anagrafica==90)"
 
 norms = {
-    "categoria_operatori_sanitari_sociosanitari":1.876108E6,
-    "categoria_personale_non_sanitario":2.17E6, 
-    "categoria_ospiti_rsa":0.34E6,
-    "categoria_60_69":7.379E6,
-    "categoria_70_79":5.944E6,
-    "categoria_over80":4.64E6,
-    "categoria_forze_armate":0.55E6,
+    "categoria_operatori_sanitari_sociosanitari":1886260,
+    "categoria_personale_non_sanitario":6E5, 
+    "categoria_ospiti_rsa": 379452,
+#    "categoria_60_69":7.379E6,
+#    "categoria_70_79":5.944E6,
+#    "categoria_over80":4419703,
+    "categoria_forze_armate":551566,
     "categoria_soggetti_fragili":2.08E6+5.87E6, #ultravulnerabili + vulnerabili
-    "categoria_personale_scolastico":1.49E6,
-    "categoria_altro":50E6,
+    "categoria_personale_scolastico": 1483442,
+#    "categoria_altro":50E6,
     "prima_dose":50E6,
     "seconda_dose":50E6,
     16:2.169E6, 
-    20:6.130E6, 
-    30:6.817E6, 
-    40:8.940E6, 
-    50:9.407E6, 
-    60:7.379E6, 
-    70:5.944E6, 
-    80:3.628E6,
-    90:0.792E6, 
-    0:60.36E6, 
+    20:2962307+3175599, 
+    30:3320500+3654733, 
+    40:4372031+4785280, 
+    50:4900974+4387417, 
+    60:3819054+3468709, 
+    70:3215420+2712798, 
+    80:2162715+1367800,
+    90:599445+152196+14132,
+    0:59816673, 
+    #Dati presi da https://www.tuttitalia.it/statistiche/popolazione-eta-sesso-stato-civile-2019/
 }
 
-norms["categoria_altro"] = 50E6
+norms["categoria_over80"] = norms[80] + norms[90] - norms["categoria_ospiti_rsa"] 
+norms["categoria_altro"] = norms[0] -  norms["categoria_operatori_sanitari_sociosanitari"] - norms["categoria_personale_non_sanitario"] - norms["categoria_ospiti_rsa"] - norms["categoria_forze_armate"] - norms["categoria_soggetti_fragili"] - norms["categoria_personale_scolastico"] - norms[60] - norms[70]
 for norm in norms:
     if type(norm)==str and "categoria" in norm and norm !="categoria_altro":
         norms["categoria_altro"]-=norms[norm]
@@ -281,7 +283,7 @@ cats = [
     "categoria_altro",
 #    "categoria_60_69",
 #    "categoria_70_79",
-#    "categoria_over80",
+    "categoria_over80",
     "categoria_soggetti_fragili",
     90, 
     80,
