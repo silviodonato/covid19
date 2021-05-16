@@ -5,8 +5,8 @@ Results was:
 With exit code 0
 ['Italia']
 Traceback (most recent call last):
-  File "scriptItalyISS.py", line 135, in <module>
-    prelievi_h = makeHistos("histo_prelievi", prelievi,        dates, places, firstDate, lastDate, predictionsDate, 0, cutTails=False, errorType='cumulative', lineWidth=2, daysSmearing=1)
+  File "scriptItalyISS.py", line 136, in <module>
+    decessi_h    = makeHistos("histo_decessi", decessi,           dates, places, firstDate, lastDate, predictionsDate, 0, cutTails=False, errorType='cumulative', lineWidth=2, daysSmearing=1)
   File "/home/sdonato/COVID-19-new/covid19/tools.py", line 541, in makeHistos
     valueP1 = data[place][dates[i+1]] if i<=lastDate else value
-KeyError: '5/13/21'
+KeyError: '5/15/21'

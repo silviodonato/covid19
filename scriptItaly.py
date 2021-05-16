@@ -585,7 +585,7 @@ for place in places:
     
     positiveToTestRatio = newConfirmes_h[place].Clone("positiveToTestRatio_"+place)
     positiveToTestRatio.Reset()
-    positiveToTestRatio.Divide(newTests_h[place], newConfirmes_h[place])
+    positiveToTestRatio.Divide(newConfirmes_h[place], newTests_h[place])
 #    positiveHisto(positiveToTestRatio)
     
 #    for i in range(positiveToTestRatio.GetNbins()+2):
@@ -599,7 +599,7 @@ for place in places:
     deathDailyToRecoverRatio.Reset()
     deathDailyToRecoverRatio.Divide(newRecoveres_h[place], newDeaths_h[place])
 
-    savePlotNew([getScaled(positiveToTestRatio,0.2), deathToRecoverRatio,deathDailyToRecoverRatio], [], "plotsRegioni/%s_rapporto.png"%place, startDate, dates, d3, log=False)
+    savePlotNew([getScaled(positiveToTestRatio,200), deathToRecoverRatio,deathDailyToRecoverRatio], [], "plotsRegioni/%s_rapporto.png"%place, startDate, dates, d3, log=False)
 
 
 if (doProvince): 
