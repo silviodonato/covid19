@@ -1,0 +1,12 @@
+--2021-04-22 21:39:17--  https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-andamento-nazionale/dpc-covid19-ita-andamento-nazionale.csv
+Resolving raw.githubusercontent.com (raw.githubusercontent.com)... 185.199.111.133, 185.199.109.133, 185.199.110.133, ...
+Connecting to raw.githubusercontent.com (raw.githubusercontent.com)|185.199.111.133|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 51886 (51K) [text/plain]
+Saving to: ‘dpc-covid19-ita-andamento-nazionale.csv’
+
+     0K .......... .......... .......... .......... .......... 98%  277K 0s
+    50K                                                       100% 1278G=0.2s
+
+2021-04-22 21:39:18 (281 KB/s) - ‘dpc-covid19-ita-andamento-nazionale.csv’ saved [51886/51886]
+
