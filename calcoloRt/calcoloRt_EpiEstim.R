@@ -16,7 +16,7 @@ intervallo.seriale <- dgamma(0:N, shape=shape.stimato, rate=rate.stimato)
 ## normalizzo la distribuzione dell'intervallo seriale in modo che la somma faccia 1
 SI <- (intervallo.seriale/sum(intervallo.seriale)) 
 
-startPoint = 297
+#startPoint = 297
 for (file_ in c(
     "dpc_nuovi_positivi.Rdata",
     "dpc_ingressi_terapia_intensiva.Rdata",
@@ -61,7 +61,7 @@ for (file_ in c(
     sel.date <- stima$R[, "t_end"]
     date <- curva.epidemica[sel.date,1] 
 
-    startPoint = length(date) - 7*12 - 2 ## 15 feb - 15 may
+    startPoint = length(date) - 7*4*7 - 2 ## 1 feb - 1 sep
     ymax = 1.55
     ymin = 0.45
     ysize = 0.1
