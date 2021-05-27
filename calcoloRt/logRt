@@ -1,25 +1,21 @@
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    75  100    75    0     0    728      0 --:--:-- --:--:-- --:--:--   728
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  4509  100  4509    0     0   7578      0 --:--:-- --:--:-- --:--:--  7565
 Archive:  calcolo_rt_italia.zip
-  End-of-central-directory signature not found.  Either this file is not
-  a zipfile, or it constitutes one disk of a multi-part archive.  In the
-  latter case the central directory and zipfile comment will be found on
-  the last disk(s) of this archive.
-unzip:  cannot find zipfile directory in one of calcolo_rt_italia.zip or
-        calcolo_rt_italia.zip.zip, and cannot find calcolo_rt_italia.zip.ZIP, period.
-cp: cannot stat 'calcolo_Rt_Italia/curva_epidemica_Italia_20*': No such file or directory
---2021-05-26 17:47:21--  https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-andamento-nazionale/dpc-covid19-ita-andamento-nazionale.csv
-Resolving raw.githubusercontent.com (raw.githubusercontent.com)... 185.199.111.133, 185.199.110.133, 185.199.108.133, ...
+   creating: calcolo_Rt_Italia/
+  inflating: calcolo_Rt_Italia/calcoloRt_EpiEstim.R  
+  inflating: calcolo_Rt_Italia/curva_epidemica_Italia_2021-05-19  
+--2021-05-27 21:51:12--  https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-andamento-nazionale/dpc-covid19-ita-andamento-nazionale.csv
+Resolving raw.githubusercontent.com (raw.githubusercontent.com)... 185.199.111.133, 185.199.108.133, 185.199.109.133, ...
 Connecting to raw.githubusercontent.com (raw.githubusercontent.com)|185.199.111.133|:443... connected.
 HTTP request sent, awaiting response... 200 OK
-Length: 56939 (56K) [text/plain]
+Length: 57085 (56K) [text/plain]
 Saving to: ‘dpc-covid19-ita-andamento-nazionale.csv’
 
-     0K .......... .......... .......... .......... .......... 89% 5.09M 0s
-    50K .....                                                 100% 89.2M=0.01s
+     0K .......... .......... .......... .......... .......... 89%  555K 0s
+    50K .....                                                 100% 6.53M=0.09s
 
-2021-05-26 17:47:22 (5.62 MB/s) - ‘dpc-covid19-ita-andamento-nazionale.csv’ saved [56939/56939]
+2021-05-27 21:51:13 (613 KB/s) - ‘dpc-covid19-ita-andamento-nazionale.csv’ saved [57085/57085]
 
 2021-09-01 00:00:00
 dpc-covid19-ita-andamento-nazionale.csv
@@ -322,39 +318,16 @@ dpc-covid19-ita-andamento-nazionale.csv
 2021-05-24 00:00:00 1.467008 3653
 2021-05-25 00:00:00 1.130304 3644
 2021-05-26 00:00:00 0.928682 3656
-2021-05-26 00:00:00
+2021-05-27 00:00:00 0.732461 3038
+2021-05-27 00:00:00
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    75  100    75    0     0   1829      0 --:--:-- --:--:-- --:--:--  1829
-ssconvert: Unknown sheet "casi_inizio_sintomi_sint"
-mv: cannot stat 'aa.csv.0': No such file or directory
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 88273  100 88273    0     0   154k      0 --:--:-- --:--:-- --:--:--  153k
 2021-09-01 00:00:00
 casi_inizio_sintomi_sint.csv
-Traceback (most recent call last):
-  File "./convertCSVtoR.py", line 14, in <module>
-    file_ = open(fileName,'r')
-FileNotFoundError: [Errno 2] No such file or directory: 'casi_inizio_sintomi_sint.csv'
-ssconvert: Unknown sheet "casi_inizio_sintomi"
-mv: cannot stat 'aa.csv.0': No such file or directory
 2021-09-01 00:00:00
 casi_inizio_sintomi.csv
-Traceback (most recent call last):
-  File "./convertCSVtoR.py", line 14, in <module>
-    file_ = open(fileName,'r')
-FileNotFoundError: [Errno 2] No such file or directory: 'casi_inizio_sintomi.csv'
-ssconvert: Unknown sheet "casi_prelievo_diagnosi"
-mv: cannot stat 'aa.csv.0': No such file or directory
 2021-09-01 00:00:00
 casi_prelievo_diagnosi.csv
-Traceback (most recent call last):
-  File "./convertCSVtoR.py", line 14, in <module>
-    file_ = open(fileName,'r')
-FileNotFoundError: [Errno 2] No such file or directory: 'casi_prelievo_diagnosi.csv'
-ssconvert: Unknown sheet "decessi"
-mv: cannot stat 'aa.csv.0': No such file or directory
 2021-09-01 00:00:00
 decessi.csv
-Traceback (most recent call last):
-  File "./convertCSVtoR.py", line 14, in <module>
-    file_ = open(fileName,'r')
-FileNotFoundError: [Errno 2] No such file or directory: 'decessi.csv'
