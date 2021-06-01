@@ -78,7 +78,7 @@ firstDate = 0
 #firstDate = dates.index("12/30/20")
 #firstDate = dates.index("12/31/20")
 #firstDate = dates.index("8/23/20")
-firstDate = dates.index("5/1/21")
+firstDate = dates.index("4/30/21")
 #firstDate = dates.index("1/1/21")
 #firstDate = dates.index("12/20/20")
 #firstDate = dates.index("4/1/20")
@@ -115,7 +115,8 @@ for place in confirmes:
         positives[place][dates[i]] = confirmes[place][dates[i]] - deaths[place][dates[i]] - recoveres[place][dates[i]]
 
 
-newConfirmes = newCases(confirmes, dates)
+newConfirmes = newCases(confirmes, dates, toDebug= []) #toDebug= ["Italia"]
+#print(newConfirmes["Italia"])
 newDeaths = newCases(deaths, dates)
 newRecoveres = newCases(recoveres, dates)
 newTests = newCases(tests, dates)
@@ -229,7 +230,8 @@ if startFromZero:
 #histos = makeHistos(confirmes, places, firstDate, lastDate, predictionsDate, cumulativeError=True)
 #eType = "default"
 eType = "3sqrtN"
-newConfirmes_h  = makeHistos("histo_newConfirmes", newConfirmes, dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=True, lineWidth=2, daysSmearing=daysSmearing, errorType=eType)
+#print(newConfirmes["Italia"])
+newConfirmes_h  = makeHistos("histo_newConfirmes", newConfirmes, dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2, daysSmearing=daysSmearing, errorType=eType)
 newRecoveres_h  = makeHistos("histo_newRecoveres", newRecoveres, dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2, daysSmearing=daysSmearing, errorType=eType)
 newDeaths_h     = makeHistos("histo_newDeaths", newDeaths,    dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2, daysSmearing=daysSmearing, errorType=eType)
 newTests_h     = makeHistos("histo_newTests", newTests,    dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2, daysSmearing=daysSmearing, errorType=eType)
@@ -238,26 +240,29 @@ newIntensivas_h     = makeHistos("histo_newIntensivas", newIntensivas,    dates,
 newPositives_h  = makeHistos("histo_newpositives", newPositives, dates, places, firstDate, lastDate, predictionsDate, 1, cutTails=False, lineWidth=2, daysSmearing=daysSmearing, errorType=eType)
 
 
-### fix "negative" test on 12/17/20
-for place in places:
-#    for date in ['12/5/20','12/6/20','12/6/20','12/17/20','12/18/20','2/6/21','3/21/21','3/22/21','3/23/21','3/24/21']:
-    for date in ['3/22/21']:
-        fixDate = dates.index(date)
-        for histos in [newTests_h, newConfirmes_h, newRecoveres_h]:
-            if place in histos:
-                bin_ = histos[place].FindBin(fixDate)
-#                print("AAA",bin_,place)
-#                print(histos[place].GetBinContent(bin_))
-                histos[place].SetBinContent(bin_, histos[place].GetBinContent(bin_-7))
-#                histos[place].SetBinContent(bin_, 0)
-#                print(histos[place].GetBinContent(bin_))
-#                histos[place].Modify()
+bin_ = newConfirmes_h[place].FindBin(dates.index('4/22/21'))
+
+#### fix "negative" test on 12/17/20
+#for place in places:
+##    for date in ['12/5/20','12/6/20','12/6/20','12/17/20','12/18/20','2/6/21','3/21/21','3/22/21','3/23/21','3/24/21']:
+#    for date in ['3/22/21']:
+#        fixDate = dates.index(date)
+#        for histos in [newTests_h, newConfirmes_h, newRecoveres_h]:
+#            if place in histos:
+#                bin_ = histos[place].FindBin(fixDate)
+##                print("AAA",bin_,place)
+##                print(histos[place].GetBinContent(bin_))
+#                histos[place].SetBinContent(bin_, histos[place].GetBinContent(bin_-7))
+##                histos[place].SetBinContent(bin_, 0)
+##                print(histos[place].GetBinContent(bin_))
+##                histos[place].Modify()
 
 print(newTests_h[place])
 print(newTests_h[place].GetBinContent(bin_))
 print(newConfirmes_h[place].GetBinContent(bin_))
+print(confirmes_h[place].GetBinContent(bin_+1), "-", confirmes_h[place].GetBinContent(bin_))
 print(newRecoveres_h[place].GetBinContent(bin_))
-
+#1./0
 
 for place in places:
 #    positiveHisto(tests_h[place])
@@ -280,8 +285,8 @@ print(newTests_h[place])
 
 fits, fits_res, fits_error              = fitErf(confirmes_h,      places, firstDate, lastDate, predictionsDate)
 #fitdiffs, fitdiffs_res, fitdiffs_error  = fitGaussAsymmetric(newConfirmes_h, places, firstDate, lastDate, predictionsDate)
-fitdiffs, fitdiffs_res, fitdiffs_error  = fitTwoExp(newConfirmes_h, places, firstDate, lastDate, predictionsDate)
 fitexps, fitexps_res, fitexps_error                = fitExp(newConfirmes_h, places, lastDate-14, lastDate, predictionsDate)
+fitdiffs, fitdiffs_res, fitdiffs_error  = fitTwoExp(newConfirmes_h, places, firstDate, lastDate, predictionsDate)
 fitexptotals, fitexptotals_res, fitexptotals_error = fitExp(confirmes_h,    places, lastDate-14-1, lastDate-1, predictionsDate)
 #fitexptotals, fitexptotals_res, fitexptotals_error = fitExp(confirmes_h,    places, lastDate-8, lastDate, predictionsDate)
 fitdiffIntensivas, fitdiffIntensivas_res, fitdiffIntensivas_error = fitTwoGaussDiff(newIntensivas_h, places, firstDate, lastDate, predictionsDate)

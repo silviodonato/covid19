@@ -452,14 +452,16 @@ def getColumn(dataRegioni_, label, scaleFactor=1):
                 data[place][date] += int(dataRegioni_[regione][date][label])*scaleFactor
     return data
 
-def newCases(cases, dates):
+def newCases(cases, dates, toDebug = []):
     newCases = {}
     for place in cases:
         newCases[place] = {}
         newCases[place][dates[0]] = 0
         for i in range(1, len(cases[place])):
-#            print place, i, dates[i]
             newCases[place][dates[i]] = cases[place][dates[i]] - cases[place][dates[i-1]]
+            if place in toDebug:
+                print place, i, dates[i]
+                print cases[place][dates[i]], cases[place][dates[i-1]], newCases[place][dates[i]] 
     return newCases
 
 def shiftHisto(histo, shift):
@@ -500,7 +502,7 @@ def smearData(dataUnsmeared, dates, daysSmearing):
         data = copy.copy(dataUnsmeared)
     return data
 
-def makeHistos(prefix, dataUnsmeared, dates, places, firstDate, lastDate, predictionDate, threshold=-1E30, cutTails=False, errorType=None, lineWidth=3, daysSmearing=1):
+def makeHistos(prefix, dataUnsmeared, dates, places, firstDate, lastDate, predictionDate, threshold=-1E30, cutTails=False, errorType=None, lineWidth=3, daysSmearing=1, toDebug = []):
     data = smearData(dataUnsmeared, dates, daysSmearing)
     histos = {}
     for place in places:
@@ -618,7 +620,7 @@ def fitExpGauss(h, places, firstDate, lastDate, predictionDate, fitOption="0SEQ"
     functs_res = {}
     functs_err = {}
     for place in places:
-        print "### Fit %s ###"%place
+        print "### Fit fitExpGauss %s - %s ###"%(place,h[place].GetName())
         functs[place] = copy.copy(ROOT.TF1("function"+place,"gaus + exp(+x/[4]*0-[3])",firstDate,predictionDate))
         functs[place].SetParameters(h[place].GetMaximum(), lastDate, fixSigma*10, 10, 1000)
 
@@ -677,7 +679,7 @@ def fitTwoGaussDiff(h, places, firstDate, lastDate, predictionDate, fitOption="0
     functs_err = {}
     fixSigma=20
     for place in places:
-        print "### Fit %s ###"%place
+        print "### Fit fitTwoGaussDiff %s - %s ###"%(place,h[place].GetName())
         functs[place] = copy.copy(ROOT.TF1("function"+place,"gaus(0) + exp(+x/[4]*0-[3]) + gaus(5)",firstDate,predictionDate))
         functs[place].SetParLimits(0, 0, h[place].GetMaximum()*2)
         functs[place].SetParameters(h[place].GetMaximum(), h[place].GetMean(), fixSigma, 1, 1000, 0, 0, 0)
@@ -752,7 +754,7 @@ def fitGauss(h, places, firstDate, lastDate, predictionDate, fitOption="0SEQ", m
     functs_res = {}
     functs_err = {}
     for place in places:
-        print "### Fit %s ###"%place
+        print "### Fit fitGauss %s - %s ###"%(place,h[place].GetName())
         functs[place] = copy.copy(ROOT.TF1("function"+place,"gaus + [3]",firstDate,predictionDate))
         functs[place].SetParameters(h[place].GetBinContent(h[place].GetMaximumBin()), h[place].GetMean(), fixSigma)
         functs[place].FixParameter(2, fixSigma)
@@ -788,7 +790,7 @@ def fitGaussAsymmetric(h, places, firstDate, lastDate, predictionDate, fitOption
     functs_res = {}
     functs_err = {}
     for place in places:
-        print "### Fit fitGaussAsymmetric %s ###"%place
+        print "### Fit fitGaussAsymmetric %s - %s ###"%(place,h[place].GetName())
         functs[place] = copy.copy(ROOT.TF1("function"+place,"[0]*exp(-0.5*( (x<=[5])*(x-[1])/[2] + [4]/[2]*(x>[5])*(x-[1])/[4] )**2) + [3]",firstDate,predictionDate))
 #        functs[place] = copy.copy(ROOT.TF1("function"+place,"[0]*exp(-0.5*( (x<=[1])*(x-[1])/[2] + (x>[1])*(x-[1])/[4] )**2) + [3]",firstDate,predictionDate))
         fixSigma = 20
@@ -837,7 +839,7 @@ def fitGaussExp(h, places, firstDate, lastDate, predictionDate, fitOption="0SE",
     functs_res = {}
     functs_err = {}
     for place in places:
-        print "### Fit fitGaussExp %s ###"%place
+        print "### Fit fitGaussExp %s - %s ###"%(place,h[place].GetName())
 #        functs[place] = copy.copy(ROOT.TF1("function"+place,"[0]*exp( (x<=[5])*(-0.5*(x-[1])**2/[2]) - (x>[5])*(0.5*([5]-[1])**2/[2])/(1+[4]*[5])*(1+[4]*x) ) + [3]",firstDate,predictionDate))
 
         functs[place] = copy.copy(ROOT.TF1("function"+place,"[0]*exp( (x<=[5])*(-0.5*(x-[1])**2/[2]) - (x>[5])*(0.5*([5]-[1])**2/[2])/(1+-2/([1] + [5])*[5])*(1+-2/([1] + [5])*x) ) + [3]",firstDate,predictionDate)) ###FUNZIONA! DERIVATA CONTINUA
@@ -889,12 +891,20 @@ def fitGaussExp(h, places, firstDate, lastDate, predictionDate, fitOption="0SE",
         functs_err[place].SetName(name+"_errorBand")
     return functs, functs_res, functs_err
 
+#  EXT PARAMETER                                   STEP         FIRST   
+#  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+#   1  p0           7.93712e+05           nan   1.37999e+06  -7.80844e+28
+#   2  p1           1.32749e+04           nan   1.37999e+04          -inf
+#   3  p2           6.89555e+02           nan   3.15875e-03   1.26635e-03
+#   4  p3           2.81559e+01           nan   3.45093e-04  -1.21856e-02
+
+
 def fitTwoExp(h, places, firstDate, lastDate, predictionDate, fitOption="0SEQ", maxPar3=maxPar3):
     functs = {}
     functs_res = {}
     functs_err = {}
     for place in places:
-        print "### Fit %s ###"%place
+        print "### Fit fitTwoExp %s - %s ###"%(place,h[place].GetName())
         functs[place] = copy.copy(ROOT.TF1("function"+place,"exp((x-[0])/[1]) + exp(-(x-[2])/[3])",firstDate,predictionDate))
         functs[place].SetParameters(h[place].GetMean(), h[place].GetMean(), h[place].GetMean(), h[place].GetMean())
 #        functs[place].FixParameter(2, 10000)
@@ -911,6 +921,8 @@ def fitTwoExp(h, places, firstDate, lastDate, predictionDate, fitOption="0SEQ", 
 #            functs[place].ReleaseParameter(4)
 #            functs[place].SetParLimits(4,minPar2,maxPar2)
         functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
+#        for i in [0,1,2,3]:
+#            functs[place].SetParLimits(i,functs[place].GetParameter(i)*(1-0.5),functs[place].GetParameter(i)*(1+0.5))
         functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
         color = colors[places.index(place)]
         functs[place].SetLineColor(color)
@@ -931,7 +943,7 @@ def fitDecessi(h, places, firstDate, lastDate, predictionDate, fitOption="0SEQ")
     functs_res = {}
     functs_err = {}
     for place in places:
-        print "### Fit %s ###"%place
+        print "### Fit fitDecessi %s - %s ###"%(place,h[place].GetName())
         functs[place] = copy.copy(ROOT.TF1("functionDecessi"+place,"exp((x-[1])/[0]) + [2]",firstDate,predictionDate))
         functs[place].SetParameters(5, 10, 0 )
         functs[place].FixParameter(2, 0)
@@ -961,7 +973,7 @@ def fitMultiExp(h, places, firstDate, lastDate, predictionDate, fitOption="0SEQ"
     functs_res = {}
     functs_err = {}
     for place in places:
-        print "### Fit %s ###"%place
+        print "### Fit fitMultiExp %s - %s ###"%(place,h[place].GetName())
         functs[place] = copy.copy(ROOT.TF1("functionExp"+str(place),"exp((x-[1])/[0]) + [2]",firstDate,predictionDate))
         functs[place].SetParameters(5, 10, 0 )
 #        functs[place].FixParameter(2, 0)
@@ -992,7 +1004,7 @@ def fitLinear(h, places, firstDate, lastDate, predictionDate, fitOption="0SEQ", 
     functs_res = {}
     functs_err = {}
     for place in places:
-        print "### Fit %s ###"%place
+        print "### Fit fitLinear  %s - %s ###"%(place,h[place].GetName())
         functs[place] = copy.copy(ROOT.TF1("functionLinear"+str(place),"[0]+[1]*x+[2]*x*x+[3]*x*x*x+[4]*x*x*x*x+[5]*x*x*x*x*x+[6]*x*x*x*x*x*x",firstDate,predictionDate))
         functs[place].SetParameters(h[place].GetBinContent(2), 0, 0)
         functs[place].FixParameter(1, 0)
@@ -1033,7 +1045,7 @@ def fitExp(h, places, firstDate, lastDate, predictionDate, fitOption="0SEQ", max
     functs_res = {}
     functs_err = {}
     for place in places:
-        print "### Fit %s ###"%place
+        print "### Fit fitExp %s - %s ###"%(place,h[place].GetName())
         functs[place] = copy.copy(ROOT.TF1("functionExp"+str(place),"exp((x-[1])*[0]) + [2]",firstDate,predictionDate))
         functs[place].SetParameters(1./5, 10, 0 )
         if tail: functs[place].SetParameters(-1./10, 200, 0 )
@@ -1342,7 +1354,7 @@ def savePlotNew(histos, functions, fName, xpred, dates, canvas, ISTAT=False, log
     canvas.SaveAs(fName)
 #    print fName
 #    for h in histos:
-#        print h.GetName()
+#        print h[place].GetName()
 #    for f in functions:
 #        print f.GetName()
 
