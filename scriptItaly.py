@@ -78,7 +78,7 @@ firstDate = 0
 #firstDate = dates.index("12/30/20")
 #firstDate = dates.index("12/31/20")
 #firstDate = dates.index("8/23/20")
-firstDate = dates.index("4/11/21")
+firstDate = dates.index("5/1/21")
 #firstDate = dates.index("1/1/21")
 #firstDate = dates.index("12/20/20")
 #firstDate = dates.index("4/1/20")
@@ -89,7 +89,7 @@ lastDate = lastDateData - 1
 #lastDate = dates.index("3/1/20")
 #lastDate = 30
 #predictionsDate = dates.index("12/31/20")
-predictionsDate = dates.index("7/11/21")
+predictionsDate = dates.index("8/1/21")
 #predictionsDate = 95
 
 #firstDate = dates.index("3/1/20")

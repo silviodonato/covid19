@@ -1019,12 +1019,12 @@ Info in <TCanvas::Print>: png file plotsISS/Italia_newCases.png has been created
 Info in <TCanvas::Print>: png file plotsISS/Italia_newCases_scaled.png has been created
 Info in <TCanvas::Print>: png file plotsISS/Italia_scaled.png has been created
 Info in <TCanvas::Print>: png file plotsISS/Italia_rapporto.png has been created
-(<ROOT.TH1F object ("histo_newcasi_Italia0.231656542746") at 0x5566c30dc770>, 1)
-(<ROOT.TH1F object ("histo_newprelievi_Italia0.484973614337") at 0x5566c30f7990>, 1)
-(<ROOT.TH1F object ("histo_newdecessi_Italia0.957476956537") at 0x5566c30f1ba0>, 40)
-(<ROOT.TH1F object ("histo_newcasiSintomatici_Italia0.744305343134") at 0x5566c2ef7070>, 1)
-(<ROOT.TH1F object ("histo_casi_Italia0.999741748907") at 0x5566c307f910>, 1)
-(<ROOT.TH1F object ("histo_prelievi_Italia0.162909875391") at 0x5566c3079550>, 1)
-(<ROOT.TH1F object ("histo_decessi_Italia0.282617805293") at 0x5566c30e4650>, 40)
-(<ROOT.TH1F object ("histo_casiSintomatici_Italia0.947201082017") at 0x5566c30d99e0>, 0.1)
-(<ROOT.TH1F object ("positiveTocasiSintomaticiRatio_Italia") at 0x5566c3690650>, 0.2)
+(<ROOT.TH1F object ("histo_newcasi_Italia0.231656542746") at 0x55ec5d742cb0>, 1)
+(<ROOT.TH1F object ("histo_newprelievi_Italia0.484973614337") at 0x55ec5d744d20>, 1)
+(<ROOT.TH1F object ("histo_newdecessi_Italia0.957476956537") at 0x55ec5d74a1b0>, 40)
+(<ROOT.TH1F object ("histo_newcasiSintomatici_Italia0.744305343134") at 0x55ec5d55fd50>, 1)
+(<ROOT.TH1F object ("histo_casi_Italia0.999741748907") at 0x55ec5d6e8940>, 1)
+(<ROOT.TH1F object ("histo_prelievi_Italia0.162909875391") at 0x55ec5d6e2580>, 1)
+(<ROOT.TH1F object ("histo_decessi_Italia0.282617805293") at 0x55ec5cda6950>, 40)
+(<ROOT.TH1F object ("histo_casiSintomatici_Italia0.947201082017") at 0x55ec5d74b800>, 0.1)
+(<ROOT.TH1F object ("positiveTocasiSintomaticiRatio_Italia") at 0x55ec5db66dd0>, 0.2)
