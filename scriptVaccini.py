@@ -41,10 +41,10 @@ histoMax = (date(2021,8,1) - refDate).days+0.5
 #histoMin = (date(2021,2,18) - refDate).days-0.5
 histoMin = (date(2021,12,1) - refDate).days-0.5
 histoMin = (date(2021,3,1) - refDate).days-0.5
-histoMin = (date(2021,4,15) - refDate).days-0.5
+#histoMin = (date(2021,5,1) - refDate).days-0.5
 #x_min=(date(2021,3,1) - refDate).days-0.5
 histoN = int(histoMax - histoMin)
-#lastDate = (date.today() - refDate).days-2
+lastDate = (date.today() - refDate).days-2
 #lastDate = 0
 
 excludedDays = []
@@ -70,8 +70,9 @@ def getPlot(somministrazioniTree, selection, dosi= "prima_dose+seconda_dose", cu
     somministrazioniTree.Draw("max(%s,data_somministrazione) >> %s(%s,%s,%s)"%(histoMin,hname,histoN,histoMin,histoMax), sel, "HIST")
 #    somministrazioniTree.Draw("data_somministrazione >> histo2", sel, "HIST")
 #    print('somministrazioniTree.Draw("data_somministrazione >> histo2(%s,%s,%s)", "%s", "HIST")'%(histoN,histoMin,histoMax,sel))
-    print(getattr(ROOT,hname))
+    print(getattr(ROOT,hname), hname)
     histo = getattr(ROOT,hname).Clone(hname)
+    print(histo.Integral())
     if cumulative:
         histo = histo.GetCumulative()
 #    for i in range(histo.FindBin(lastDate+1),histo.GetNbinsX()+1): 
@@ -255,7 +256,7 @@ norms = {
 #    "categoria_altro":50E6,
     "prima_dose":50E6,
     "seconda_dose":50E6,
-    16:2.169E6, 
+    12:2.169E6 *2, 
     20:2962307+3175599, 
     30:3320500+3654733, 
     40:4372031+4785280, 
@@ -276,16 +277,16 @@ for norm in norms:
 print("Norm altro = ", norms["categoria_altro"])
 
 cats = [
-    "categoria_operatori_sanitari_sociosanitari",
-    "categoria_personale_non_sanitario",
-    "categoria_ospiti_rsa",
-    "categoria_forze_armate",
-    "categoria_personale_scolastico",
-    "categoria_altro",
-#    "categoria_60_69",
-#    "categoria_70_79",
-    "categoria_over80",
-    "categoria_soggetti_fragili",
+#    "categoria_operatori_sanitari_sociosanitari",
+#    "categoria_personale_non_sanitario",
+#    "categoria_ospiti_rsa",
+#    "categoria_forze_armate",
+#    "categoria_personale_scolastico",
+#    "categoria_altro",
+##    "categoria_60_69",
+##    "categoria_70_79",
+#    "categoria_over80",
+#    "categoria_soggetti_fragili",
     90, 
     80,
     70, 
@@ -294,7 +295,7 @@ cats = [
     40, 
     30, 
     20, 
-    16, 
+    12, 
     0,
     "prima_dose",
     "seconda_dose",
