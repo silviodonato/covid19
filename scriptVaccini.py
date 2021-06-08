@@ -254,8 +254,8 @@ norms = {
     "categoria_soggetti_fragili":2.08E6+5.87E6, #ultravulnerabili + vulnerabili
     "categoria_personale_scolastico": 1483442,
 #    "categoria_altro":50E6,
-    "prima_dose":50E6,
-    "seconda_dose":50E6,
+    "prima_dose":59816673,
+    "seconda_dose":59816673,
     12:2.169E6 *2, 
     20:2962307+3175599, 
     30:3320500+3654733, 
