@@ -2,7 +2,7 @@
 #import csv
 #import copy
 from tools import colors, fillDataRegioni, fillDataISTATpickle, newCases, getRatio, makeHistos, fitErf, fitGauss, fitGaussAsymmetric, fitExp, extendDates, saveCSV, savePlotNew, getPrediction, getPredictionErf, getColumn, selectComuniDatesAgeGender, makeCompatible, fitLinear, fitTwoExp, fitGaussExp, applyScaleFactors, useLog, positiveHisto, fitTwoGaussDiff, fitGaussExp, getScaled
-from math import floor, ceil
+
 
 placesTest = []
 #placesTest = ["Italia","LaSpezia"]
@@ -604,7 +604,7 @@ for place in places:
     deathDailyToRecoverRatio.Reset()
     deathDailyToRecoverRatio.Divide(newRecoveres_h[place], newDeaths_h[place])
 
-    savePlotNew([getScaled(positiveToTestRatio,200), deathToRecoverRatio,deathDailyToRecoverRatio], [], "plotsRegioni/%s_rapporto.png"%place, startDate, dates, d3, log=False)
+    savePlotNew([getScaled(positiveToTestRatio,1000), deathToRecoverRatio,deathDailyToRecoverRatio], [], "plotsRegioni/%s_rapporto.png"%place, startDate, dates, d3, log=False)
 
 
 if (doProvince): 
