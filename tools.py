@@ -4,6 +4,7 @@ import copy
 import array
 import datetime
 import pickle
+from math import floor, ceil
 
 rnd = ROOT.TRandom3()
 
@@ -1279,8 +1280,8 @@ def savePlotNew(histos, functions, fName, xpred, dates, canvas, ISTAT=False, log
     minim = 1E9
     for histo in histos:
         if not "prediction" in histo.GetName(): ## exclude prediction plot to define max/min
-            maxim = max(maxim, histo.GetMaximum())*1.01
-            minim = min(minim, histo.GetMinimum())-0.01*abs(min(minim, histo.GetMinimum()))
+            maxim = max(maxim, histo.GetMaximum())*1.001
+            minim = min(minim, histo.GetMinimum())-0.001*abs(min(minim, histo.GetMinimum()))
         maxim = min(maxim,1E7)
         if not "prediction" in histo.GetName():
             label = getLabel(histo.GetName())
@@ -1310,9 +1311,15 @@ def savePlotNew(histos, functions, fName, xpred, dates, canvas, ISTAT=False, log
         else:
             leg.AddEntry(function, function.label, "lp")
             
+    if not useLog:
+        print("maxim=",maxim)
+        print("minim=",minim)
     if maxim>0 and useLog: maxim = 10**int(ROOT.TMath.Log10(maxim)+1)
-    if maxim>0 and not useLog: maxim = (1.+int(maxim*100      /10**int(ROOT.TMath.Log10(maxim*100))     ))*10**int(ROOT.TMath.Log10(maxim*100))/100
-    if minim<0 and not useLog: minim = -int(abs(minim)/10**int(ROOT.TMath.Log10(abs(minim)))+2)*10**int(ROOT.TMath.Log10(abs(minim)))
+    if maxim>0 and not useLog: maxim = ceil(maxim/10**floor(ROOT.TMath.Log10(abs(maxim)))) * 10**floor(ROOT.TMath.Log10(abs(maxim)))
+    if minim<0 and not useLog: minim = floor(minim/10**floor(ROOT.TMath.Log10(abs(minim)))) * 10**floor(ROOT.TMath.Log10(abs(minim)))
+    if not useLog:
+        print("maxim2=",maxim)
+        print("minim2=",minim)
     
     line = ROOT.TLine(xpred+0.5,0,xpred+0.5,maxim)
     line.SetLineStyle(2)

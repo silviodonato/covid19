@@ -2,11 +2,11 @@
 #import csv
 #import copy
 from tools import colors, fillDataRegioni, fillDataISTATpickle, newCases, getRatio, makeHistos, fitErf, fitGauss, fitGaussAsymmetric, fitExp, extendDates, saveCSV, savePlotNew, getPrediction, getPredictionErf, getColumn, selectComuniDatesAgeGender, makeCompatible, fitLinear, fitTwoExp, fitGaussExp, applyScaleFactors, useLog, positiveHisto, fitTwoGaussDiff, fitGaussExp, getScaled
-
+from math import floor, ceil
 
 placesTest = []
 #placesTest = ["Italia","LaSpezia"]
-#placesTest = ["Italia"]
+placesTest = ["Italia"]
 #placesTest = ["Liguria"]
 #placesTest = ["Umbria"]
 #placesTest = ["Basilicata"]
