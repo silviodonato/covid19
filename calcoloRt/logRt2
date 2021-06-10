@@ -1,2 +1,37 @@
-Error in library(EpiEstim) : there is no package called ‘EpiEstim’
-Execution halted
+[1] "dpc_nuovi_positivi.Rdata"
+Default config will estimate R on weekly sliding windows.
+    To change this change the t_start and t_end arguments. 
+[1] "dpc_nuovi_positivi.Rdata"
+[1] "dpc_ingressi_terapia_intensiva.Rdata"
+Default config will estimate R on weekly sliding windows.
+    To change this change the t_start and t_end arguments. 
+[1] "dpc_ingressi_terapia_intensiva.Rdata"
+[1] "dpc_deceduti.Rdata"
+Default config will estimate R on weekly sliding windows.
+    To change this change the t_start and t_end arguments. 
+[1] "dpc_deceduti.Rdata"
+[1] "dpc_ricoverati_con_sintomi.Rdata"
+Default config will estimate R on weekly sliding windows.
+    To change this change the t_start and t_end arguments. 
+[1] "dpc_ricoverati_con_sintomi.Rdata"
+[1] "decessi.Rdata"
+Default config will estimate R on weekly sliding windows.
+    To change this change the t_start and t_end arguments. 
+[1] "decessi.Rdata"
+[1] "casi_prelievo_diagnosi.Rdata"
+Default config will estimate R on weekly sliding windows.
+    To change this change the t_start and t_end arguments. 
+[1] "casi_prelievo_diagnosi.Rdata"
+[1] "casi_inizio_sintomi.Rdata"
+Default config will estimate R on weekly sliding windows.
+    To change this change the t_start and t_end arguments. 
+[1] "casi_inizio_sintomi.Rdata"
+[1] "casi_inizio_sintomi_sint.Rdata"
+Default config will estimate R on weekly sliding windows.
+    To change this change the t_start and t_end arguments. 
+[1] "casi_inizio_sintomi_sint.Rdata"
+[1] "curva_epidemica_Italia_ufficiale.Rdata"
+Default config will estimate R on weekly sliding windows.
+    To change this change the t_start and t_end arguments. 
+[1] "curva_epidemica_Italia_ufficiale.Rdata"
+There were 18 warnings (use warnings() to see them)
