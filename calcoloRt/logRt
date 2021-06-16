@@ -5,17 +5,17 @@ Archive:  calcolo_rt_italia.zip
    creating: calcolo_Rt_Italia/
   inflating: calcolo_Rt_Italia/calcoloRt_EpiEstim.R  
   inflating: calcolo_Rt_Italia/curva_epidemica_Italia_2021-06-09  
---2021-06-15 17:26:33--  https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-andamento-nazionale/dpc-covid19-ita-andamento-nazionale.csv
-Resolving raw.githubusercontent.com (raw.githubusercontent.com)... 185.199.108.133, 185.199.109.133, 185.199.110.133, ...
-Connecting to raw.githubusercontent.com (raw.githubusercontent.com)|185.199.108.133|:443... connected.
+--2021-06-16 17:21:55--  https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-andamento-nazionale/dpc-covid19-ita-andamento-nazionale.csv
+Resolving raw.githubusercontent.com (raw.githubusercontent.com)... 185.199.111.133, 185.199.108.133, 185.199.110.133, ...
+Connecting to raw.githubusercontent.com (raw.githubusercontent.com)|185.199.111.133|:443... connected.
 HTTP request sent, awaiting response... 200 OK
-Length: 59845 (58K) [text/plain]
+Length: 59988 (59K) [text/plain]
 Saving to: ‘dpc-covid19-ita-andamento-nazionale.csv’
 
-     0K .......... .......... .......... .......... .......... 85% 6.94M 0s
-    50K ........                                              100% 15.2M=0.008s
+     0K .......... .......... .......... .......... .......... 85% 6.74M 0s
+    50K ........                                              100% 13.8M=0.008s
 
-2021-06-15 17:26:33 (7.53 MB/s) - ‘dpc-covid19-ita-andamento-nazionale.csv’ saved [59845/59845]
+2021-06-16 17:21:55 (7.29 MB/s) - ‘dpc-covid19-ita-andamento-nazionale.csv’ saved [59988/59988]
 
 2021-09-01 00:00:00
 dpc-covid19-ita-andamento-nazionale.csv
@@ -338,10 +338,11 @@ dpc-covid19-ita-andamento-nazionale.csv
 2021-06-13 00:00:00 1.011004 1405
 2021-06-14 00:00:00 1.467008 1331
 2021-06-15 00:00:00 1.130304 1419
-2021-06-15 00:00:00
+2021-06-16 00:00:00 0.928682 1300
+2021-06-16 00:00:00
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 89634  100 89634    0     0  1346k      0 --:--:-- --:--:-- --:--:-- 1346k
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 89662  100 89662    0     0  1435k      0 --:--:-- --:--:-- --:--:-- 1412k
 2021-09-01 00:00:00
 casi_inizio_sintomi_sint.csv
 2021-09-01 00:00:00
