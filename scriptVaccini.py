@@ -58,11 +58,11 @@ excludedDays.append((date(2021,3,19) - refDate).days)
 excludedDays.append(histoMin)
 excludedDays.append(histoMin-1)
 
-#anagraficaFileName ="dataVaccini/dati/anagrafica-vaccini-summary-latest.csv"
+plateaFileName ="dataVaccini/dati/platea.csv"
 consegneFileName ="dataVaccini/dati/consegne-vaccini-latest.csv"
 somministrazioniFileName = "dataVaccini/dati/somministrazioni-vaccini-latest.csv"
 
-def getPlot(somministrazioniTree, selection, dosi= "prima_dose+seconda_dose", cumulative=True, hname = None):
+def getPlot(somministrazioniTree, plateaTree, selection, dosi= "prima_dose+seconda_dose", cumulative=True, hname = None):
     if hname==None:
         hname = "histo_"+selection+dosi
         if cumulative: hname = hname + "cumul"
@@ -101,11 +101,40 @@ def getPlot(somministrazioniTree, selection, dosi= "prima_dose+seconda_dose", cu
         histo.SetBinContent(histo.FindBin(date),0)
     histo = histo.Clone(hname)
     histo.Sumw2()
+    plateaTree.Draw("1 >> aaa", "(%s) * totale_popolazione"%selection)
+    tmphisto =  getattr(ROOT,"aaa")
+    norm = tmphisto.Integral()
+    del tmphisto
+    print("Selection = %s, Norm = %f"%(selection, norm))
+    histo.Scale(100./norm)
     print(hname)
     print(sel)
     return histo, lastDate
 
 
+regionMap = {
+    'ABR' : '13',
+    'BAS' : '17',
+    'CAL' : '18',
+    'CAM' : '15',
+    'EMR' : '8',
+    'FVG' : '6',
+    'LAZ' : '12',
+    'LIG' : '7',
+    'LOM' : '3',
+    'MAR' : '11',
+    'MOL' : '14',
+    'PAB' : '4',
+    'PAT' : '4',
+    'PIE' : '1',
+    'PUG' : '16',
+    'SAR' : '20',
+    'SIC' : '19',
+    'TOS' : '9',
+    'UMB' : '10',
+    'VDA' : '2',
+    'VEN' : '5',
+}
 def convertData(label, data):
     
     if 'data' in label:
@@ -120,12 +149,15 @@ def convertData(label, data):
         elif 'Astrazeneca':
             return "-1"
     elif label=='fascia_anagrafica':
-        if "90+" in data: return "90"
+        if "90+" in data: return "80" #merge 90+ with 80+
+        elif "80+" in data: return "80"
         return data.split("-")[0]
+    elif label=='area':
+            return regionMap[data]
     else:
         return data
 
-def getAnagrafica(fileName):
+def getPlatea(fileName):
     with open(fileName) as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         line_count = 0
@@ -138,7 +170,7 @@ def getAnagrafica(fileName):
             else:
                 for label in labels:
                     if not label in data: data[label]={}
-                    data[label][convertData('fascia_anagrafica',row[0])]=convertData(label, row[labels.index(label)])
+                    data[label][convertData('fascia_anagrafica',row[2])]=convertData(label, row[labels.index(label)])
             line_count+=1
     return data
 
@@ -170,7 +202,8 @@ def updateROOTfile(fileName, rootFileName):
     #    "codice_NUTS1",
     #    "codice_NUTS2",
         "codice_regione_ISTAT",
-    #    "nome_area"
+        "totale_popolazione",
+        "area",
     ]
     
     fixed_csv = file(newcsvFileName,'w')
@@ -210,16 +243,21 @@ def updateROOTfile(fileName, rootFileName):
     fil_.Close()
     print("DONE")
 
-#anagrafica = getAnagrafica("dataVaccini/dati/anagrafica-vaccini-summary-latest.csv")
+platea = getPlatea(plateaFileName)
+plateaROOTFileName = plateaFileName.replace(".csv",".root")
 consegneROOTFileName = consegneFileName.replace(".csv",".root")
 somministrazioniROOTFileName = somministrazioniFileName.replace(".csv",".root")
 updateROOTfile(somministrazioniFileName, somministrazioniROOTFileName)
 updateROOTfile(consegneFileName, consegneROOTFileName)
+updateROOTfile(plateaFileName, plateaROOTFileName)
 
 somministrazioniFile = ROOT.TFile.Open(somministrazioniROOTFileName)
 consegneFile = ROOT.TFile.Open(consegneROOTFileName)
+plateaFile = ROOT.TFile.Open(plateaROOTFileName)
+
 somministrazioniTree = somministrazioniFile.Get("tree")
 consegneTree = consegneFile.Get("tree")
+plateaTree = plateaFile.Get("tree")
 
 ROOT.gStyle.SetOptStat("0")
 print('''
@@ -287,7 +325,7 @@ cats = [
 ##    "categoria_70_79",
 #    "categoria_over80",
 #    "categoria_soggetti_fragili",
-    90, 
+#    90, 
     80,
     70, 
     60, 
@@ -297,8 +335,8 @@ cats = [
     20, 
     12, 
     0,
-    "prima_dose",
-    "seconda_dose",
+#    "prima_dose",
+#    "seconda_dose",
 ]
 
 max_=0
@@ -311,23 +349,18 @@ for tipo in ["prima_dose","seconda_dose","somministrazioni"]:
         histos = {}
         ratio = {}
         for i,cat in enumerate(cats):
-            dosi = str(cat)
+            selection = "(fascia_anagrafica==%d)"%cat
             if tipo == "somministrazioni":
-                if type(cat)==int: 
-                    dosi = "(prima_dose+seconda_dose) * (fascia_anagrafica==%d)"%cat
-                else:
-                    dosi = "(%s)"%cat
-            elif type(cat)==int:
-                dosi = "(%s) * (fascia_anagrafica==%d)"%(tipo,cat)
+                dosi = "(prima_dose+seconda_dose)"
             else:
-                continue
-            dosi = dosi.replace(" * (fascia_anagrafica==0)","") ## fascia_anagrafica = 0 means all fascia_anagrafica
-            histos[cat], lastDate = getPlot(somministrazioniTree, selection = "1", dosi = dosi, cumulative = cumulative, hname="histo_%s_%s%s"%(str(cat),tipo,"" if  cumulative else "_daily"))
+                dosi = "(%s) "%tipo
+            selection = selection.replace("(fascia_anagrafica==0)","(1)") ## fascia_anagrafica = 0 means all fascia_anagrafica
+            histos[cat], lastDate = getPlot(somministrazioniTree, plateaTree, selection = selection, dosi = dosi, cumulative = cumulative, hname="histo_%s_%s%s"%(str(cat),tipo,"" if  cumulative else "_daily"))
             if not cumulative and applySF:
                 applyScaleFactors(histos[cat])
             histos[cat].SetLineWidth(3)
             histos[cat].SetFillStyle(0)
-            histos[cat].Scale(100./norms[cat])
+#            histos[cat].Scale(100./norms[cat]) ##old method, new method: renormalization done in getPlot
             if cumulative:
                 fits[cat] = ROOT.TF1(str(cat)+tipo,"[0]+[1]*x",lastDate-functionRange+0.5,histoMax)
                 p1 = fitdiffs[cat].GetParameter(0)
