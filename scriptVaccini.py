@@ -101,7 +101,7 @@ def getPlot(somministrazioniTree, plateaTree, selection, dosi= "prima_dose+secon
         histo.SetBinContent(histo.FindBin(date),0)
     histo = histo.Clone(hname)
     histo.Sumw2()
-    plateaTree.Draw("1 >> aaa", "(%s) * totale_popolazione"%selection)
+    plateaTree.Draw("1 >> aaa", "(%s) * totale_popolazione"%selection,"GOFF")
     tmphisto =  getattr(ROOT,"aaa")
     norm = tmphisto.Integral()
     del tmphisto
@@ -146,8 +146,12 @@ def convertData(label, data):
             return "1"
         elif 'Moderna' in data:
             return "2"
-        elif 'Astrazeneca':
+        elif 'AstraZeneca' in data:
             return "-1"
+        elif 'Janssen' in data:
+            return "-2"
+        else:
+            return "-3"
     elif label=='fascia_anagrafica':
         if "90+" in data: return "80" #merge 90+ with 80+
         elif "80+" in data: return "80"
@@ -436,6 +440,64 @@ for tipo in ["prima_dose","seconda_dose","somministrazioni"]:
         #integral = ROOT.histo.GetIntegral()
         #for i in ROOT.histo:
         #    ROOT.histo.SetBinContent(i, integral[i])
+
+
+labels = {
+    "J&J " : ("prima_dose","fornitore==-2"),
+    "Asz1" : ("prima_dose","fornitore==-1"),
+    "Pfz1" : ("prima_dose","fornitore==1"),
+    "Mod1" : ("prima_dose","fornitore==2"),
+    "Asz2" : ("seconda_dose","fornitore==-1"),
+    "Pfz2" : ("seconda_dose","fornitore==1"),
+    "Mod2" : ("seconda_dose","fornitore==2"),
+}
+
+labels_keys=[
+    "Eta'",
+    "Tot ",
+    "J&J ",
+    "Asz1",
+    "Pfz1",
+    "Mod1",
+    "Asz2",
+    "Pfz2",
+    "Mod2",
+]
+
+tab = ""
+for i, sel in enumerate(labels_keys):
+    tab += sel
+    if i == len(labels_keys)-1:
+        tab +=  "\n"
+    else:
+        tab += ","
+
+for fascia_anagrafica in cats:
+    selection = "fascia_anagrafica == %d"%fascia_anagrafica
+    for i, label in enumerate(labels_keys):
+        if label == "Eta'":
+            tab += "%d,"%fascia_anagrafica
+            continue
+        elif label == "Tot ":
+            plateaTree.Draw("1 >> aaa", "(%s) * totale_popolazione"%selection,"GOFF")
+        else:
+            dosi, fornitore = labels[label]
+            somministrazioniTree.Draw("1 >> aaa", "(%s) * (%s) * (%s)"%(dosi, fornitore, selection),"GOFF")
+        tmphisto =  getattr(ROOT,"aaa")
+        val = tmphisto.Integral()
+        del tmphisto
+        tab += "%.3f"%(val/1E6)
+        if i == len(labels_keys)-1:
+            tab += "\n"
+        else:
+            tab += ","
+
+
+print(tab)
+
+f_ = open("vaccini_tabella.csv","w")
+f_.write(tab)
+f_.close()
 
 '''
 data_somministrazione,
