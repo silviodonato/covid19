@@ -35,26 +35,32 @@ firstDate = 0
 #firstDate = dates.index("12/1/20")
 #firstDate = dates.index("12/30/20")
 #firstDate = dates.index("12/31/20")
-firstDate = dates.index("9/1/20")
-#firstDate = dates.index("1/18/21")
+#firstDate = dates.index("8/23/20")
+firstDate = dates.index("4/30/21")
+#firstDate = dates.index("1/1/21")
+#firstDate = dates.index("12/20/20")
 #firstDate = dates.index("4/1/20")
 #firstDate = 16
+#firstDate = dates.index("10/1/20")
 lastDate = lastDateData - 1
 #lastDate = dates.index("2/29/20")
 #lastDate = dates.index("3/1/20")
 #lastDate = 30
 #predictionsDate = dates.index("12/31/20")
-predictionsDate = dates.index("4/18/21")
+predictionsDate = dates.index("8/1/21")
 #predictionsDate = 95
 
-
-#firstDate = dates.index("3/1/20")
-#lastDate  = dates.index("5/1/20")
-#predictionsDate = dates.index("6/30/20")
+#firstDate = dates.index("4/30/20")
+#lastDate  = dates.index("8/1/20")
+#predictionsDate = dates.index("6/21/20")
 
 #firstDate = 10
 #lastDate = 35
 #predictionsDate = 35
+
+#firstDate = dates.index("10/1/20")
+#lastDate = dates.index("10/15/20")
+#predictionsDate = lastDate+1
 
 ################
 
