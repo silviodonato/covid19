@@ -900,22 +900,30 @@ def fitGaussExp(h, places, firstDate, lastDate, predictionDate, fitOption="0SE",
 #   4  p3           2.81559e+01           nan   3.45093e-04  -1.21856e-02
 
 
-def fitTwoExp(h, places, firstDate, lastDate, predictionDate, fitOption="0SEQ", maxPar3=maxPar3):
+def fitTwoExp(h, places, firstDate, lastDate, predictionDate, fitOption="0SEQ", maxPar3=maxPar3, oneExp=False):
     functs = {}
     functs_res = {}
     functs_err = {}
     for place in places:
         print "### Fit fitTwoExp %s - %s ###"%(place,h[place].GetName())
-        functs[place] = copy.copy(ROOT.TF1("function"+place,"exp((x-[0])/[1]) + exp(-(x-[2])/[3])",firstDate,predictionDate))
+        functs[place] = copy.copy(ROOT.TF1("function"+place + ("One" if oneExp else "Two"),"exp((x-[0])/[1]) + exp(-(x-[2])/[3])",firstDate,predictionDate))
+        if not oneExp: #allow negative/positive expo if only one exp
+            functs[place].SetParLimits(2,0,h[place].GetMean()*h[place].GetMean())
+            functs[place].SetParLimits(3,0,h[place].GetMean()*h[place].GetMean())
         functs[place].SetParameters(h[place].GetMean(), h[place].GetMean(), h[place].GetMean(), h[place].GetMean())
-#        functs[place].FixParameter(2, 10000)
- #       functs[place].FixParameter(3, 1)
+        functs[place].FixParameter(0, h[place].GetMean()*10)
+        functs[place].FixParameter(1, 1)
         functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
   #      functs[place].FixParameter(2, functs[place].GetParameter(0))
    #     functs[place].FixParameter(3, functs[place].GetParameter(1))
         functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
-    #    functs[place].ReleaseParameter(2)
-     #   functs[place].ReleaseParameter(3)
+        if not oneExp:
+            functs[place].ReleaseParameter(0)
+            functs[place].ReleaseParameter(1)
+            functs[place].SetParLimits(0,0,h[place].GetMean()*h[place].GetMean())
+            functs[place].SetParLimits(1,0,h[place].GetMean()*h[place].GetMean())
+            functs[place].SetParameter(0, h[place].GetMean())
+            functs[place].SetParameter(1, h[place].GetMean())
 #        if minPar2 != maxPar2:
 #            functs[place].ReleaseParameter(2)
 #            functs[place].SetParLimits(2,minPar2,maxPar2)
@@ -926,6 +934,8 @@ def fitTwoExp(h, places, firstDate, lastDate, predictionDate, fitOption="0SEQ", 
 #            functs[place].SetParLimits(i,functs[place].GetParameter(i)*(1-0.5),functs[place].GetParameter(i)*(1+0.5))
         functs_res[place] = h[place].Fit(functs[place], fitOption,"",firstDate-0.5,lastDate+1.5)
         color = colors[places.index(place)]
+        if oneExp:
+            color = colors[places.index(place)]+3
         functs[place].SetLineColor(color)
         functs_err[place] = copy.copy(h[place].Clone(("err"+h[place].GetName())))
         functs_err[place].Reset()
@@ -933,7 +943,8 @@ def fitTwoExp(h, places, firstDate, lastDate, predictionDate, fitOption="0SEQ", 
         functs_err[place].SetStats(ROOT.kFALSE)
         functs_err[place].SetLineColor(color)
         functs_err[place].SetFillColor(color)
-        name = h[place].GetName().replace("histo_","functionGaus_")
+        name = h[place].GetName().replace("histo_","functionTwoExp_")
+        if oneExp: name = name.replace("Two","One")
         functs[place].SetName(name+"_centralValue") 
         if functs_res[place].Get(): functs_res[place].SetName(name+"_fitResult")
         functs_err[place].SetName(name+"_errorBand")
@@ -1307,7 +1318,7 @@ def savePlotNew(histos, functions, fName, xpred, dates, canvas, ISTAT=False, log
                 else:
                     leg.AddEntry(function, "Gaussian fit", "lp")
             if "Exp" in function.GetName():
-                leg.AddEntry(function, "#splitline{Exponential fit}{#tau_{2} = %.1f days}"%((1./function.GetParameter(0))*ROOT.TMath.Log(2)), "lep")
+                leg.AddEntry(function, "#splitline{Exponential fit}{#tau_{2} = %.1f days}"%((1./function.GetParameter(0))*ROOT.TMath.Log(2) if function.GetParameter(0)>0 else 999), "lep")
         else:
             leg.AddEntry(function, function.label, "lp")
             

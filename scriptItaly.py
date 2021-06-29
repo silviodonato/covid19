@@ -287,6 +287,7 @@ fits, fits_res, fits_error              = fitErf(confirmes_h,      places, first
 #fitdiffs, fitdiffs_res, fitdiffs_error  = fitGaussAsymmetric(newConfirmes_h, places, firstDate, lastDate, predictionsDate)
 fitexps, fitexps_res, fitexps_error                = fitExp(newConfirmes_h, places, lastDate-14, lastDate, predictionsDate)
 fitdiffs, fitdiffs_res, fitdiffs_error  = fitTwoExp(newConfirmes_h, places, firstDate, lastDate, predictionsDate)
+fitOnediffs, fitOnediffs_res, fitOnediffs_error  = fitTwoExp(newConfirmes_h, places, firstDate, lastDate, predictionsDate, oneExp=True)
 fitexptotals, fitexptotals_res, fitexptotals_error = fitExp(confirmes_h,    places, lastDate-14-1, lastDate-1, predictionsDate)
 #fitexptotals, fitexptotals_res, fitexptotals_error = fitExp(confirmes_h,    places, lastDate-8, lastDate, predictionsDate)
 fitdiffIntensivas, fitdiffIntensivas_res, fitdiffIntensivas_error = fitTwoGaussDiff(newIntensivas_h, places, firstDate, lastDate, predictionsDate)
@@ -560,6 +561,8 @@ for place in places:
 #    savePlot(confirmes_h[place], recoveres_h[place], deaths_h[place], predictions_h[place], fits[place], fits_res[place], fits_error[place], fitexptotals[place], "plots/%s.png"%place, lastDate, d5)
     fitexptotals[place].error = fitexptotals_error[place]
     fitexptotals[place].fitResult = fitexptotals_res[place]
+    fitOnediffs[place].error = fitOnediffs_error[place]
+    fitOnediffs[place].fitResult = fitOnediffs_res[place]
     fitdiffs[place].error = fitdiffs_error[place]
     fitdiffs[place].fitResult = fitdiffs_res[place]
     fitdiffDeaths[place].error = fitdiffDeaths_error[place]
@@ -581,9 +584,9 @@ for place in places:
             fitLinears[place].res = fitLinears_res[place]
     if not place in newDeathIstatExcess_h: newDeathIstatExcess_h[place] = None
     savePlotNew([confirmes_h[place], recoveres_h[place], deaths_h[place], predictionConfirmes_h[place], predictionDeaths_h[place], predictionRecoveres_h[place], predictionIntensivas_h[place], predictionPositives_h[place], predictionRicoveratis_h[place], intensivas_h[place], ricoveratis_h[place], tests_h[place] if useLog else 0, positives_h[place]], [fitexptotals[place]], "plotsRegioni/%s.png"%place, startDate, dates, d3)
-    savePlotNew([newConfirmes_h[place], newRecoveres_h[place], newDeaths_h[place], newDeathIstatExcess_h[place], newIntensivas_h[place], newRicoveratis_h[place], newTests_h[place] if useLog else 0, newPositives_h[place]], [fitexps[place], fitdiffs[place], fitdiffRecoveres[place], fitdiffDeaths[place], fitdiffIntensivas[place], fitdiffPositives[place], fitdiffRicoveratis[place]], "plotsRegioni/%s_newCases.png"%place, startDate, dates, d3)
+    savePlotNew([newConfirmes_h[place], newRecoveres_h[place], newDeaths_h[place], newDeathIstatExcess_h[place], newIntensivas_h[place], newRicoveratis_h[place], newTests_h[place] if useLog else 0, newPositives_h[place]], [fitexps[place], fitdiffs[place], fitOnediffs[place], fitdiffRecoveres[place], fitdiffDeaths[place], fitdiffIntensivas[place], fitdiffPositives[place], fitdiffRicoveratis[place]], "plotsRegioni/%s_newCases.png"%place, startDate, dates, d3)
     
-    savePlotNew([getScaled(newConfirmes_h[place],newConfirmes_scale), getScaled(newRecoveres_h[place],newRecoveres_scale), getScaled(newDeaths_h[place],newDeaths_scale), getScaled(newDeathIstatExcess_h[place],newDeathIstatExcess_scale), getScaled(newIntensivas_h[place],newIntensivas_scale), getScaled(newRicoveratis_h[place],newRicoveratis_scale), getScaled(newTests_h[place],newTests_scale), getScaled(newPositives_h[place],newPositives_scale)], [fitexps[place], fitdiffs[place], fitdiffRecoveres[place], fitdiffPositives[place]], "plotsRegioni/%s_newCases_scaled.png"%place, startDate, dates, d3, log=False)
+    savePlotNew([getScaled(newConfirmes_h[place],newConfirmes_scale), getScaled(newRecoveres_h[place],newRecoveres_scale), getScaled(newDeaths_h[place],newDeaths_scale), getScaled(newDeathIstatExcess_h[place],newDeathIstatExcess_scale), getScaled(newIntensivas_h[place],newIntensivas_scale), getScaled(newRicoveratis_h[place],newRicoveratis_scale), getScaled(newTests_h[place],newTests_scale), getScaled(newPositives_h[place],newPositives_scale)], [fitexps[place], fitdiffs[place], fitOnediffs[place], fitdiffRecoveres[place], fitdiffPositives[place]], "plotsRegioni/%s_newCases_scaled.png"%place, startDate, dates, d3, log=False)
     
     fromZero=False
     savePlotNew([getScaled(confirmes_h[place], confirmes_scale, fromZero), getScaled(recoveres_h[place], recoveres_scale, fromZero), getScaled(deaths_h[place], deaths_scale, fromZero), getScaled(predictionConfirmes_h[place], predictionConfirmes_scale, fromZero), getScaled(predictionDeaths_h[place], predictionDeaths_scale, fromZero), getScaled(predictionRecoveres_h[place], predictionRecoveres_scale, fromZero), getScaled(predictionIntensivas_h[place], predictionIntensivas_scale, fromZero), getScaled(predictionPositives_h[place], predictionPositives_scale, fromZero), getScaled(predictionRicoveratis_h[place], predictionRicoveratis_scale, fromZero), getScaled(intensivas_h[place], intensivas_scale, fromZero), getScaled(ricoveratis_h[place], ricoveratis_scale, fromZero), getScaled(tests_h[place], tests_scale, fromZero), getScaled(positives_h[place], positives_scale, fromZero)], [fitexptotals[place]], "plotsRegioni/%s_scaled.png"%place, startDate, dates, d3, log=False)

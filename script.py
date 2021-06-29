@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #import csv
 #import copy
-from tools import colors, fillData, newCases, getRatio, makeHistos, fitErf, fitGaussAsymmetric, fitExp, extendDates, saveCSV, savePlotNew, getPrediction, getPredictionErf, shiftHisto, applyScaleFactors, useLog, positiveHisto, getScaled
+from tools import colors, fillData, newCases, getRatio, makeHistos, fitErf, fitGaussAsymmetric, fitExp, extendDates, saveCSV, savePlotNew, getPrediction, getPredictionErf, shiftHisto, applyScaleFactors, useLog, positiveHisto, getScaled, fitTwoExp
 
 useScaleFactor = True
 startFromZero = True
@@ -113,7 +113,8 @@ for place in confirmes.keys():
     if confirmes[place][dates[lastDate]]>1000000:
         places.append(place)
 
-places = ["Israel"]
+places = ["United Kingdom", "India", "US", "Germany", "Singapore", "Spain", "Russia", "Italy", "Belgium", "Portugal", "France", "Denmark", "Indonesia", "Japan", "Australia", "Switzerland", "Ireland", "Canada", "Finland", "Mexico", "Israel", "Thailand", "Poland", "Norway", "Argentina"]
+#places = ["Israel"]
 #places = ["Italy"]
 #places = ["United Kingdom"]
 #places = ["Rest of Europe"]
@@ -182,11 +183,12 @@ for place in places:
 
 
 fits, fits_res, fits_error                         = fitErf(confirmes_h,      places, firstDate, lastDate, predictionsDate)
-fitdiffs, fitdiffs_res, fitdiffs_error             = fitGaussAsymmetric(newConfirmes_h, places, firstDate, lastDate, predictionsDate)
 fitexps, fitexps_res, fitexps_error                = fitExp(newConfirmes_h,   places, lastDate-8, lastDate, predictionsDate)
 fitexptotals, fitexptotals_res, fitexptotals_error = fitExp(confirmes_h,      places, lastDate-8, lastDate, predictionsDate)
-fitdiffDeaths, fitdiffDeaths_res, fitdiffDeaths_error = fitGaussAsymmetric(newDeaths_h, places, firstDate, lastDate, predictionsDate)
-fitdiffRecoveres, fitdiffRecoveres_res, fitdiffRecoveres_error = fitGaussAsymmetric(newRecoveres_h, places, firstDate, lastDate, predictionsDate)
+fitdiffs, fitdiffs_res, fitdiffs_error             = fitTwoExp(newConfirmes_h, places, firstDate, lastDate, predictionsDate)
+fitOnediffs, fitOnediffs_res, fitOnediffs_error             = fitTwoExp(newConfirmes_h, places, firstDate, lastDate, predictionsDate, oneExp=True)
+fitdiffDeaths, fitdiffDeaths_res, fitdiffDeaths_error = fitTwoExp(newDeaths_h, places, firstDate, lastDate, predictionsDate)
+fitdiffRecoveres, fitdiffRecoveres_res, fitdiffRecoveres_error = fitTwoExp(newRecoveres_h, places, firstDate, lastDate, predictionsDate)
 
 for a in positives_h.values(): a.SetName('positives_'+a.GetName())
 
@@ -378,6 +380,8 @@ for place in places:
 #    savePlot(newConfirmes_h[place], newRecoveres_h[place], newDeaths_h[place],  shiftNewConf, None, None, None, fitdiffs[place], fitdiffs_res[place], fitdiffs_error[place], fitexps[place], "plots/%s_newCases.png"%place, lastDate, c5)
     fitexptotals[place].error = fitexptotals_error[place]
     fitexptotals[place].fitResult = fitexptotals_res[place]
+    fitOnediffs[place].error = fitOnediffs_error[place]
+    fitOnediffs[place].fitResult = fitOnediffs_res[place]
     fitdiffs[place].error = fitdiffs_error[place]
     fitdiffs[place].fitResult = fitdiffs_res[place]
     fitdiffDeaths[place].error = fitdiffDeaths_error[place]
@@ -387,23 +391,45 @@ for place in places:
     fitexps[place].error = None
     fitexps[place].fitResult = None
     savePlotNew([confirmes_h[place], recoveres_h[place], deaths_h[place], predictions_h[place], predictionDeaths_h[place], predictionRecoveres_h[place], shiftConf], [fitexptotals[place]], "plots/%s.png"%place, startDate, dates, c3)
-    savePlotNew([newConfirmes_h[place], newRecoveres_h[place], newDeaths_h[place], shiftNewConf], [fitdiffs[place], fitdiffRecoveres[place], fitdiffDeaths[place], fitexps[place]], "plots/%s_newCases.png"%place, startDate, dates, c5)
+    savePlotNew([newConfirmes_h[place], newRecoveres_h[place], newDeaths_h[place], shiftNewConf], [fitdiffs[place], fitOnediffs[place], fitdiffRecoveres[place], fitdiffDeaths[place], fitexps[place]], "plots/%s_newCases.png"%place, startDate, dates, c5)
 
-    savePlotNew([getScaled(newConfirmes_h[place],newConfirmes_scale), getScaled(newRecoveres_h[place],newRecoveres_scale), getScaled(newDeaths_h[place],newDeaths_scale)], [fitexps[place], fitdiffs[place], fitdiffRecoveres[place]], "plots/%s_newCases_scaled.png"%place, startDate, dates, c5, log=False)
+    savePlotNew([getScaled(newConfirmes_h[place],newConfirmes_scale), getScaled(newRecoveres_h[place],newRecoveres_scale), getScaled(newDeaths_h[place],newDeaths_scale)], [fitexps[place], fitdiffs[place], fitOnediffs[place], fitdiffRecoveres[place]], "plots/%s_newCases_scaled.png"%place, startDate, dates, c5, log=False)
     
     fromZero=False
     savePlotNew([getScaled(confirmes_h[place], confirmes_scale, fromZero), getScaled(recoveres_h[place], recoveres_scale, fromZero), getScaled(deaths_h[place], deaths_scale, fromZero), getScaled(predictionDeaths_h[place], predictionDeaths_scale, fromZero), getScaled(predictionRecoveres_h[place], predictionRecoveres_scale, fromZero), getScaled(positives_h[place], positives_scale, fromZero)], [fitexptotals[place]], "plots/%s_scaled.png"%place, startDate, dates, c5, log=False)
     
     
+    positiveToTestRatio = newConfirmes_h[place].Clone("positiveToTestRatio_"+place)
+    positiveToTestRatio.Reset()
+#    positiveToTestRatio.Divide(newConfirmes_h[place], newTests_h[place])
+#    positiveHisto(positiveToTestRatio)
+    
+#    for i in range(positiveToTestRatio.GetNbins()+2):
+#        if positiveToTestRatio.GetBinContent(i)<0: positiveToTestRatio.SetBinContent(i,0)
+    
     deathToRecoverRatio = deaths_h[place].Clone("deathToRecoverRatio_"+place)
     deathToRecoverRatio.Reset()
-    deathToRecoverRatio.Divide(deaths_h[place], recoveres_h[place])
+    deathToRecoverRatio.Divide(recoveres_h[place], deaths_h[place])
     
     deathDailyToRecoverRatio = newDeaths_h[place].Clone("deathDailyToRecoverRatio_"+place)
     deathDailyToRecoverRatio.Reset()
-    deathDailyToRecoverRatio.Divide(newDeaths_h[place], newRecoveres_h[place])
+    deathDailyToRecoverRatio.Divide(newRecoveres_h[place], newDeaths_h[place])
 
-    savePlotNew([deathToRecoverRatio,deathDailyToRecoverRatio], [], "plots/%s_rapporto.png"%place, startDate, dates, c5, log=False)
+    savePlotNew([getScaled(positiveToTestRatio,1000), deathToRecoverRatio,deathDailyToRecoverRatio], [], "plots/%s_rapporto.png"%place, startDate, dates, c5, log=False)
+
+
+
+ROOT.gROOT.SetBatch(0)
+canv=ROOT.TCanvas("canv")
+
+
+p = places [0]
+
+newConfirmes_h[p].Draw()
+fitOnediffs[p].Draw("same")
+fitOnediffs[p].error.Draw("same")
+
+
 
 '''
 

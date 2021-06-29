@@ -1,4 +1,4 @@
-#python2 script.py >& logWorld &
+python2 script.py >& logWorld &
 cd calcoloRt && (./getIssData.sh >& logRt) &
 sleep 3
 python2 scriptItalyISS.py >& logISS &
