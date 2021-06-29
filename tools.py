@@ -114,6 +114,7 @@ colorMap = {
     "newDeaths":      decessi,
     "storico":        storico,
     "prediction":      prediction,
+    "functionOneExp":   ROOT.kRed+2,
     "functionExp":      funcExp,
     "functionExp_newConfirmes":      funcExp,
     "functionExp_confirmes":      funcExp,
@@ -1254,6 +1255,12 @@ def saveCSV(predictions, places, dates, fn_predictions, fn_predictions_error):
 #    canvas.SaveAs(fName)
 #    print fName
 
+def fromKtoTau2(kappa):
+    return (1./kappa)*ROOT.TMath.Log(2) if kappa>0 else 999
+
+def fromTautoTau2(tau):
+    return tau/ROOT.TMath.Log(2)
+
 
 def getScaled(histo, scale, fromZero=False):
     print(histo,scale)
@@ -1317,8 +1324,12 @@ def savePlotNew(histos, functions, fName, xpred, dates, canvas, ISTAT=False, log
 #                    leg.AddEntry(function, "#splitline{Gaussian fit}{#splitline{max %d}{ %.1f Nov}} "%( int(function.GetMaximum()), function.GetMaximumX() - Nov1), "lep")
                 else:
                     leg.AddEntry(function, "Gaussian fit", "lp")
-            if "Exp" in function.GetName():
-                leg.AddEntry(function, "#splitline{Exponential fit}{#tau_{2} = %.1f days}"%((1./function.GetParameter(0))*ROOT.TMath.Log(2) if function.GetParameter(0)>0 else 999), "lep")
+            if "TwoExp" in function.GetName():
+                leg.AddEntry(function, "#splitline{Two Exp fit}{#tau_{2+,-} = %.1f, %.1f days}"%(fromTautoTau2(function.GetParameter(1)), fromTautoTau2(function.GetParameter(3))), "lep")
+            elif "OneExp" in function.GetName():
+                leg.AddEntry(function, "#splitline{One Exp fit}{#tau_{2} = %.1f days}"%(fromTautoTau2(function.GetParameter(3))), "lep")
+            elif "Exp" in function.GetName():
+                leg.AddEntry(function, "#splitline{Exponential fit}{#tau_{2} = %.1f days}"%(fromKtoTau2(function.GetParameter(0))), "lep")
         else:
             leg.AddEntry(function, function.label, "lp")
             

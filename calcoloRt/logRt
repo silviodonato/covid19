@@ -1,21 +1,21 @@
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  4698  100  4698    0     0  23727      0 --:--:-- --:--:-- --:--:-- 23608
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  4698  100  4698    0     0  52200      0 --:--:-- --:--:-- --:--:-- 52200
 Archive:  calcolo_rt_italia.zip
    creating: calcolo_Rt_Italia/
   inflating: calcolo_Rt_Italia/calcoloRt_EpiEstim.R  
   inflating: calcolo_Rt_Italia/curva_epidemica_Italia_2021-06-23  
---2021-06-29 09:17:01--  https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-andamento-nazionale/dpc-covid19-ita-andamento-nazionale.csv
+--2021-06-29 09:43:36--  https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-andamento-nazionale/dpc-covid19-ita-andamento-nazionale.csv
 Resolving raw.githubusercontent.com (raw.githubusercontent.com)... 185.199.111.133, 185.199.110.133, 185.199.108.133, ...
 Connecting to raw.githubusercontent.com (raw.githubusercontent.com)|185.199.111.133|:443... connected.
 HTTP request sent, awaiting response... 200 OK
 Length: 61690 (60K) [text/plain]
 Saving to: ‘dpc-covid19-ita-andamento-nazionale.csv’
 
-     0K .......... .......... .......... .......... .......... 82% 6.86M 0s
-    50K ..........                                            100% 14.0M=0.008s
+     0K .......... .......... .......... .......... .......... 82% 6.97M 0s
+    50K ..........                                            100%  117M=0.007s
 
-2021-06-29 09:17:01 (7.51 MB/s) - ‘dpc-covid19-ita-andamento-nazionale.csv’ saved [61690/61690]
+2021-06-29 09:43:36 (8.30 MB/s) - ‘dpc-covid19-ita-andamento-nazionale.csv’ saved [61690/61690]
 
 2021-09-01 00:00:00
 dpc-covid19-ita-andamento-nazionale.csv
@@ -354,7 +354,7 @@ dpc-covid19-ita-andamento-nazionale.csv
 2021-06-28 00:00:00
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 90706  100 90706    0     0  1406k      0 --:--:-- --:--:-- --:--:-- 1406k
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 90706  100 90706    0     0   355k      0 --:--:-- --:--:-- --:--:--  355k
 2021-09-01 00:00:00
 casi_inizio_sintomi_sint.csv
 2021-09-01 00:00:00
