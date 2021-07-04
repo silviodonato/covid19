@@ -1,21 +1,21 @@
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  4698  100  4698    0     0  19906      0 --:--:-- --:--:-- --:--:-- 19906
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  4698  100  4698    0     0  20076      0 --:--:-- --:--:-- --:--:-- 20076
 Archive:  calcolo_rt_italia.zip
    creating: calcolo_Rt_Italia/
   inflating: calcolo_Rt_Italia/calcoloRt_EpiEstim.R  
   inflating: calcolo_Rt_Italia/curva_epidemica_Italia_2021-06-23  
---2021-07-04 11:55:08--  https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-andamento-nazionale/dpc-covid19-ita-andamento-nazionale.csv
-Resolving raw.githubusercontent.com (raw.githubusercontent.com)... 185.199.108.133, 185.199.109.133, 185.199.110.133, ...
-Connecting to raw.githubusercontent.com (raw.githubusercontent.com)|185.199.108.133|:443... connected.
+--2021-07-04 20:12:02--  https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-andamento-nazionale/dpc-covid19-ita-andamento-nazionale.csv
+Resolving raw.githubusercontent.com (raw.githubusercontent.com)... 185.199.110.133, 185.199.109.133, 185.199.111.133, ...
+Connecting to raw.githubusercontent.com (raw.githubusercontent.com)|185.199.110.133|:443... connected.
 HTTP request sent, awaiting response... 200 OK
-Length: 62395 (61K) [text/plain]
+Length: 62535 (61K) [text/plain]
 Saving to: ‘dpc-covid19-ita-andamento-nazionale.csv’
 
-     0K .......... .......... .......... .......... .......... 82% 2.57M 0s
-    50K ..........                                            100% 9.66M=0.02s
+     0K .......... .......... .......... .......... .......... 81% 3.62M 0s
+    50K .......... .                                          100% 3.88M=0.02s
 
-2021-07-04 11:55:08 (2.96 MB/s) - ‘dpc-covid19-ita-andamento-nazionale.csv’ saved [62395/62395]
+2021-07-04 20:12:02 (3.67 MB/s) - ‘dpc-covid19-ita-andamento-nazionale.csv’ saved [62535/62535]
 
 2021-09-01 00:00:00
 dpc-covid19-ita-andamento-nazionale.csv
@@ -356,10 +356,11 @@ dpc-covid19-ita-andamento-nazionale.csv
 2021-07-01 00:00:00 0.732461 646
 2021-07-02 00:00:00 0.817663 649
 2021-07-03 00:00:00 0.912878 851
-2021-07-03 00:00:00
+2021-07-04 00:00:00 1.011004 817
+2021-07-04 00:00:00
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 91043  100 91043    0     0   251k      0 --:--:-- --:--:-- --:--:--  251k
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 91043  100 91043    0     0   421k      0 --:--:-- --:--:-- --:--:--  421k
 2021-09-01 00:00:00
 casi_inizio_sintomi_sint.csv
 2021-09-01 00:00:00
