@@ -1318,18 +1318,27 @@ def savePlotNew(histos, functions, fName, xpred, dates, canvas, ISTAT=False, log
         function.SetFillColor(function.GetLineColor())
         if not "ISTAT" in histo.GetName():
             if "Gaus" in function.GetName():
-                if function.fitResult.Get(): 
+                if function.fitResult and function.fitResult.Get(): 
 #                    leg.AddEntry(function, "Exp + Gauss fit", "lp")
                     leg.AddEntry(function, "#splitline{Gaussian fit}{#splitline{#mu=%.1f #pm %.1f Nov}{ #sigma=%.1f #pm %.1f}} "%(function.fitResult.GetParams()[1]-Nov1,function.fitResult.GetErrors()[1],function.fitResult.GetParams()[2],function.fitResult.GetErrors()[2]), "lep")
 #                    leg.AddEntry(function, "#splitline{Gaussian fit}{#splitline{max %d}{ %.1f Nov}} "%( int(function.GetMaximum()), function.GetMaximumX() - Nov1), "lep")
                 else:
-                    leg.AddEntry(function, "Gaussian fit", "lp")
+                    leg.AddEntry(function, "Gaussian fit", "lep")
             if "TwoExp" in function.GetName():
-                leg.AddEntry(function, "#splitline{Two Exp fit}{#splitline{#tau2+ = %.1f #pm %.1f days}{#tau2- = %.1f #pm %.1f days}}"%(fromTautoTau2(function.fitResult.GetParams()[1]), fromTautoTau2(function.fitResult.GetErrors()[1]), fromTautoTau2(function.fitResult.GetParams()[3]), fromTautoTau2(function.fitResult.GetErrors()[3])), "lep")
+                if function.fitResult and function.fitResult.Get(): 
+                    leg.AddEntry(function, "#splitline{Two Exp fit}{#splitline{#tau2+ = %.1f #pm %.1f days}{#tau2- = %.1f #pm %.1f days}}"%(fromTautoTau2(function.fitResult.GetParams()[1]), fromTautoTau2(function.fitResult.GetErrors()[1]), fromTautoTau2(function.fitResult.GetParams()[3]), fromTautoTau2(function.fitResult.GetErrors()[3])), "lep")
+                else:
+                    leg.AddEntry(function, "Two Exp fit", "lep")
             elif "OneExp" in function.GetName():
-                leg.AddEntry(function, "#splitline{One Exp fit}{#tau_{2} = %.1f days}"%(fromTautoTau2(function.fitResult.GetParams()[3])), "lep")
+                if function.fitResult and function.fitResult.Get(): 
+                    leg.AddEntry(function, "#splitline{One Exp fit}{#tau_{2} = %.1f  #pm %.1f days}"%(fromTautoTau2(function.fitResult.GetParams()[3]), fromTautoTau2(function.fitResult.GetErrors()[3])), "lep")
+                else:
+                    leg.AddEntry(function, "Two Exp fit", "lep")
             elif "Exp" in function.GetName():
-                leg.AddEntry(function, "#splitline{Exponential fit}{#tau_{2} = %.1f days}"%(fromKtoTau2(function.fitResult.GetParams()[0])), "lep")
+                if function.fitResult and function.fitResult.Get(): 
+                    leg.AddEntry(function, "#splitline{Exponential fit}{#tau_{2} = %.1f  #pm %.1f days}"%(fromKtoTau2(function.fitResult.GetParams()[0]), fromKtoTau2(function.fitResult.GetErrors()[0])), "lep")
+                else:
+                    leg.AddEntry(function, "Two Exp fit", "lep")
         else:
             leg.AddEntry(function, function.label, "lp")
             
