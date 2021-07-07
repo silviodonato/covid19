@@ -1325,11 +1325,11 @@ def savePlotNew(histos, functions, fName, xpred, dates, canvas, ISTAT=False, log
                 else:
                     leg.AddEntry(function, "Gaussian fit", "lp")
             if "TwoExp" in function.GetName():
-                leg.AddEntry(function, "#splitline{Two Exp fit}{#tau_{2+,-} = %.1f, %.1f days}"%(fromTautoTau2(function.GetParameter(1)), fromTautoTau2(function.GetParameter(3))), "lep")
+                leg.AddEntry(function, "#splitline{Two Exp fit}{#splitline{#tau2+ = %.1f #pm %.1f days}{#tau2- = %.1f #pm %.1f days}}"%(fromTautoTau2(function.fitResult.GetParams()[1]), fromTautoTau2(function.fitResult.GetErrors()[1]), fromTautoTau2(function.fitResult.GetParams()[3]), fromTautoTau2(function.fitResult.GetErrors()[3])), "lep")
             elif "OneExp" in function.GetName():
-                leg.AddEntry(function, "#splitline{One Exp fit}{#tau_{2} = %.1f days}"%(fromTautoTau2(function.GetParameter(3))), "lep")
+                leg.AddEntry(function, "#splitline{One Exp fit}{#tau_{2} = %.1f days}"%(fromTautoTau2(function.fitResult.GetParams()[3])), "lep")
             elif "Exp" in function.GetName():
-                leg.AddEntry(function, "#splitline{Exponential fit}{#tau_{2} = %.1f days}"%(fromKtoTau2(function.GetParameter(0))), "lep")
+                leg.AddEntry(function, "#splitline{Exponential fit}{#tau_{2} = %.1f days}"%(fromKtoTau2(function.fitResult.GetParams()[0])), "lep")
         else:
             leg.AddEntry(function, function.label, "lp")
             
