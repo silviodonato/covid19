@@ -37,7 +37,7 @@ fileName = sys.argv[1]
 print(fileName)
 
 beginDate = datetime(2020, 8, 1)
-endDate = datetime(2021, 9, 1)
+endDate = datetime(2021, 10, 30)
 
 beginDateSF = datetime(2020, 2, 1) ## to apply the SFs in the proper order
 

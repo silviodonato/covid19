@@ -34,9 +34,9 @@ ROOT.kGray,
 ] 
 colors += colors
 
-refDate = date(2021,5,31) 
+refDate = date(2021,6,30) 
 #histoMax = (date.today() - refDate).days+1
-histoMax = (date(2021,8,1) - refDate).days+0.5
+histoMax = (date(2021,10,1) - refDate).days+0.5
 #histoMin = (date(2021,3,1) - refDate).days-0.5
 #histoMin = (date(2021,2,18) - refDate).days-0.5
 histoMin = (date(2021,12,1) - refDate).days-0.5
@@ -405,7 +405,7 @@ for tipo in ["prima_dose","seconda_dose","somministrazioni"]:
                 fitdiffs[cat].SetLineColor(colors[i])
         #    histos[cat].SetMinimum(0.02)
             if i==0:
-                histos[cat].GetXaxis().SetTitle("Giorni dal 31 Maggio")
+                histos[cat].GetXaxis().SetTitle("Giorni dal 30 Giugno")
                 histos[cat].GetYaxis().SetTitle(tipo.replace("_"," ")+" (%)")
                 histos[cat].SetTitle(tipo.replace("_"," "))
                 histos[cat].Draw("HIST")
