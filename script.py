@@ -115,7 +115,7 @@ for place in confirmes.keys():
         places.append(place)
 
 places = ["Switzerland", "United Kingdom", "India", "US", "Germany", "Singapore", "Spain", "Russia", "Italy", "Belgium", "Portugal", "France", "Denmark", "Indonesia", "Japan", "Australia", "Switzerland", "Ireland", "Canada", "Finland", "Mexico", "Israel", "Thailand", "Poland", "Norway", "Argentina"]
-#places = ["Israel"]
+#places = ["Switzerland"]
 #places = ["Italy"]
 #places = ["United Kingdom"]
 #places = ["Rest of Europe"]
