@@ -389,8 +389,10 @@ for place in places:
     fitdiffDeaths[place].fitResult = fitdiffDeaths_res[place]
     fitdiffRecoveres[place].error = fitdiffRecoveres_error[place]
     fitdiffRecoveres[place].fitResult = fitdiffRecoveres_res[place]
-    fitexps[place].error = None
-    fitexps[place].fitResult = None
+    fitexps[place].error = fitexps_error[place]
+    fitexps[place].fitResult = fitexps_res[place]
+#    fitexps[place].error = None
+#    fitexps[place].fitResult = None
     savePlotNew([confirmes_h[place], recoveres_h[place], deaths_h[place], predictions_h[place], predictionDeaths_h[place], predictionRecoveres_h[place], shiftConf], [fitexptotals[place]], "plots/%s.png"%place, startDate, dates, c3)
     savePlotNew([newConfirmes_h[place], newRecoveres_h[place], newDeaths_h[place], shiftNewConf], [fitdiffs[place], fitOnediffs[place], fitdiffRecoveres[place], fitdiffDeaths[place], fitexps[place]], "plots/%s_newCases.png"%place, startDate, dates, c5)
 
